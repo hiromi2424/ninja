@@ -28,12 +28,12 @@ abstract class AppBehaviorTestCase extends AppTestCase {
 		$this->Behavior = new $this->behaviorClass;
 	}
 
-	public function endTest() {
+	public function endTest($method = null) {
 		$this->Model = null;
 		$this->Behavior = null;
 		ClassRegistry::flush();
 
-		parent::endTest();
+		parent::endTest($method);
 	}
 
 	protected function _getBehavior() {
