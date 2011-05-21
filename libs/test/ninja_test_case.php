@@ -1,6 +1,6 @@
 <?php
 
-App::import('Lib', 'Ninja.test/FixtureLoaderTestCase');
+App::import('Lib', 'Ninja.test' . DS . 'FixtureLoaderTestCase');
 
 abstract class NinjaTestCase extends FixtureLoaderTestCase {
 
