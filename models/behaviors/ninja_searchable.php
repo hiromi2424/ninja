@@ -3,7 +3,7 @@
 // requires Search plugin.
 App::import('Behavior', 'Search.Searchable');
 
-class AppSearchableBehavior extends SearchableBehavior {
+class NinjaSearchableBehavior extends SearchableBehavior {
 
 /**
  * $field might be useful for considering to create conditions.

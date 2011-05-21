@@ -1,8 +1,8 @@
 <?php
 
-App::import('Lib', 'Ninja.test/AppTestCase');
+App::import('Lib', 'Ninja.test' . DS . 'NinjaTestCase');
 
-abstract class AppBehaviorTestCase extends AppTestCase {
+abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 
 	public $Model;
 	public $Behavior;

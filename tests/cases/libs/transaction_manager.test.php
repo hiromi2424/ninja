@@ -1,7 +1,7 @@
 <?php
 
 App::import('Lib', 'Ninja.TransactionManager');
-App::import('Lib', 'Ninja.AppTestCase');
+App::import('Lib', 'Ninja.NinjaTestCase');
 
 class MockTransactionManager extends TransactionManager {
 	public static $begun = array();
@@ -39,7 +39,7 @@ class MockTransactionManager extends TransactionManager {
 	}
 }
 
-class TransactionManagerTestCase extends AppTestCase {
+class TransactionManagerTestCase extends NinjaTestCase {
 
 	public $datasource = 'test_suite';
 	public $mockModel;

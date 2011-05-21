@@ -1,12 +1,12 @@
 <?php
 /* CommonValidation Test cases generated on: 2010-11-23 09:11:17 : 1290472577*/
-App::import('Lib', 'Ninja.test/AppBehaviorTestCase');
+App::import('Lib', 'Ninja.test' . DS . 'NinjaBehaviorTestCase');
 
 class EmptyFilterBehaviorMockModel extends Model {
 	public $actsAs = array('Ninja.EmptyFilter');
 }
 
-class EmptyFilterBehaviorTestCase extends AppBehaviorTestCase {
+class EmptyFilterBehaviorTestCase extends NinjaBehaviorTestCase {
 
 	public $fixtures = array('plugin.ninja.empty_filter_behavior_mock_model');
 

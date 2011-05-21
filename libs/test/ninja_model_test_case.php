@@ -1,8 +1,8 @@
 <?php
 
-App::import('Lib', 'Ninja.test/AppTestCase');
+App::import('Lib', 'Ninja.test' . DS . 'NinjaTestCase');
 
-abstract class AppModelTestCase extends AppTestCase {
+abstract class NinjaModelTestCase extends NinjaTestCase {
 
 	public $fixtures = array('IMPORT' => 'default');
 	public $modelName;

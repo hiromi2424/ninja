@@ -1,6 +1,6 @@
 <?php
 
-App::import('Lib', 'Ninja.test/AppBehaviorTestCase');
+App::import('Lib', 'Ninja.test' . DS . 'NinjaBehaviorTestCase');
 
 class MagickMethodBehaviorMockModel extends Model {
 	public $useTable = false;
@@ -20,7 +20,7 @@ class MagickMethodBehaviorMockModel extends Model {
 	}
 }
 
-class MagickMethodBehaviorTestCase extends AppBehaviorTestCase {
+class MagickMethodBehaviorTestCase extends NinjaBehaviorTestCase {
 
 	public function testFind() {
 		$this->assertEqual($this->Model->findById(1), array('first', array('conditions' => array($this->Model->escapeField('id') => 1))));

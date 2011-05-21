@@ -1,6 +1,6 @@
 <?php
 /* CommonValidation Test cases generated on: 2010-11-23 09:11:17 : 1290472577*/
-App::import('Lib', 'Ninja.test/AppBehaviorTestCase');
+App::import('Lib', 'Ninja.test' . DS . 'NinjaBehaviorTestCase');
 
 class CommonValidationBehaviorMockModel extends Model {
 	public $actsAs = array('Ninja.CommonValidation' => array('user_class' => 'CommonValidationBehaviorUser'));
@@ -37,7 +37,7 @@ class CommonValidationBehaviorBelonged extends Model {
 	);
 }
 
-class CommonValidationBehaviorTestCase extends AppBehaviorTestCase {
+class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 	public $fixtures = array(
 		'plugin.ninja.common_validation_behavior_mock_model',
 		'plugin.ninja.common_validation_behavior_belonged',
@@ -223,6 +223,8 @@ class CommonValidationBehaviorTestCase extends AppBehaviorTestCase {
 	}
 
 	public function testCheckDoubleSave() {
+		$this->Behavior->wait_double_check = 10;
+
 		$this->Model->validate = array(
 			'created' => array(
 				'checkDoubleSave' => array(

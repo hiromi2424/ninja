@@ -1,16 +1,17 @@
 <?php
 
-App::import('Lib', 'Ninja.test/AppBehaviorTestCase');
+App::import('Lib', 'Ninja.test' . DS . 'NinjaBehaviorTestCase');
 
 class CurrentUserBehaviorMockModel extends Model {
 	public $actsAs = array('Ninja.CurrentUser');
 }
 
-class CurrentUserBehaviorTestCase extends AppBehaviorTestCase {
+class CurrentUserBehaviorTestCase extends NinjaBehaviorTestCase {
 
 	public $fixtures = array('plugin.ninja.current_user_behavior_mock_model');
 
-	public funcion testSetCurrentUser() {
+	public function testSetCurrentUser() {
+		Configure::delete('CurrentUser');
 		$this->assertFalse($this->Model->setCurrentUser());
 
 		Configure::write('CurrentUser.id', 1);
@@ -34,7 +35,7 @@ class CurrentUserBehaviorTestCase extends AppBehaviorTestCase {
 		$this->assertEqual($this->Model->data['CurrentUserBehaviorMockModel']['user_id'], 1);
 	}
 
-	public funcion testValidate() {
+	public function testValidate() {
 		Configure::write('CurrentUser.id', 1);
 		$data = array(
 			$this->Model->alias => array(
@@ -66,7 +67,7 @@ class CurrentUserBehaviorTestCase extends AppBehaviorTestCase {
 		$this->assertEqual($this->Model->data['CurrentUserBehaviorMockModel']['user_id'], 2);
 	}
 
-	public funcion testValidateCurrentUserDelete() {
+	public function testValidateCurrentUserDelete() {
 		$this->loadFixtures('CurrentUserBehaviorMockModel');
 		Configure::write('CurrentUser.id', 2);
 
@@ -77,7 +78,7 @@ class CurrentUserBehaviorTestCase extends AppBehaviorTestCase {
 		$this->assertTrue($this->Model->validateCurrentUserDelete());
 	}
 
-	public funcion testBeforeDelete() {
+	public function testBeforeDelete() {
 		$this->loadFixtures('CurrentUserBehaviorMockModel');
 		Configure::write('CurrentUser.id', 1);
 		$this->Model->id = 1;

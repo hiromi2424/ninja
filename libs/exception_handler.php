@@ -66,7 +66,7 @@ class ExceptionHandler extends Object {
 
 }
 
-class AppException extends Exception {
+class NinjaException extends Exception {
 
 	public $defaultMessage = null;
 
@@ -88,11 +88,11 @@ class AppException extends Exception {
 	}
 }
 
-class ParseError extends AppException {
+class ParseError extends NinjaException {
 	public $defaultMessage = '解析エラー:';
 }
 
-class LogicError extends AppException {
+class LogicError extends NinjaException {
 	public $defaultMessage = '入力情報が正しくありません';
 }
 

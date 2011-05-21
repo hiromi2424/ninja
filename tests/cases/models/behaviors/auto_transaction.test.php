@@ -1,7 +1,7 @@
 <?php
 
 App::import('Behavior', 'Ninja.AutoTransaction');
-App::import('Lib', 'Ninja.test/AppBehaviorTestCase', false);
+App::import('Lib', 'Ninja.test' . DS . 'NinjaBehaviorTestCase', false);
 
 class MockAutoTransactionBehavior extends AutoTransactionBehavior {
 
@@ -20,7 +20,7 @@ class AutoTransactionBehaviorMockModel extends Model {
 	public $actsAs = array('MockAutoTransaction');
 }
 
-class AutoTransactionBehaviorTestCase extends AppBehaviorTestCase {
+class AutoTransactionBehaviorTestCase extends NinjaBehaviorTestCase {
 	public $fixtures = array('plugin.ninja.auto_transaction_behavior_mock_model');
 
 	protected function _reset($auto = true) {
