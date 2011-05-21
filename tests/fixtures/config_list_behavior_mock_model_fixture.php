@@ -1,6 +1,6 @@
 <?php
 
-class ConfigListBehaviorMockModelFixture extends CakeTestFixture {
+class ConfigListBehaviorMockModelFixture extends NinjaTestFixture {
 
 	public $name = 'ConfigListBehaviorMockModel';
 
@@ -9,7 +9,7 @@ class ConfigListBehaviorMockModelFixture extends CakeTestFixture {
 		'normal' => array('type' => 'string'),
 		'list' => array('type' => 'string', 'null' => true, 'default' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci')
 	);
 
 	public $records = array(

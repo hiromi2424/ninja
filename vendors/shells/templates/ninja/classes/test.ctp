@@ -20,13 +20,13 @@
  */
 
 $modelOrBehavior = in_array($type, array('Model', 'Behavior'));
-$testClass = 'App' . $modelOrBehavior ? $type : '' . 'TestCase';
+$testClass = 'Ninja' . ($modelOrBehavior ? $type : '') . 'TestCase';
 
 echo "<?php\n";
 echo "/* ". $className ." Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n";
 ?>
 App::import('<?php echo $type; ?>', '<?php echo $plugin . $className;?>');
-App::import('Lib', 'Ninja.test/<?php echo $testClass ?>');
+App::import('Lib', 'Ninja.test' . DS . '<?php echo $testClass ?>');
 
 <?php if ($mock and strtolower($type) == 'controller'): ?>
 class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {

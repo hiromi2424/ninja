@@ -1,6 +1,6 @@
 <?php
 
-class EmptyFilterBehaviorMockModelFixture extends CakeTestFixture {
+class EmptyFilterBehaviorMockModelFixture extends NinjaTestFixture {
 
 	public $name = 'EmptyFilterBehaviorMockModel';
 
@@ -17,6 +17,6 @@ class EmptyFilterBehaviorMockModelFixture extends CakeTestFixture {
 		'binary' => array('type' => 'binary'),
 		'boolean' => array('type' => 'boolean'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci')
 	);
 }

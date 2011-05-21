@@ -223,7 +223,7 @@ class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 	}
 
 	public function testCheckDoubleSave() {
-		$this->Behavior->wait_double_check = 10;
+		$this->Model->Behaviors->CommonValidation->wait_double_check = 10;
 
 		$this->Model->validate = array(
 			'created' => array(

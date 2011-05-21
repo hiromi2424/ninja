@@ -1,9 +1,9 @@
 <?php
 /* RequestLog Fixture generated on: 2011-03-09 18:57:15 : 1299664635 */
-class RequestLogFixture extends CakeTestFixture {
-	var $name = 'RequestLog';
+class RequestLogFixture extends NinjaTestFixture {
+	public $name = 'RequestLog';
 
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'url' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'status' => array('type' => 'string', 'null' => true, 'default' => NULL, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -12,10 +12,10 @@ class RequestLogFixture extends CakeTestFixture {
 		'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 		'article_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'article_id' => array('column' => 'article_id', 'unique' => 0)),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci')
 	);
 
-	var $records = array(
+	public $records = array(
 		array(
 			'id' => 1,
 			'url' => 'Lorem ipsum dolor sit amet',

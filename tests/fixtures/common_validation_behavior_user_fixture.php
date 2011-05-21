@@ -1,17 +1,17 @@
 <?php
 
-class CommonValidationBehaviorUserFixture extends CakeTestFixture {
-	var $name = 'CommonValidationBehaviorUser';
+class CommonValidationBehaviorUserFixture extends NinjaTestFixture {
+	public $name = 'CommonValidationBehaviorUser';
 
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci')
 	);
 
-	var $records = array(
+	public $records = array(
 		array(
 			'id' => 1,
 		),

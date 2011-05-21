@@ -1,9 +1,9 @@
 <?php
 
-class CommonValidationBehaviorBelongedFixture extends CakeTestFixture {
-	var $name = 'CommonValidationBehaviorBelonged';
+class CommonValidationBehaviorBelongedFixture extends NinjaTestFixture {
+	public $name = 'CommonValidationBehaviorBelonged';
 
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'common_validation_behavior_user_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 		'common_validation_behavior_mock_model_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10, 'key' => 'index'),
@@ -12,10 +12,10 @@ class CommonValidationBehaviorBelongedFixture extends CakeTestFixture {
 			'common_validation_behavior_user_id' => array('column' => 'common_validation_behavior_user_id', 'unique' => 0),
 			'common_validation_behavior_mock_model_id' => array('column' => 'common_validation_behavior_mock_model_id', 'unique' => 0),
 		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci')
 	);
 
-	var $records = array(
+	public $records = array(
 		array(
 			'id' => 1,
 			'common_validation_behavior_mock_model_id' => 1,
