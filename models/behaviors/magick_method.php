@@ -32,9 +32,11 @@ class MagickMethodBehavior extends ModelBehavior {
 
 		if (empty($type)) {
 			$type = 'first';
+		} else {
+			$type{0} = strtolower($type{0});
 		}
 
-		return array(strtolower($type), $parts);
+		return array($type, $parts);
 	}
 
 	public function __findMagick(&$model) {
