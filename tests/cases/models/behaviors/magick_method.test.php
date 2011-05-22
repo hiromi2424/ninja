@@ -39,6 +39,8 @@ class MagickMethodBehaviorTestCase extends NinjaBehaviorTestCase {
 		$this->assertEqual($this->Model->findAll(), array('all', array()));
 		$this->assertEqual($this->Model->findList(), array('list', array()));
 		$this->assertEqual($this->Model->findUserDefinedFindMethod(), array('userDefinedFindMethod', array()));
+
+		$this->assertEqual($this->Model->findById(null), array('first', array('conditions' => array($this->Model->escapeField('id') => null))));
 	}
 
 	public function testError() {

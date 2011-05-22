@@ -77,7 +77,7 @@ class MagickMethodBehavior extends ModelBehavior {
 			} elseif (method_exists($model, $modelCallback)) {
 				list($field, $value) = $model->$modelCallback();
 			} else {
-				if (!isset($args[$offset])) {
+				if (!array_key_exists($offset, $args)) {
 					trigger_error(sprintf(__('Missing argument %d for %s', true), $offset + 1, __METHOD__), E_USER_WARNING);
 					return null;
 				}
