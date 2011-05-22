@@ -19,7 +19,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$baseTestCaseExists = in_array($type, array('Model', 'Behavior', 'Helper'));
+$baseTestCaseExists = in_array($type, array('Controller', 'Component', 'Model', 'Behavior', 'Helper'));
 $testClass = 'Ninja' . ($baseTestCaseExists ? $type : '') . 'TestCase';
 
 echo "<?php\n";
