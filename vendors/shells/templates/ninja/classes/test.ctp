@@ -19,13 +19,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$modelOrBehavior = in_array($type, array('Model', 'Behavior'));
-$testClass = 'Ninja' . ($modelOrBehavior ? $type : '') . 'TestCase';
+$baseTestCaseExists = in_array($type, array('Model', 'Behavior', 'Helper'));
+$testClass = 'Ninja' . ($baseTestCaseExists ? $type : '') . 'TestCase';
 
 echo "<?php\n";
 echo "/* ". $className ." Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n";
 ?>
-App::import('<?php echo $type; ?>', '<?php echo $plugin . $className;?>');
+<?php if (!$baseTestCaseExists): ?>App::import('<?php echo $type; ?>', '<?php echo $plugin . $className;?>');<?php endif ?>
+
 App::import('Lib', 'Ninja.test' . DS . '<?php echo $testClass ?>');
 
 <?php if ($mock and strtolower($type) == 'controller'): ?>
@@ -43,7 +44,7 @@ class <?php echo $fullClassName; ?>TestCase extends <?php echo $testClass ?> {
 
 	public $fixtures = array('<?php echo join("', '", $fixtures); ?>');
 <?php endif; ?>
-<?php if (!$modelOrBehavior): ?>
+<?php if (!$baseTestCaseExists): ?>
 
 	public function startTest() {
 		$this-><?php echo $className . ' = ' . $construction; ?>

@@ -10,21 +10,32 @@ abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 	public $behaviorClass;
 	public $modelName;
 
-	public function setUp() {
+	public function startCase() {
 		$this->behaviorName = str_replace('BehaviorTestCase', '', get_class($this));
 		$this->behaviorClass = $this->behaviorName . 'Behavior';
-		$this->modelName = $this->behaviorClass . 'MockModel';
+
+		if (class_exists($this->behaviorClass . 'MockModel')) {
+			$this->modelName = $this->behaviorClass . 'MockModel';
+		}
+
 		if (class_exists('Mock' . $this->behaviorClass)) {
 			$this->behaviorClass = 'Mock' . $this->behaviorClass;
 			$this->behaviorName = 'Mock' . $this->behaviorName;
+		} elseif (!class_exists($this->behaviorClass)) {
+			App::import('Behavior', $this->plugin . $this->behaviorName);
 		}
-		parent::setUp();
+
+
+		parent::startCase();
 	}
 
 	public function startTest($method = null) {
 		parent::startTest($method);
 
-		$this->Model = ClassRegistry::init($this->modelName);
+		if ($this->modelName) {
+			$this->Model = ClassRegistry::init($this->modelName);
+		}
+
 		$this->Behavior = new $this->behaviorClass;
 	}
 
