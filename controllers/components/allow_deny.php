@@ -1,22 +1,33 @@
 <?php
 
 class AllowDenyComponent extends Object {
+
 	public $auth = 'Auth';
 	public $allowNonPrefix = true;
+	public $allowNonPrefixProperty = 'allowNonPrefix';
+	public $allowProperty = 'allowActions';
+	public $denyProperty = 'loginRequired';
+
+	public $Controller;
+	public $Auth;
 
 	public function initialize($Controller, $settings = array()) {
 		$this->_set($settings);
+		$this->Controller = $Controller;
+		$this->Auth = $this->Controller->{$this->auth};
 
-		if (isset($Controller->{$this->auth})) {
-			$Auth = $Controller->{$this->auth};
-			if ($this->allowNonPrefix && empty($Controller->params['prefix'])) {
-				$Auth->allow('*');
-			}
+		$allowNonPrefix = isset($this->Controller->{$this->allowNonPrefixProperty}) ? $this->Controller->{$this->allowNonPrefixProperty} : $this->allowNonPrefix;
 
-			if (!empty($Controller->loginRequired)) {
-				$Auth->deny($Controller->loginRequired);
-			}
+		if ($allowNonPrefix && empty($this->Controller->params['prefix'])) {
+			$this->Auth->allow('*');
 		}
-		return true;
+
+		if (!empty($this->Controller->{$this->denyProperty})) {
+			$this->Auth->deny($this->Controller->{$this->denyProperty});
+		}
+
+		if (!empty($this->Controller->{$this->allowProperty})) {
+			$this->Auth->allow($this->Controller->{$this->allowProperty});
+		}
 	}
 }
