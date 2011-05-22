@@ -15,7 +15,7 @@ class Request extends HttpSocket {
 	}
 
 	public function get($url, $query = array(), $request = array()) {
-		$log = true;
+		$log = false;
 		if (array_key_exists('_log', $query)) {
 			$log = $query['_log'];
 			unset($query['_log']);
