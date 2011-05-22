@@ -62,4 +62,10 @@ class NinjaAuthComponent extends AuthComponent {
 		return null;
 	}
 
+	public function reLogin() {
+		$user_id = $this->user('id');
+		$this->logout();
+		$this->login($user_id);
+	}
+
 }
