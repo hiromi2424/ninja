@@ -27,4 +27,3 @@ class RequestLogFixture extends NinjaTestFixture {
 		),
 	);
 }
-?>
