@@ -11,44 +11,52 @@ class NinjaAuthComponent extends AuthComponent {
 
 	public function identify($data = null, $conditions = null) {
 		if (empty($conditions)) {
-			$conditions = $this->userScope;
+			$scope = $this->userScope;
 		} else {
-			$conditions += $this->userScope;
+			$scope = (array)$conditions + $this->userScope;
 		}
 
-		if ($data === null) {
+		if (empty($data)) {
 			$id = $this->user('id');
 		} elseif (!is_array($data)) {
 			$id = $data;
 		} else {
-			$conditions += $data;
+			$scope += $data;
 		}
 
 		$model = $this->getModel();
 
-		if (isset($id)) {
-			$conditions = array($model->escapeField() => $id);
+		if (!empty($id)) {
+			$scope = array($model->escapeField() => $id) + $scope;
 		}
 
-		$user = $this->getModel()->find('first', array('recursive' => 0) + compact('conditions'));
+		if (empty($scope)) {
+			return null;
+		}
+
+		$user = $model->find('first', array(
+			'recursive' => 0,
+			'conditions' => $scope,
+		));
 
 		if (empty($user)) {
 			return null;
 		}
 
-		$user = Set::merge($user, $user[$this->userModel]);
-		unset($user[$this->userModel]);
-
-		return $user;
+		return $this->adjustUserdataForStore($user);
 	}
 
-	function userdata() {
-		$model = $this->getModel();
-		$data = $model->find('first', array('conditions' => array($model->escapeField($model->primaryKey) => $this->user('id')), 'recursive' => 0));
-		$data = Set::merge($data, $data[$this->userModel]);
-		unset($data[$this->userModel]);
-		$this->Session->write($this->sessionKey, $data);
-		return $data;
+	public function adjustUserdataForStore($user) {
+		if (!empty($user)) {
+			$model = $this->getModel();
+			if (!empty($user[$model->alias][$this->fields['password']])) {
+				unset($user[$model->alias][$this->fields['password']]);
+			}
+			$user = Set::merge($user, $user[$this->userModel]);
+			unset($user[$this->userModel]);
+		}
+
+		return $user;
 	}
 
 	public function user($key = null) {
@@ -63,9 +71,12 @@ class NinjaAuthComponent extends AuthComponent {
 	}
 
 	public function reLogin() {
-		$user_id = $this->user('id');
+		if (!($user_id = $this->user('id'))) {
+			return false;
+		}
+
 		$this->logout();
-		$this->login($user_id);
+		return $this->login($user_id);
 	}
 
 }
