@@ -86,7 +86,7 @@ abstract class NinjaControllerTestCase extends NinjaTestCase {
 
 	public function shutdownController() {
 		$this->Controller->Component->shutdown($this->Controller);
-		unset($this->Controller);
+		$this->Controller = null;
 	}
 
 }

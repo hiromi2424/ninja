@@ -16,6 +16,12 @@ abstract class NinjaComponentTestCase extends NinjaControllerTestCase {
 		if (!class_exists($this->componentClass)) {
 			App::import('Component', $this->plugin . $this->componentName);
 		}
+
+		if (class_exists('Test' . $this->componentClass)) {
+			$this->componentClass = 'Test' . $this->componentClass;
+		} elseif (class_exists('Mock' . $this->componentClass)) {
+			$this->componentClass = 'Mock' . $this->componentClass;
+		}
 	}
 
 	public function startTest($method = null) {
@@ -58,7 +64,7 @@ abstract class NinjaComponentTestCase extends NinjaControllerTestCase {
 		if (isset($component->components) && is_array($component->components)) {
 			$components = (array)Set::normalize($component->components);
 			foreach (array_keys($components) as $c) {
-				$this->Controller->Component->_loadComponents($object, $c);
+				$this->Controller->Component->_loadComponents($component, $c);
 			}
 
 			foreach ($components as $c => $config) {
