@@ -52,8 +52,8 @@ class NinjaAuthComponent extends AuthComponent {
 			if (!empty($user[$model->alias][$this->fields['password']])) {
 				unset($user[$model->alias][$this->fields['password']]);
 			}
-			$user = Set::merge($user, $user[$this->userModel]);
-			unset($user[$this->userModel]);
+			$user = Set::merge($user, $user[$model->alias]);
+			unset($user[$model->alias]);
 		}
 
 		return $user;
