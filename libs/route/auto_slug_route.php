@@ -2,6 +2,17 @@
 
 class AutoSlugRoute extends CakeRoute {
 
+	public static $defaultOptions = array(
+		'model' => null,
+		'display' => ':displayField',
+		'lookup' => ':primaryKey',
+		'cacheConfig' => 'default',
+		'recursive' => -1,
+		'named' => ':displayField',
+		'identity' => ':name',
+		'urlencode' => true,
+	);
+
 	protected $_model;
 	protected $_display;
 	protected $_lookup;
@@ -47,14 +58,11 @@ class AutoSlugRoute extends CakeRoute {
 
 		$defaults = array(
 			'model' => isset($this->defaults['controller']) ? $this->defaults['controller'] : null,
-			'display' => ':displayField',
-			'lookup' => ':primaryKey',
-			'cacheConfig' => 'default',
-			'recursive' => -1,
-			'named' => 'slug',
-			'identity' => ':name',
-			'urlencode' => true,
-		);
+		) + self::$defaultOptions;
+
+		if (isset($this->options['lookup']) && !isset($this->options['named'])) {
+			$this->options['named'] = $this->options['lookup'];
+		}
 
 		foreach (array_merge($defaults, array_intersect_key($this->options, $defaults)) as $name => $config) {
 			$this->{"_$name"} = $config;
@@ -156,7 +164,7 @@ class AutoSlugRoute extends CakeRoute {
 
 			$slugs[$result[$this->_getModel()->alias][$this->lookup]] = $result[$this->_getModel()->alias][$this->display];
 			if ($this->cacheConfig !== false) {
-				Cache::write($this->__cacheName(), $slugs, $this->cacheConfig);
+				Cache::write($this->cacheName(), $slugs, $this->cacheConfig);
 			}
 		}
 
@@ -187,14 +195,14 @@ class AutoSlugRoute extends CakeRoute {
 			return $this->__cached;
 		}
 
-		if ($this->cacheConfig !== false && ($this->__cached = Cache::read($this->__cacheName(), $this->cacheConfig))) {
+		if ($this->cacheConfig !== false && ($this->__cached = Cache::read($this->cacheName(), $this->cacheConfig))) {
 			return $this->__cached;
 		}
 
 		$result = $this->_getModel()->find('list', array('fields' => array($this->lookup, $this->display), 'recursive' => $this->recursive));
 
 		if ($this->cacheConfig !== false) {
-			Cache::write($this->__cacheName(), $result, $this->cacheConfig);
+			Cache::write($this->cacheName(), $result, $this->cacheConfig);
 			$this->__cached = $result;
 		}
 
@@ -202,16 +210,42 @@ class AutoSlugRoute extends CakeRoute {
 
 	}
 
-	private function __cacheName() {
-		return sprintf('%s_%s', $this->_getModel()->name, $this->display);
+	public function cacheName() {
+		return sprintf('%s_%s', Inflector::underscore($this->_getModel()->alias), strtolower($this->display));
 	}
 
-	public static function cacheName($identity) {
-
+	public static function getInstance($identity) {
 		if (isset(self::$_instances[$identity])) {
-			return self::$_instances[$identity]->__cacheName();
+			return self::$_instances[$identity];
 		}
+	}
 
+
+	public static function getCacheName($identity) {
+		if (isset(self::$_instances[$identity])) {
+			return self::$_instances[$identity]->cacheName();
+		}
+	}
+
+	public static function clearCache($identity) {
+		if (isset(self::$_instances[$identity])) {
+			$instance = self::$_instances[$identity];
+			return Cache::delete($instance->cacheName(), $instance->cacheConfig);
+		}
+	}
+
+	public static function readCache($identity) {
+		if (isset(self::$_instances[$identity])) {
+			$instance = self::$_instances[$identity];
+			return Cache::read($instance->cacheName(), $instance->cacheConfig);
+		}
+	}
+
+	public static function storeCache($identity, $data) {
+		if (isset(self::$_instances[$identity])) {
+			$instance = self::$_instances[$identity];
+			return Cache::write($instance->cacheName(), $data, $instance->cacheConfig);
+		}
 	}
 
 }
