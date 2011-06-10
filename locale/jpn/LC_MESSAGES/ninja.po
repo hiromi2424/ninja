@@ -1,0 +1,69 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2011-06-10 09:15+0900\n"
+"PO-Revision-Date: 2011-06-10 09:24+0900\n"
+"Last-Translator: hiromi <tanaka2424@gmail.com>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: \libs\exception_handler.php:48
+msgid ""
+"** Unexpected Exception::class\n"
+"#########\n"
+":message\n"
+"#########\n"
+"\n"
+":file at line :line\n"
+"\n"
+"* Stack Trace:\n"
+":trace"
+msgstr ""
+"** 予期しない例外::class\n"
+"#########\n"
+":message\n"
+"#########\n"
+"\n"
+":file, :line 行目\n"
+"\n"
+"* トレース：\n"
+":trace"
+
+#: \libs\exception_handler.php:61
+msgid "<h3>Unexpected Exception::class</h3><p><hr /><strong>:message</strong><hr /><br />:file at line :line</p><h4>Stack Trace:</h4><p>:trace</p>"
+msgstr "<h3>予期しない例外::class</h3><p><hr /><strong>:message</strong><hr /><br />:file, :line 行目</p><h4>トレース：</h4><p>:trace</p>"
+
+#: \libs\exception_handler.php:108
+msgid "Parse error"
+msgstr "解析エラー"
+
+#: \libs\exception_handler.php:117
+msgid "Your input is not valid"
+msgstr "入力情報が正しくありません"
+
+#: \libs\transaction_manager.php:26
+msgid "Datasource %s was not found"
+msgstr "データソース「%s」が見つかりません"
+
+#: \models\behaviors\common_validation.php:172
+msgid "Detecting associated model and field failed: field name = :field_name, class name = :class_name"
+msgstr "アソシエーションのモデルとフィールドの検出ができませんでした: フィールド = :field_name、クラス = :class_name"
+
+#: \models\behaviors\empty_filter.php:55
+msgid "Could not trim %s type"
+msgstr "「%s」タイプをトリミングできませんでした"
+
+#: \models\behaviors\magick_method.php:50
+msgid "Retrieving method name failed."
+msgstr "メソッド名の検出に失敗しました。"
+
+#: \models\behaviors\magick_method.php:81
+msgid "Missing argument %d for %s"
+msgstr "%sに%d番目の引数が与えられていません。"
+

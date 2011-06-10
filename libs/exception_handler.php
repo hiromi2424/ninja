@@ -45,7 +45,7 @@ class ExceptionHandler extends Object {
 	protected static function _text($params) {
 
 		$error = String::insert(
-			"** 予期しない例外::class\n#########\n:message\n#########\n\n:file, :line 行目\n\n* トレース：\n:trace",
+			__d('ninja', "** Unexpected Exception::class\n#########\n:message\n#########\n\n:file at line :line\n\n* Stack Trace:\n:trace"),
 			$params
 		);
 		return $error;
@@ -57,7 +57,7 @@ class ExceptionHandler extends Object {
 		$params['message'] = nl2br($params['message']);
 		$params['trace'] = nl2br($params['trace']);
 		$error = String::insert(
-			"<h3>予期しない例外::class</h3><p><hr /><strong>:message</strong><hr /><br />:file, :line 行目</p><h4>トレース：</h4><p>:trace</p>",
+			__d('ninja', '<h3>Unexpected Exception::class</h3><p><hr /><strong>:message</strong><hr /><br />:file at line :line</p><h4>Stack Trace:</h4><p>:trace</p>', true),
 			$params
 		);
 		return $error;
@@ -71,6 +71,8 @@ class NinjaException extends Exception {
 	public $defaultMessage = null;
 
 	public function __construct($message = null, $code = 0, Exception $previous = null) {
+		$this->_constructDefaultMessage($message, $code, $previous);
+
 		if ($this->defaultMessage !== null) {
 			if ($message !== null) {
 				$messages = (array)$message;
@@ -86,13 +88,30 @@ class NinjaException extends Exception {
 		}
 		parent::__construct($message, $code, $previous);
 	}
+
+	protected function _constructDefaultMessage($message, $code, $previous) {
+		if ($detected = $this->_defaultMessage($message, $code, $previous)) {
+			$this->defaultMessage = $detected;
+		}
+	}
+
+	protected function _defaultMessage() {}
+
 }
 
 class ParseError extends NinjaException {
-	public $defaultMessage = '解析エラー:';
+
+	protected function _defaultMessage() {
+		return __d('ninja', 'Parse error', true);
+	}
+
 }
 
 class LogicError extends NinjaException {
-	public $defaultMessage = '入力情報が正しくありません';
+
+	protected function _defaultMessage() {
+		return __d('ninja', 'Your input is not valid', true);
+	}
+
 }
 

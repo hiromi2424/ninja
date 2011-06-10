@@ -136,7 +136,7 @@ class EmptyFilterBehaviorTestCase extends NinjaBehaviorTestCase {
 	}
 
 	function testIllegal() {
-		$this->expectException('Exception');
+		$this->expectError();
 		$this->Model->trimSpaces(new stdClass);
 	}
 }

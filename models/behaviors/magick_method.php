@@ -47,7 +47,7 @@ class MagickMethodBehavior extends ModelBehavior {
 
 		$matched = $this->_matched(debug_backtrace(false));
 		if (empty($matched)) {
-			trigger_error(__('Retriving method name failed.', true));
+			trigger_error(__d('ninja', 'Retrieving method name failed.', true));
 			return null;
 		}
 
@@ -78,7 +78,7 @@ class MagickMethodBehavior extends ModelBehavior {
 				list($field, $value) = $model->$modelCallback();
 			} else {
 				if (!array_key_exists($offset, $args)) {
-					trigger_error(sprintf(__('Missing argument %d for %s', true), $offset + 1, __METHOD__), E_USER_WARNING);
+					trigger_error(sprintf(__d('ninja', 'Missing argument %d for %s', true), $offset + 1, __METHOD__), E_USER_WARNING);
 					return null;
 				}
 				$value = $args[$offset];

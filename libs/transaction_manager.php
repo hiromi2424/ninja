@@ -23,7 +23,7 @@ class TransactionManager extends Object {
 
 	public function setDataSource($datasource = 'default') {
 		if (!self::_isDatasourceAvailable($datasource)) {
-			throw new DatasourceNotFoundException;
+			throw new DatasourceNotFoundException(sprintf(__d('ninja', 'Datasource %s was not found', true), $datasource));
 		}
 		$this->_datasource = $datasource;
 		$this->_db = ConnectionManager::getDataSource($datasource);
