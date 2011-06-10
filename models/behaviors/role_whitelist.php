@@ -7,7 +7,9 @@ class RoleWhitelistBehavior extends ModelBehavior {
 	protected $_defaultSetting = array(
 		'fieldName' => 'whitelists',
 		'default' => 'common',
+		'clear' => true,
 		'auto' => true,
+		'configName' => 'CurrentUser.Group.role',
 	);
 
 	public function setup($Model, $settings = array()) {
@@ -17,25 +19,27 @@ class RoleWhitelistBehavior extends ModelBehavior {
 
 	public function beforeValdiate($Model) {
 		if ($this->settings[$Model->alias]['auto']) {
-			$this->setWhitelistRole($Model);
+			if ($role = Configure::read($this->settings[$Model->alias]['configName'])) {
+				$this->setWhitelistRole($Model, $role);
+			}
 		}
 		return true;
 	}
 
 	public function setWhitelistRole($Model, $role = null) {
-		if ($role === null) {
-			if (!($role = Configure::read('CurrentUser.Group.role'))) {
-				throw new Exception('ログインユーザ以外が編集しようとしました');
-			}
-		}
-
 		extract($this->settings[$Model->alias]);
+
+		if ($clear) {
+			$Model->whitelist = array();
+		}
 
 		if (isset($Model->{$fieldName}[$role])) {
 			if (isset($Model->{$fieldName}[$default])) {
 				$Model->whitelist = array_merge($Model->whitelist, $Model->{$fieldName}[$default]);
 			}
-			$Model->whitelist = array_merge($Model->whitelist, $Model->{$fieldName}[$role]);
+			if ($role !== null && array_key_exists($role, $Model->{$fieldName})) {
+				$Model->whitelist = array_merge($Model->whitelist, $Model->{$fieldName}[$role]);
+			}
 			return true;
 		}
 		return false;
