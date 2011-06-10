@@ -168,7 +168,6 @@ class CommonValidationBehavior extends ModelBehavior {
 			}
 		}
 		if ($class_name === false) {
-			// "アソシエーションの設定がおかしいか足りません。\$field_name = '$field_name', \$class_name = '$class_name'"
 			trigger_error(String::insert(__d('ninja', 'Detecting associated model and field failed: field name = :field_name, class name = :class_name', true), compact('field_name', 'class_name')));
 			return false;
 		}
