@@ -1,0 +1,112 @@
+<?php
+/* AllowDeny Test cases generated on: 2011-05-22 14:43:09 : 1306042989*/
+
+App::import('Component', 'Ninja.DisableActions');
+App::import('Lib', 'Ninja.test' . DS . 'NinjaComponentTestCase');
+
+class DisableActionsTestController extends Controller {
+
+	public $uses = null;
+
+	public $blackHole = false;
+	public $secureType = null;
+
+	public function test_action() {}
+	public function test_action2() {}
+
+	public function blackHole($type) {
+		$this->blackHole = true;
+		$this->secureType = $type;
+	}
+
+}
+
+class TestDisableActionsComponent extends DisableActionsComponent {
+
+	public static $testConfigName = '__TestDisableActions';
+
+	public function __construct() {
+		$this->configName = self::$testConfigName;
+		$args = func_get_args();
+		call_user_func_array('parent::__construct', $args);
+	}
+
+	public function initialize($Controller) {
+		$this->Security->blackHoleCallback = 'blackHole';
+		$Controller->blackHole = false;
+		$args = func_get_args();
+		call_user_func_array('parent::initialize', $args);
+	}
+
+}
+
+class DisableActionsComponentTestCase extends NinjaComponentTestCase {
+
+	public $fixtures = false;
+
+	protected $_configBackup;
+
+	public function startTest($method = null) {
+		parent::startTest($method);
+		$this->_configBackup = Configure::read(TestDisableActionsComponent::$testConfigName);
+	}
+
+	public function endTest($method = null) {
+		Configure::delete(TestDisableActionsComponent::$testConfigName);
+		if ($this->_configBackup !== false) {
+			Configure::write(TestDisableActionsComponent::$testConfigName, $this->_configBackup);
+		}
+		parent::endTest($method);
+	}
+
+	public function testInitialize() {
+		Configure::write(TestDisableActionsComponent::$testConfigName, array(
+			'*' => '*',
+		));
+		$this->DisableActions->initialize($this->Controller);
+		$this->assertTrue($this->Controller->blackHole);
+		$this->assertEqual($this->Controller->secureType, 'disableActions');
+	}
+
+	public function testJudge() {
+		$this->assertTrue($this->DisableActions->judge(array(
+			'*' => '*',
+		)));
+
+		$this->assertTrue($this->DisableActions->judge(array(
+			'*' => 'test_action',
+		)));
+
+		$this->assertFalse($this->DisableActions->judge(array(
+			'*' => 'other_action',
+		)));
+
+		$this->assertTrue($this->DisableActions->judge(array(
+			'disable_actions_test' => '*',
+		)));
+
+		$this->assertFalse($this->DisableActions->judge(array(
+			'other_controller' => '*',
+		)));
+
+		$this->assertTrue($this->DisableActions->judge(array(
+			'disable_actions_test' => 'test_action',
+		)));
+
+		$this->assertFalse($this->DisableActions->judge(array(
+			'disable_actions_test' => 'test_action2',
+		)));
+
+
+		$this->assertTrue($this->DisableActions->judge(array(
+			'*' => 'other_actions',
+			'disable_actions_test' => '*',
+		)));
+
+		$this->assertTrue($this->DisableActions->judge(array(
+			'disable_actions_test' => 'other_actions',
+			'*' => '*',
+		)));
+	}
+
+}

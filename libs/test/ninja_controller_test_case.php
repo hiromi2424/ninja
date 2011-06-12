@@ -54,6 +54,7 @@ abstract class NinjaControllerTestCase extends NinjaTestCase {
 			'controller' => $this->_guessControllerName($Controller, $params),
 			'action' => 'test_action',
 		), $params);
+		$Controller->action = $Controller->params['action'];
 
 		if ($controllerClass === 'Controller') {
 			$Controller->uses = null;

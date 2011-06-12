@@ -34,28 +34,17 @@ class DisableActionsComponent extends Object {
 	public function judge($disableActions) {
 
 		foreach ($disableActions as $controller => $actions) {
-
-			if ($controller === '*') {
-
-				if ($this->_judgeAction($actions)) {
-					return true;
-				}
-
-				continue;
-
-			}
-
-			if (Inflector::camelize($controller) === Inflector::camelize($this->_Controller->name)) {
-
-				return $this->_judgeAction($actions);
-
-				break;
-
+			if ($this->_judgeController($controller) && $this->_judgeAction($actions)) {
+				return true;
 			}
 		}
 
 		return false;
 
+	}
+
+	protected function _judgeController($controller) {
+		return $controller === '*' || Inflector::camelize($controller) === Inflector::camelize($this->_Controller->name);
 	}
 
 	protected function _judgeAction($actions) {
