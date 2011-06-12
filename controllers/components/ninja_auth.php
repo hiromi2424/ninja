@@ -4,6 +4,8 @@ App::import('Component', 'Auth');
 
 class NinjaAuthComponent extends AuthComponent {
 
+	public $recursiveForUserdata = 0;
+
 	public function initialize($controller, $settings = array()){
 		$this->Controller = $controller;
 		return parent::initialize($controller, $settings);
@@ -35,7 +37,7 @@ class NinjaAuthComponent extends AuthComponent {
 		}
 
 		$user = $model->find('first', array(
-			'recursive' => 0,
+			'recursive' => $this->recursiveForUserdata,
 			'conditions' => $scope,
 		));
 
