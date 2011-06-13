@@ -1,25 +1,36 @@
 <?php
 
 class MagickMethodBehavior extends ModelBehavior {
-	public $regex = '/^find(.+)$/';
-	protected $_method = '__findMagick';
 
-	public $callbackPrefix = 'by';
+	public $mapMethods = array();
 
-	// method was strtolower'd so this cannot handle camel cased.
-	public function setup($model, $config = array()) {
-		$this->_set($config);
-		$this->mapMethods = array(
-			$this->regex => $this->_method,
-		);
+	protected $_findMap = array('/^find(.+)$/' => '_findMagick');
+	protected $_scopeMap = array('/^scope(.+)$/' => '_scopeMagick');
+
+	public static $defaultSettings = array(
+		'callbackPrefix' => 'by',
+		'associations' => array(
+			'hasOne',
+			'belongsTo',
+			'hasMany',
+			'hasAndBelongsToMany',
+		),
+	);
+
+	public function setup($Model, $config = array()) {
+		$this->mapMethods = array_merge($this->_findMap, $this->_scopeMap);
+		$this->settings[$Model->alias] = Set::merge(self::$defaultSettings, $config);
 	}
 
-	protected function _matched($trace) {
+	protected function _matched($regex, $method) {
+		$trace = debug_backtrace(false);
+
 		for ($i = 4; $i <= 6; $i++) {
-			if (preg_match($this->regex . 'i', $trace[$i]['function'], $matched)) {
-				return $matched;
+			if (preg_match($regex . 'i', $trace[$i]['function'], $matched)) {
+				return $matched[1];
 			}
 		}
+		throw new RuntimeException(__d('ninja', 'Retrieving method name failed.', true));
 	}
 
 	protected function _parse($matched) {
@@ -39,64 +50,204 @@ class MagickMethodBehavior extends ModelBehavior {
 		return array($type, $parts);
 	}
 
-	public function __findMagick(&$model) {
+	public function _findMagick($Model) {
+
 		$args = func_get_args();
-		/* $model =& */ array_shift($args);
-		/* $method = */ array_shift($args);
+		/* $Model = */ array_shift($args);
+		$method = array_shift($args);
 		$args = array_values($args);
 
-		$matched = $this->_matched(debug_backtrace(false));
-		if (empty($matched)) {
-			trigger_error(__d('ninja', 'Retrieving method name failed.', true));
-			return null;
-		}
+		$matched = $this->_matched(key($this->_findMap), $method);
+		list($type, $parts) = $this->_parse($matched);
 
-		list($type, $parts) = $this->_parse($matched[1]);
-		if ($parts) {
-			$fields = Inflector::underscore($parts);
-			$or = strpos($fields, '_or_') !== false;
-			$fields = explode($or ? '_or_' : '_and_', $fields);
-		} else {
-			$fields = array();
-			$or = false;
-		}
-		return $this->__dispatch($model, compact('type', 'fields', 'args', 'or'));
+		list($fields, $operators) = $this->_extract($parts);
+
+		$query = empty($fields) ? array() : $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method'));
+
+		return $Model->find($type, $query);
+
 	}
 
-	private function __dispatch(&$model, $params) {
+	public function _scopeMagick($Model) {
+
+		$args = func_get_args();
+		/* $Model = */ array_shift($args);
+		$method = array_shift($args);
+		$args = array_values($args);
+
+		$matched = $this->_matched(key($this->_scopeMap) , $method);
+
+		list($fields, $operators) = $this->_extract($matched);
+
+		$query = $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method'));
+
+		return $query;
+
+	}
+
+	protected function _extract($parts) {
+
+		if (empty($parts)) {
+			return array(array(), array());
+		}
+
+		$parts = Inflector::underscore($parts);
+		$parts = explode('_', $parts);
+
+		$elements = $this->_extractElements($parts);
+
+		return $elements;
+
+	}
+
+	protected function _extractElements($parts) {
+
+		$fields = array();
+		$operators = array();
+
+		while ($element = current($parts)) {
+			if (in_array($element, array('and', 'or'))) {
+				$operators[] = $element;
+				next($parts);
+			} else {
+				$field = array();
+				do {
+					$field[] = $element;
+					$element = next($parts);
+				} while ($element && !in_array($element, array('and', 'or')));
+				$fields[] = implode('_', $field);
+			}
+		}
+
+		if (count($fields) - 1 !== count($operators)) {
+			throw new BadMethodCallException(__d('ninja', "Trailing 'or', 'and' is not expected", true));
+		} elseif (count(array_unique($fields)) !== count($fields)) {
+			throw new BadMethodCallException(__d('ninja', 'Scope name must be used at once', true));
+		}
+
+		return array($fields, $operators);
+
+	}
+
+	protected function _findParams($params) {
 		extract($params);
 
-		$scope = array();
+		$scopes = array();
 		$offset = 0;
 		foreach ($fields as $field) {
+
 			$Field = Inflector::camelize($field);
-			$callback = '__by' . $Field;
-			$modelCallback = $this->callbackPrefix . $Field;
-			if (method_exists($this, $callback)) {
-				list($field, $value) = $this->$callback($model);
-			} elseif (method_exists($model, $modelCallback)) {
-				list($field, $value) = $model->$modelCallback();
+			$callback = $this->settings[$Model->alias]['callbackPrefix'] . $Field;
+
+			if ($Model->hasMethod($callback)) {
+				$scopes = Set::merge($scopes, $Model->$callback());
 			} else {
 				if (!array_key_exists($offset, $args)) {
-					trigger_error(sprintf(__d('ninja', 'Missing argument %d for %s', true), $offset + 1, __METHOD__), E_USER_WARNING);
-					return null;
+					throw new BadMethodCallException(sprintf(__d('ninja', 'Missing argument %d for %s', true), $offset + 1, $method));
 				}
+
 				$value = $args[$offset];
 				$offset++;
+
+				if ($Model->hasField($field, true) || !($assocField = $this->_retrieveAssociatedField($Model, $field))) {
+					$scopes[$Model->escapeField($field)] = $value;
+				} else {
+					$scopes[$assocField] = $value;
+				}
+
 			}
-			$scope[$model->escapeField($field)] = $value;
+
 		}
 		$query = isset($args[$offset]) ? $args[$offset] : array();
-		if ($or) {
-			$scope = array('OR' => $scope);
+
+		if (empty($operators) || !in_array('or', $operators)) {
+			$criteria = $scopes;
+		} else {
+			$criteria = $this->_generatesOrCreteria($scopes, $operators);
 		}
-		if (!empty($scope)) {
-			$query = Set::merge($query, array('conditions' => $scope));
-		}
-		return $model->find($type, $query);
+
+		return Set::merge(array('conditions' => $criteria), $query);
+
 	}
 
-	private function __byInsertId(&$model) {
-		return array($model->primaryKey, $model->getInsertId());
+	protected function _retrieveAssociatedField($Model, $field) {
+		$parts = explode('_', $field);
+		$partsCount = count($parts);
+
+		foreach ($Model->getAssociated() as $alias => $assoc) {
+
+			if (in_array($assoc, $this->settings[$Model->alias]['associations'])) {
+				for ($i = 1; $i <= $partsCount; $i++) {
+					$search = Inflector::camelize(implode('_', array_slice($parts, 0, $i)));
+
+					if ($alias === $search) {
+						$field = implode('_', array_slice($parts, $i));
+						if ($Model->$alias->hasField($field, true)) {
+							return $Model->$alias->escapeField($field);
+						}
+					}
+				}
+			}
+
+		}
+
+		return false;
 	}
+
+	protected function _generatesOrCreteria($scopes, $operators) {
+
+		$criteria = $scopeParts = $parts = array();
+
+		$operator = current($operators);
+		foreach ($scopes as $field => $value) {
+			$parts = array_merge($parts, array($field => $value));
+
+			if ($operator === 'and') {
+				$scopeParts[] = $parts;
+				$parts = array();
+			}
+
+			$operator = next($operators);
+		}
+
+		if (!empty($parts)) {
+			$scopeParts[] = $parts;
+		}
+
+		foreach ($scopeParts as $parts) {
+			if (count($parts) > 1) {
+				$criteria[] = array('OR' => $parts);
+			} else {
+				$criteria[key($parts)] = current($parts);
+			}
+		}
+		return $criteria;
+
+	}
+
+	public function byInsertId($Model) {
+		return array($Model->escapeField($Model->primaryKey) => $Model->getInsertId());
+	}
+
+	// this functionality is implemented in 2.0
+	public function hasMethod($Model, $method) {
+		if (method_exists($Model, $method)) {
+			return true;
+		}
+
+		foreach (array_keys($Model->Behaviors->__methods) as $behaviorMethod) {
+			if (strcasecmp($method, $behaviorMethod) == 0) {
+				return true;
+			}
+		}
+
+		foreach (array_keys($Model->Behaviors->__mappedMethods) as $mappedMethod) {
+			if (preg_match($mappedMethod . 'i', $method)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 }

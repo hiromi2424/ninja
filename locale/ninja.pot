@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2011-06-10 09:15+0900\n"
+"POT-Creation-Date: 2011-06-13 14:10+0900\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -18,15 +18,15 @@ msgstr ""
 msgid "** Unexpected Exception::class\n#########\n:message\n#########\n\n:file at line :line\n\n* Stack Trace:\n:trace"
 msgstr ""
 
-#: \libs\exception_handler.php:61
+#: \libs\exception_handler.php:60
 msgid "<h3>Unexpected Exception::class</h3><p><hr /><strong>:message</strong><hr /><br />:file at line :line</p><h4>Stack Trace:</h4><p>:trace</p>"
 msgstr ""
 
-#: \libs\exception_handler.php:108
+#: \libs\exception_handler.php:105
 msgid "Parse error"
 msgstr ""
 
-#: \libs\exception_handler.php:117
+#: \libs\exception_handler.php:113
 msgid "Your input is not valid"
 msgstr ""
 
@@ -34,7 +34,7 @@ msgstr ""
 msgid "Datasource %s was not found"
 msgstr ""
 
-#: \models\behaviors\common_validation.php:172
+#: \models\behaviors\common_validation.php:171
 msgid "Detecting associated model and field failed: field name = :field_name, class name = :class_name"
 msgstr ""
 
@@ -42,11 +42,19 @@ msgstr ""
 msgid "Could not trim %s type"
 msgstr ""
 
-#: \models\behaviors\magick_method.php:50
+#: \models\behaviors\magick_method.php:33
 msgid "Retrieving method name failed."
 msgstr ""
 
-#: \models\behaviors\magick_method.php:81
+#: \models\behaviors\magick_method.php:123
+msgid "Trailing 'or', 'and' is not expected"
+msgstr ""
+
+#: \models\behaviors\magick_method.php:125
+msgid "Scope name must be used at once"
+msgstr ""
+
+#: \models\behaviors\magick_method.php:146
 msgid "Missing argument %d for %s"
 msgstr ""
 
