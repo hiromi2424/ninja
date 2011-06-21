@@ -1,6 +1,8 @@
 <?php
 
-class AutoSlugRoute extends CakeRoute {
+App::import('Lib', 'Ninja.route' . DS . 'NinjaRoute');
+
+class AutoSlugRoute extends NinjaRoute {
 
 	public static $defaultOptions = array(
 		'model' => null,
@@ -28,7 +30,7 @@ class AutoSlugRoute extends CakeRoute {
 
 	public function __construct($route, $defaults = array(), $options = array()) {
 
-		parent::CakeRoute($route, $defaults, $options);
+		parent::__construct($route, $defaults, $options);
 		$this->_setOptions();
 
 		self::$_instances[$this->identity] = $this;
@@ -39,14 +41,7 @@ class AutoSlugRoute extends CakeRoute {
 		$property = '_' . $name;
 		if (isset($this->$property)) {
 			if (is_string($this->$property)) {
-				$model = $this->_getModel();
-				$params = array(
-					'name' => $model->name,
-					'primaryKey' => $model->primaryKey,
-					'displayField' => $model->displayField,
-					'alias' => $model->alias,
-				);
-				return $this->$name = String::insert($this->$property, $params);
+				return $this->$name = $this->_insertParams($this->$property, $this->_getModel());
 			} else {
 				return $this->$property;
 			}
@@ -72,17 +67,6 @@ class AutoSlugRoute extends CakeRoute {
 
 	protected function _getModel() {
 		return ClassRegistry::init(Inflector::classify($this->_model));
-	}
-
-	/*
-	protected function _isTest() {
-		return basename(ltrim(env('PHP_SELF'), '/') === 'test.php' || env('argc') > 1);
-	}
-	*/
-
-	// for debug
-	function _log($var) {
-		Object::log(var_export($var, true), 'debug');
 	}
 
 	public function parse($url) {
@@ -130,7 +114,7 @@ class AutoSlugRoute extends CakeRoute {
 			if (isset($slug)) {
 				$params[$this->named] = $this->_urlencode ? rawurlencode($slug) : $slug;
 				unset($params[0]);
-				$params = $this->__normalizePass($params);
+				$params = $this->_normalizePass($params);
 
 				return parent::match($params);
 
@@ -138,18 +122,6 @@ class AutoSlugRoute extends CakeRoute {
 		}
 
 		return false;
-
-	}
-
-	protected function _match($params) {
-
-		foreach ($this->defaults as $key => $value) {
-			if (!array_key_exists($key, $params) || $params[$key] !== $value) {
-				return false;
-			}
-		}
-
-		return true;
 
 	}
 
@@ -169,23 +141,6 @@ class AutoSlugRoute extends CakeRoute {
 		}
 
 		return $result;
-
-	}
-
-	private function __normalizePass($params) {
-
-		$result = array();
-		$passes = array();
-
-		foreach ($params as $key => $value) {
-			if (is_numeric($key)) {
-				$passes[] = $value;
-			} else {
-				$result[$key] = $value;
-			}
-		}
-
-		return array_merge($result, $passes);
 
 	}
 
