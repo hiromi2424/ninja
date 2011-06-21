@@ -107,12 +107,12 @@ class MenuHelper extends AppHelper {
 		}
 
 		$result = implode($separator, $results);
-
-		$id = $this->_attribute(compact('id'));
-		$class = $this->_attribute(compact('class'));
+		$result = "$before$result$after";
 
 		if ($wrapper_tag !== false) {
-			$result = "<$wrapper_tag$id$class>$before$result$after</$wrapper_tag>";
+			$id = $this->_attribute(compact('id'));
+			$class = $this->_attribute(compact('class'));
+			$result = "<$wrapper_tag$id$class>$result</$wrapper_tag>";
 		}
 
 		return $result;
