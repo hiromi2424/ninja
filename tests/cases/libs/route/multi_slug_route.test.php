@@ -182,12 +182,8 @@ class MultiSlugRouteTest extends NinjaTestCase {
 				'user' => array(
 					'model' => 'Author',
 					'callbacks' => array(
-						'match' => function($value) {
-							return 'author;' . $value;
-						},
-						'parse' => function($slug) {
-							return preg_replace('/^author;/', '', $slug);
-						},
+						'match' => create_function('$value', 'return "author;" . $value;'),
+						'parse' => create_function('$slug', 'return preg_replace("/^author;/", "", $slug);'),
 					),
 				),
 			),
