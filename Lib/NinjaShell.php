@@ -1,5 +1,7 @@
 <?php
 
+App::uses('Router', 'Routing');
+
 abstract class NinjaShell extends Shell {
 
 	public $Controller;
@@ -17,8 +19,10 @@ abstract class NinjaShell extends Shell {
 		if (!class_exists('Controller')) {
 			App::import('Controller', 'Controller', false);
 		}
-		$this->Controller = new Controller();
-		$this->Controller->uses = array();
+
+		$request = new CakeRequest;
+		$this->Controller = new Controller($request);
+		$this->Controller->uses = null;
 
 		$this->Controller->constructClasses();
 		$this->Controller->startupProcess();
@@ -39,51 +43,26 @@ abstract class NinjaShell extends Shell {
 			$this->loadController();
 		}
 
-		list($plugin, $component) = pluginSplit($component, true, null);
-		if (isset($this->Controller->$component)) {
-			return $this->Controller->$component;
+		list($plugin, $componentName) = pluginSplit($component, true, null);
+		if (isset($this->Controller->$componentName)) {
+			return $this->Controller->$componentName;
 		}
 
-		$componentClass = $component . 'Component';
-		if (!class_exists($componentClass)) {
-			App::import('Component', $plugin . $component);
+		$object = $this->Controller->Components->load($component, $settings);
+		if (!$object || !is_object($object)) {
+			return null;
 		}
-
-		$object = new $componentClass(null);
 
 		if (method_exists($object, 'initialize')) {
 			$object->initialize($this->Controller, $settings);
 		}
 
-		if (isset($object->components) && is_array($object->components)) {
-			$components = (array)Set::normalize($object->components);
-			foreach (array_keys($components) as $c) {
-				$this->Controller->Component->_loadComponents($object, $c);
-			}
-
-			foreach ($components as $c => $config) {
-				list($plugin, $c) = pluginSplit($c, true, null);
-
-				if (method_exists($object->{$c}, 'initialize')) {
-					$object->{$c}->initialize($this->Controller, $config);
-				}
-				if (method_exists($object->{$c}, 'startup')) {
-					$object->{$c}->startup($this->Controller);
-				}
-			}
-		}
-
-		$this->$component = $this->Controller->$component = $object;
-		return $this->$component;
+		return $this->$componentName = $this->Controller->$componentName = $object;
 	}
 
 	public function loadRouter($base = null) {
 		if ($base === null) {
 			$base = Configure::read('App.base');
-		}
-
-		if (!class_exists('Router')) {
-			App::import('Core', 'Router');
 		}
 
 		Router::setRequestInfo(array(
