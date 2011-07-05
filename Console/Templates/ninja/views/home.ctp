@@ -24,7 +24,7 @@ endif;
 	\$settings = Cache::settings();
 	if (!empty(\$settings)):
 		echo '<span class=\"notice success\">';
-				printf(__('The %s is being used for caching. To change the config edit APP/config/core.php ', true), '<em>'. \$settings['engine'] . 'Engine</em>');
+				printf(__('The %s is being used for caching. To change the config edit APP/config/core.php '), '<em>'. \$settings['engine'] . 'Engine</em>');
 		echo '</span>';
 	else:
 		echo '<span class=\"notice\">';
@@ -72,7 +72,7 @@ if (!empty(\$filePresent)):
 ?>
 </p>\n";
 $output .= "<?php endif;?>\n";
-$output .= "<h3><?php __('Editing this Page') ?></h3>\n";
+$output .= "<h3><?php echo __('Editing this Page') ?></h3>\n";
 $output .= "<p>\n";
 $output .= "<?php\n";
 $output .= "\tprintf(__('To change the content of this page, edit: %s\n";

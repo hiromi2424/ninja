@@ -26,7 +26,7 @@ class MagickMethodBehavior extends ModelBehavior {
 		if (preg_match($regex . 'i', $method, $matched)) {
 			return $matched[1];
 		}
-		throw new RuntimeException(__d('ninja', 'Retrieving method name failed.', true));
+		throw new RuntimeException(__d('ninja', 'Retrieving method name failed.'));
 	}
 
 	protected function _parse($matched) {
@@ -123,9 +123,9 @@ class MagickMethodBehavior extends ModelBehavior {
 		}
 
 		if (count($fields) - 1 !== count($operators)) {
-			throw new BadMethodCallException(__d('ninja', "Trailing 'or', 'and' is not expected", true));
+			throw new BadMethodCallException(__d('ninja', "Trailing 'or', 'and' is not expected"));
 		} elseif (count(array_unique($fields)) !== count($fields)) {
-			throw new BadMethodCallException(__d('ninja', 'Scope name must be used at once', true));
+			throw new BadMethodCallException(__d('ninja', 'Scope name must be used at once'));
 		}
 
 		return array($fields, $operators);

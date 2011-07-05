@@ -5,10 +5,10 @@ App::import('TestSuite', 'Ninja.NinjaHelperTestCase');
 class ElapsedHelperTestCase extends NinjaHelperTestCase {
 
 	public function testNice() {
-		$msec = __d('elapsed', 'msec', true);
-		$sec = __d('elapsed', 'sec', true);
-		$min = __d('elapsed', 'min', true);
-		$hour = __d('elapsed', 'hour', true);
+		$msec = __d('elapsed', 'msec');
+		$sec = __d('elapsed', 'sec');
+		$min = __d('elapsed', 'min');
+		$hour = __d('elapsed', 'hour');
 
 		$this->assertEqual("1 $hour 10 $min 27.225 $sec", $this->Elapsed->nice(4227.2246));
 		$this->assertEqual("225 $msec", $this->Elapsed->nice(0.2246));

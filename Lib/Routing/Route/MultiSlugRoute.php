@@ -66,7 +66,7 @@ class MultiSlugRoute extends NinjaRoute {
 		}
 
 		if (!isset($options[$name])) {
-			trigger_error(sprintf(__d('ninja', '%s option is not set', true), $name));
+			trigger_error(sprintf(__d('ninja', '%s option is not set'), $name));
 			return null;
 		}
 
@@ -84,7 +84,7 @@ class MultiSlugRoute extends NinjaRoute {
 		}
 
 		if ($model === null) {
-			trigger_error(__d('ninja', 'Detecting model failed. you should specify the model', true));
+			trigger_error(__d('ninja', 'Detecting model failed. you should specify the model'));
 			return null;
 		}
 
