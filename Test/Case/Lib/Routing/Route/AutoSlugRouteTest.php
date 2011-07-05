@@ -1,12 +1,12 @@
 <?php
 
 App::uses('Router', 'Routing');
+App::uses('CakeRoute', 'Routing/Route');
 App::uses('AutoSlugRoute', 'Ninja.Routing/Route');
 App::import('TestSuite', 'Ninja.NinjaTestCase');
 
 class AutoSlugRouteTestPost extends CakeTestModel {
 
-	public $name = 'AutoSlugRouteTestPost';
 	public $alias = 'Post';
 	public $useTable = 'posts';
 
@@ -14,18 +14,17 @@ class AutoSlugRouteTestPost extends CakeTestModel {
 
 class AutoSlugRouteTest extends NinjaTestCase {
 
-	protected $_routingBackup;
-	protected $_cacheBackup;
+	protected static $_routingBackup;
+	protected static $_cacheBackup;
 
 	public $fixtures = array(
 		'core.post',
 		'core.author',
 	);
 
-	public function startCase() {
-		parent::startCase();
-		$this->_routingBackup = Configure::read('Routing');
-		$this->_cacheBackup = Configure::read('Cache');
+	public static function setupBeforeClass() {
+		self::$_routingBackup = Configure::read('Routing');
+		self::$_cacheBackup = Configure::read('Cache');
 
 		Configure::write('Routing', null);
 		Configure::write('Cache.disable', false);
@@ -33,13 +32,12 @@ class AutoSlugRouteTest extends NinjaTestCase {
 		ClassRegistry::init(array('class' => 'AutoSlugRouteTestPost', 'alias' => 'Post'));
 	}
 
-	public function endCase() {
-		Configure::write('Routing', $this->_routingBackup);
-		Configure::write('Cache', $this->_cacheBackup);
-		parent::endCase();
+	public static function tearDownAfterClass() {
+		Configure::write('Routing', self::$_routingBackup);
+		Configure::write('Cache', self::$_cacheBackup);
 	}
 
-	public function endTest($method = null) {
+	public function endTest($method) {
 		AutoSlugRoute::clearCache('AutoSlugRouteTestPost');
 		AutoSlugRoute::clearCache('AutoSlugRouteTestPostBody');
 		parent::endTest($method);
@@ -76,8 +74,7 @@ class AutoSlugRouteTest extends NinjaTestCase {
 		$result = $route->parse('/post/First Post/2');
 		$this->assertEqual($result['controller'], 'posts');
 		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['pass'], array(1));
-		$this->assertEqual($result['_args_'], '2');
+		$this->assertEqual($result['pass'], array(1, 2));
 
 
 		$result = $route->parse('/post/invalid');

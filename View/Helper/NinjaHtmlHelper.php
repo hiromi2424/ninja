@@ -9,8 +9,9 @@ class NinjaHtmlHelper extends HtmlHelper {
 		'altEqualTitle' => true,
 	);
 
-	public function __construct($settings = array()) {
+	public function __construct(View $view, $settings = array()) {
 		$this->settings = (array)$settings + $this->defaultSettings;
+		parent::__construct($view, $settings);
 	}
 
 	public function image($path, $options = array()) {

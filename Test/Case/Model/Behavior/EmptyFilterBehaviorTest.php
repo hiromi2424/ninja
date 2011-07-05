@@ -8,7 +8,7 @@ class EmptyFilterBehaviorMockModel extends Model {
 
 class EmptyFilterBehaviorTestCase extends NinjaBehaviorTestCase {
 
-	public $fixtures = array('plugin.ninja.empty_filter_behavior_mock_model');
+	public $fixtures = array('plugin.Ninja.EmptyFilterBehaviorMockModel');
 
 	public function testTrimSpaces() {
 		$this->assertIdentical($this->Model->trimSpaces(' a '), 'a');
@@ -122,7 +122,8 @@ class EmptyFilterBehaviorTestCase extends NinjaBehaviorTestCase {
 				'piyo' => '  d  ',
 			),
 		));
-		$this->assertTrue($this->Model->validates());
+		$result = $this->Model->validates();
+		$this->assertTrue($result);
 		$this->assertIdentical($this->Model->data, array(
 			'EmptyFilterBehaviorMockModel' => array(
 				'integer' => 'a',

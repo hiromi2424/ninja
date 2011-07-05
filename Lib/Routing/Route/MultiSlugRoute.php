@@ -1,6 +1,6 @@
 <?php
 
-App::import('Lib', 'Ninja.route' . DS . 'NinjaRoute');
+App::uses('NinjaRoute', 'Ninja.Routing/Route');
 
 class MultiSlugRoute extends NinjaRoute {
 
@@ -187,7 +187,7 @@ class MultiSlugRoute extends NinjaRoute {
 		if (empty($params['pass'])) {
 			$params['pass'] = array();
 		}
-		$params['pass'][] = $id;
+		array_unshift($params['pass'], $id);
 
 		return $params;
 

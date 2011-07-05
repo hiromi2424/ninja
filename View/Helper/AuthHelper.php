@@ -2,18 +2,12 @@
 
 class AuthHelper extends AppHelper {
 
-	public $helpers = array('Session');
-
 	public function loggedIn() {
-		return $this->user('id') !== null;
+		return $this->user() !== null;
 	}
 
 	public function user($name = null) {
-		$key = 'Auth.User';
-		if ($name !== null) {
-			$key .= ".$name";
-		}
-		return $this->Session->read($key);
+		return AuthComponent::user($name);
 	}
 
 }

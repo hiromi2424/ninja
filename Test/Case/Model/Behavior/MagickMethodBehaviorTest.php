@@ -26,7 +26,7 @@ class MagickMethodBehaviorMockBase extends Model {
 
 class MagickMethodBehaviorMockModel extends MagickMethodBehaviorMockBase {
 
-	public $actsAs = array('MagickMethod.MagickMethod');
+	public $actsAs = array('Ninja.MagickMethod');
 
 	public $belongsTo = array(
 		'BelongsTo' => array(
@@ -319,21 +319,21 @@ class MagickMethodBehaviorTestCase extends NinjaBehaviorTestCase {
 			$this->Model->findById();
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (Exception $e) {
-			$this->assertTrue(is_a($e, 'BadMethodCallException'));
+			$this->assertInstanceOf('BadMethodCallException', $e);
 		}
 
 		try {
 			$this->Model->findByIdAndId(1, 2);
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (Exception $e) {
-			$this->assertTrue(is_a($e, 'BadMethodCallException'));
+			$this->assertInstanceOf('BadMethodCallException', $e);
 		}
 
 		try {
 			$this->Model->findByIdOr(1);
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (Exception $e) {
-			$this->assertTrue(is_a($e, 'BadMethodCallException'));
+			$this->assertInstanceOf('BadMethodCallException', $e);
 		}
 
 	}

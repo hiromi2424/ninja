@@ -1,17 +1,9 @@
 <?php
 
-class ConfigViewCacheComponent extends Object {
+class ConfigViewCacheComponent extends Component {
 
 	public $configName = 'ViewCache';
 	public $useCallback = null;
-
-	public function initialize($controller, $settings = array()) {
-
-		$this->_set($settings);
-
-		return true;
-
-	}
 
 	public function startup($controller) {
 

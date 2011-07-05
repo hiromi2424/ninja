@@ -1,6 +1,6 @@
 <?php
 
-class DisableActionsComponent extends Object {
+class DisableActionsComponent extends Component {
 
 	public $auto = true;
 	public $configName = 'DisableActions';
@@ -9,11 +9,10 @@ class DisableActionsComponent extends Object {
 
 	public $controller;
 
-	public function initialize($controller, $settings = array()) {
+	public function initialize($controller) {
 
 		$this->controller = $controller;
-
-		$this->_set($settings);
+		$settings = $this->settings;
 		unset($settings['auto']);
 		unset($settings['configName']);
 

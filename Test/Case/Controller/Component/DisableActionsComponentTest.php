@@ -25,7 +25,7 @@ class TestDisableActionsComponent extends DisableActionsComponent {
 
 	public static $testConfigName = '__TestDisableActions';
 
-	public function __construct() {
+	public function __construct(ComponentCollection $collection, $settings = array()) {
 		$this->configName = self::$testConfigName;
 		$args = func_get_args();
 		call_user_func_array('parent::__construct', $args);

@@ -1,6 +1,6 @@
 <?php
 
-class PageTitleComponent extends Object {
+class PageTitleComponent extends Component {
 
 	public $controller;
 

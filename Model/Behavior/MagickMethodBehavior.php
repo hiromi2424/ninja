@@ -23,12 +23,8 @@ class MagickMethodBehavior extends ModelBehavior {
 	}
 
 	protected function _matched($regex, $method) {
-		$trace = debug_backtrace(false);
-
-		for ($i = 4; $i <= 6; $i++) {
-			if (preg_match($regex . 'i', $trace[$i]['function'], $matched)) {
-				return $matched[1];
-			}
+		if (preg_match($regex . 'i', $method, $matched)) {
+			return $matched[1];
 		}
 		throw new RuntimeException(__d('ninja', 'Retrieving method name failed.', true));
 	}
@@ -150,7 +146,7 @@ class MagickMethodBehavior extends ModelBehavior {
 				$scopes = Set::merge($scopes, $Model->$callback());
 			} else {
 				if (!array_key_exists($offset, $args)) {
-					throw new BadMethodCallException(sprintf(__d('ninja', 'Missing argument %d for %s', true), $offset + 1, $method));
+					throw new BadMethodCallException(__d('ninja', 'Missing argument %d for %s', $offset + 1, $method));
 				}
 
 				$value = $args[$offset];
@@ -234,27 +230,6 @@ class MagickMethodBehavior extends ModelBehavior {
 
 	public function byInsertId($Model) {
 		return array($Model->escapeField($Model->primaryKey) => $Model->getInsertId());
-	}
-
-	// this functionality is implemented in 2.0
-	public function hasMethod($Model, $method) {
-		if (method_exists($Model, $method)) {
-			return true;
-		}
-
-		foreach (array_keys($Model->Behaviors->__methods) as $behaviorMethod) {
-			if (strcasecmp($method, $behaviorMethod) == 0) {
-				return true;
-			}
-		}
-
-		foreach (array_keys($Model->Behaviors->__mappedMethods) as $mappedMethod) {
-			if (preg_match($mappedMethod . 'i', $method)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 }

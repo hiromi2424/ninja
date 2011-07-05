@@ -9,8 +9,9 @@ class ElapsedHelper extends AppHelper {
 		'msec' => true,
 	);
 
-	public function __construct($settings = array()) {
+	public function __construct(View $view, $settings = array()) {
 		$this->settings = Set::merge($this->settings, (array)$settings);
+		parent::__construct($view, $settings);
 	}
 
 	public function nice($seconds, $separator = null) {

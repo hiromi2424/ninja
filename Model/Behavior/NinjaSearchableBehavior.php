@@ -1,7 +1,7 @@
 <?php
 
 // requires Search plugin.
-App::import('Behavior', 'Search.Searchable');
+App::import('SearchableBehavior', 'Search.Model/Behavior');
 
 class NinjaSearchableBehavior extends SearchableBehavior {
 

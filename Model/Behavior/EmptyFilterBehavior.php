@@ -68,6 +68,8 @@ class EmptyFilterBehavior extends ModelBehavior {
 		if ($autoFilter) {
 			$Model->data = $this->filterEmpty($Model, $Model->data);
 		}
+
+		return true;
 	}
 
 	public function filterEmpty($Model, $data) {

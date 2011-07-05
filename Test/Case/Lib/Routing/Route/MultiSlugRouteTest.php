@@ -1,23 +1,25 @@
 <?php
 
 App::uses('Router', 'Routing');
+App::uses('CakeRoute', 'Routing/Route');
 App::uses('MultiSlugRoute', 'Ninja.Routing/Route');
 App::import('TestSuite', 'Ninja.NinjaTestCase');
 
 class MultiSlugRouteTestPost extends CakeTestModel {
 
-	public $name = 'MultiSlugRouteTestPost';
 	public $alias = 'Post';
 	public $useTable = 'posts';
 
-	public $belongsTo = 'Author';
+	public $belongsTo = array(
+		'Author',
+	);
 
 }
 
 class MultiSlugRouteTest extends NinjaTestCase {
 
-	protected $_routingBackup;
-	protected $_cacheBackup;
+	protected static $_routingBackup;
+	protected static $_cacheBackup;
 
 	public $fixtures = array(
 		'core.post',
@@ -26,24 +28,25 @@ class MultiSlugRouteTest extends NinjaTestCase {
 
 	public $excludeCase = 'testScalability';
 
-	public function startCase() {
-		parent::startCase();
-		$this->_routingBackup = Configure::read('Routing');
-		$this->_cacheBackup = Configure::read('Cache');
+	public static function setupBeforeClass() {
+		self::$_routingBackup = Configure::read('Routing');
+		self::$_cacheBackup = Configure::read('Cache');
 
 		Configure::write('Routing', null);
 		Configure::write('Cache.disable', false);
+	}
 
+	public static function tearDownAfterClass() {
+		Configure::write('Routing', self::$_routingBackup);
+		Configure::write('Cache', self::$_cacheBackup);
+	}
+
+	public function startTest($method) {
+		parent::startTest($method);
 		ClassRegistry::init(array('class' => 'MultiSlugRouteTestPost', 'alias' => 'Post'));
 	}
 
-	public function endCase() {
-		Configure::write('Routing', $this->_routingBackup);
-		Configure::write('Cache', $this->_cacheBackup);
-		parent::endCase();
-	}
-
-	public function endTest($method = null) {
+	public function endTest($method) {
 		MultiSlugRoute::clearCacheAll();
 		MultiSlugRoute::flush();
 		parent::endTest($method);
@@ -205,8 +208,7 @@ class MultiSlugRouteTest extends NinjaTestCase {
 		$result = $route->parse('/post/mariano/First Post/2');
 		$this->assertEqual($result['controller'], 'posts');
 		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['pass'], array(1));
-		$this->assertEqual($result['_args_'], 2);
+		$this->assertEqual($result['pass'], array(1, 2));
 
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 1, 2));
 		$this->assertEqual($result, sprintf('/post/%s/%s/2', rawurlencode('mariano'), rawurlencode('First Post'), rawurlencode('2')));

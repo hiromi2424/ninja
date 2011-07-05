@@ -39,9 +39,9 @@ class CommonValidationBehaviorBelonged extends Model {
 
 class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 	public $fixtures = array(
-		'plugin.ninja.common_validation_behavior_mock_model',
-		'plugin.ninja.common_validation_behavior_belonged',
-		'plugin.ninja.common_validation_behavior_user',
+		'plugin.Ninja.CommonValidationBehaviorMockModel',
+		'plugin.Ninja.CommonValidationBehaviorBelonged',
+		'plugin.Ninja.CommonValidationBehaviorUser',
 	);
 
 	public function testIsCurrentUser() {
@@ -106,7 +106,7 @@ class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 
 	public function testCurrentUserHasNot() {
 		Configure::write('CurrentUser.id', 2);
-		$this->assertFalse($this->Model->currentUserHasnot(array('common_validation_behavior_belonged_id' => 1)));
+		$this->assertFalse($this->Model->currentUserHasNot(array('common_validation_behavior_belonged_id' => 1)));
 
 		Configure::write('CurrentUser.id', 1);
 		$this->assertTrue($this->Model->currentUserHasNot(array('common_validation_behavior_belonged_id' => 1)));

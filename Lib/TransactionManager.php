@@ -1,11 +1,10 @@
 <?php
 
-App::import('Model', 'ConnectionManager', false);
+App::uses('ConnectionManager', 'Model');
 
 class TransactionManager extends Object {
 
 	private static $__instances = array();
-	private static $__stubModel;
 
 	public $autoCommit = false;
 	public $started = false;
@@ -23,7 +22,7 @@ class TransactionManager extends Object {
 
 	public function setDataSource($datasource = 'default') {
 		if (!self::_isDatasourceAvailable($datasource)) {
-			throw new DatasourceNotFoundException(sprintf(__d('ninja', 'Datasource %s was not found', true), $datasource));
+			throw new MissingDatasourceConfigException(array('config' => $datasource));
 		}
 		$this->_datasource = $datasource;
 		$this->_db = ConnectionManager::getDataSource($datasource);
@@ -32,19 +31,19 @@ class TransactionManager extends Object {
 	public static function begin($datasource = 'default') {
 		$_this = self::__getInstance($datasource);
 		$_this->started = true;
-		return $_this->_db->begin(self::$__stubModel);
+		return $_this->_db->begin();
 	}
 
 	public static function rollback($datasource = 'default') {
 		$_this = self::__getInstance($datasource);
 		$_this->started = false;
-		return $_this->_db->rollback(self::$__stubModel);
+		return $_this->_db->rollback();
 	}
 
 	public static function commit($datasource = 'default') {
 		$_this = self::__getInstance($datasource);
 		$_this->started = false;
-		return $_this->_db->commit(self::$__stubModel);
+		return $_this->_db->commit();
 	}
 
 	public static function autoCommit($autoCommit, $datasource = 'default') {
@@ -65,7 +64,7 @@ class TransactionManager extends Object {
 
 	public function __destruct() {
 		if ($this->started) {
-			$this->autoCommit ? self::commit($this->_datasource) : self::rollback($this->_datasource);
+			$this->autoCommit ? $this->commit($this->_datasource) : $this->rollback($this->_datasource);
 		}
 	}
 
@@ -77,5 +76,3 @@ class TransactionManager extends Object {
 		return self::__getInstance($datasource)->started;
 	}
 }
-
-class DatasourceNotFoundException extends Exception {}

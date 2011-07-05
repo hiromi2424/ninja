@@ -8,7 +8,7 @@ class ConfigListBehaviorMockModel extends Model {
 
 class ConfigListBehaviorTestCase extends NinjaBehaviorTestCase {
 
-	public $fixtures = array('plugin.ninja.config_list_behavior_mock_model');
+	public $fixtures = array('plugin.Ninja.ConfigListBehaviorMockModel');
 
 	protected $_config = array(
 		'lists' => array(

@@ -2,93 +2,111 @@
 
 App::uses('TransactionManager', 'Ninja.Lib');
 App::import('TestSuite', 'Ninja.NinjaTestCase');
+App::uses('ConnectionManager', 'Model');
 
-class MockTransactionManager extends TransactionManager {
-	public static $begun = array();
-	public static $commited = array();
-	public static $rollbacked = array();
+$testDb = ConnectionManager::getDataSource('test');
+$testDbClass = get_class($testDb);
 
-	public static function begin($datasource = 'default') {
-		$result = parent::begin($datasource);
-		if ($result) {
-			self::$begun[] = $datasource;
+eval( <<<EOC
+	if (!class_exists('TransationManagerTestDatasource')) {
+		class TransationManagerTestDatasource extends {$testDbClass} {
+
+			public static \$begun = 0;
+			public static \$commited = 0;
+			public static \$rollbacked = 0;
+
+			public function begin() {
+				if (\$result = parent::begin()) {
+					self::\$begun++;
+				}
+				return \$result;
+			}
+
+			public function commit() {
+				if (\$result = parent::commit()) {
+					self::\$commited++;
+				}
+				return \$result;
+			}
+
+			public function rollback() {
+				if (\$result = parent::rollback()) {
+					self::\$rollbacked++;
+				}
+				return \$result;
+			}
+
+			public static function resetTransationCounts() {
+				self::\$begun = 0;
+				self::\$rollbacked = 0;
+				self::\$commited = 0;
+			}
+
 		}
-		return $result;
 	}
 
-	public static function rollback($datasource = 'default') {
-		$result = parent::rollback($datasource);
-		if ($result) {
-			self::$rollbacked[] = $datasource;
-		}
-		return $result;
-	}
+EOC
+);
 
-	public static function commit($datasource = 'default') {
-		$result = parent::commit($datasource);
-		if ($result) {
-			self::$commited[] = $datasource;
-		}
-		return $result;
-	}
+ConnectionManager::create('transaction_manager_test', array_merge($testDb->config, array(
+	'datasource' => 'TransationManagerTestDatasource',
+)));
 
-	public static function reset() {
-		self::$begun = array();
-		self::$rollbacked = array();
-		self::$commited = array();
-	}
-}
+unset($testDb, $testDbClass);
 
 class TransactionManagerTestCase extends NinjaTestCase {
 
-	public $datasource = 'test_suite';
+	public $datasource = 'transaction_manager_test';
 	public $mockModel;
 
-	public function startCase() {
-		MockTransactionManager::begin($this->datasource);
-		MockTransactionManager::rollback($this->datasource);
-		MockTransactionManager::destructs();
-		MockTransactionManager::reset();
-		parent::startCase();
+	public $fixtures = null;
+
+	public function startTest($method) {
+
+		TransactionManager::rollback($this->datasource);
+		TransactionManager::destructs();
+		TransationManagerTestDatasource::resetTransationCounts();
+
+		parent::startTest($method);
+
 	}
 
-	public function endCase() {
-		MockTransactionManager::destructs();
-		parent::endCase();
+	public function endTest($method) {
+		TransactionManager::destructs();
+		parent::endTest($method);
 	}
 
 	public function testBasic() {
-		$this->assertTrue(MockTransactionManager::begin($this->datasource));
-		$this->assertfalse(MockTransactionManager::begin($this->datasource));
+		$this->assertTrue(TransactionManager::begin($this->datasource));
 
-		$this->assertTrue(MockTransactionManager::rollback($this->datasource));
-		$this->assertfalse(MockTransactionManager::rollback($this->datasource));
+		$this->assertTrue(TransactionManager::rollback($this->datasource));
+		$this->assertfalse(TransactionManager::rollback($this->datasource));
 
-		$this->assertFalse(MockTransactionManager::started($this->datasource));
-		MockTransactionManager::begin($this->datasource);
-		$this->assertTrue(MockTransactionManager::started($this->datasource));
+		$this->assertFalse(TransactionManager::started($this->datasource));
+		TransactionManager::begin($this->datasource);
+		$this->assertTrue(TransactionManager::started($this->datasource));
 
-		$this->assertTrue(MockTransactionManager::commit($this->datasource));
-		$this->assertfalse(MockTransactionManager::commit($this->datasource));
+		$this->assertTrue(TransactionManager::commit($this->datasource));
+		$this->assertfalse(TransactionManager::commit($this->datasource));
 
-		$this->assertEqual(count(MockTransactionManager::$begun), 2);
-		$this->assertEqual(count(MockTransactionManager::$commited), 1);
-		$this->assertEqual(count(MockTransactionManager::$rollbacked), 1);
+		$this->assertEqual(TransationManagerTestDatasource::$begun, 2);
+		$this->assertEqual(TransationManagerTestDatasource::$commited, 1);
+		$this->assertEqual(TransationManagerTestDatasource::$rollbacked, 1);
 	}
 
 	public function testAutoCommit() {
-		MockTransactionManager::begin($this->datasource);
-		MockTransactionManager::destructs();
-		$this->assertEqual(count(MockTransactionManager::$rollbacked), 1);
+		TransactionManager::begin($this->datasource);
+		TransactionManager::destructs();
+		$this->assertEqual(TransationManagerTestDatasource::$rollbacked, 1);
 
-		MockTransactionManager::autoCommit(true, $this->datasource);
-		MockTransactionManager::begin($this->datasource);
-		MockTransactionManager::destructs();
-		$this->assertEqual(count(MockTransactionManager::$commited), 1);
+		TransactionManager::autoCommit(true, $this->datasource);
+		TransactionManager::begin($this->datasource);
+		TransactionManager::destructs();
+		$this->assertEqual(TransationManagerTestDatasource::$commited, 1);
 	}
 
 	public function testInvalidDatasource() {
-		$this->expectException();
-		MockTransactionManager::begin('InvalidDatasource!!!!!');
+		$this->expectException('MissingDatasourceConfigException');
+		TransactionManager::begin('InvalidDatasource!!!!!');
 	}
 }
