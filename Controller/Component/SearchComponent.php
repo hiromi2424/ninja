@@ -11,10 +11,10 @@ class SearchComponent extends PrgComponent {
 		'scope' => array(),
 	);
 
-	public function initialize(&$controller, $settings = array()) {
+	public function __construct(ComponentCollection $collection, $settings = array()) {
 
 		$this->defaultOptions = array_merge($this->defaultOptions, $settings);
-		parent::initialize($controller);
+		parent::__construct($collection, $settings);
 
 	}
 

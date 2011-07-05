@@ -1,6 +1,6 @@
 <?php
 
-App::import('Lib', 'Ninja.route' . DS . 'NinjaRoute');
+App::uses('NinjaRoute', 'Ninja.Routing/Route');
 
 class AutoSlugRoute extends NinjaRoute {
 
@@ -87,7 +87,7 @@ class AutoSlugRoute extends NinjaRoute {
 
 		}
 
-		$params['pass'][0] = $id;
+		array_unshift($params['pass'], $id);
 		unset($params[$this->named]);
 
 		return $params;

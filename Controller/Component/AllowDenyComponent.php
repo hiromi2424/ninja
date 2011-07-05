@@ -1,6 +1,6 @@
 <?php
 
-class AllowDenyComponent extends Object {
+class AllowDenyComponent extends Component {
 
 	public $auth = 'Auth';
 	public $allowNonPrefix = true;
@@ -11,14 +11,13 @@ class AllowDenyComponent extends Object {
 	public $Controller;
 	public $Auth;
 
-	public function initialize($Controller, $settings = array()) {
-		$this->_set($settings);
+	public function initialize($Controller) {
 		$this->Controller = $Controller;
 		$this->Auth = $this->Controller->{$this->auth};
 
 		$allowNonPrefix = isset($this->Controller->{$this->allowNonPrefixProperty}) ? $this->Controller->{$this->allowNonPrefixProperty} : $this->allowNonPrefix;
 
-		if ($allowNonPrefix && empty($this->Controller->params['prefix'])) {
+		if ($allowNonPrefix && empty($this->Controller->request->params['prefix'])) {
 			$this->Auth->allow('*');
 		}
 
@@ -29,5 +28,6 @@ class AllowDenyComponent extends Object {
 		if (!empty($this->Controller->{$this->allowProperty})) {
 			$this->Auth->allow($this->Controller->{$this->allowProperty});
 		}
+
 	}
 }

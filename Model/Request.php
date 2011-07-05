@@ -1,6 +1,6 @@
 <?php
 
-App::import('Core', 'HttpSocket');
+App::uses('HttpSocket', 'Network/Http');
 
 class Request extends HttpSocket {
 

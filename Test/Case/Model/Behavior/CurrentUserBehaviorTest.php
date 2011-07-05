@@ -8,7 +8,7 @@ class CurrentUserBehaviorMockModel extends Model {
 
 class CurrentUserBehaviorTestCase extends NinjaBehaviorTestCase {
 
-	public $fixtures = array('plugin.ninja.current_user_behavior_mock_model');
+	public $fixtures = array('plugin.Ninja.CurrentUserBehaviorMockModel');
 
 	public function testSetCurrentUser() {
 		Configure::delete('CurrentUser');

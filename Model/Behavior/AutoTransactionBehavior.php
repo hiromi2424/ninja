@@ -1,6 +1,6 @@
 <?php
 
-App::import('Lib', 'Ninja.TransactionManager', false);
+App::uses('TransactionManager', 'Ninja.Lib');
 
 class AutoTransactionBehavior extends ModelBehavior {
 

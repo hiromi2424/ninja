@@ -2,10 +2,6 @@
 
 abstract class NinjaRoute extends CakeRoute {
 
-	public function __construct($route, $defaults = array(), $options = array()) {
-		parent::CakeRoute($route, $defaults, $options);
-	}
-
 	protected function _insertParams($string, $model) {
 		$params = array(
 			'name' => $model->name,
