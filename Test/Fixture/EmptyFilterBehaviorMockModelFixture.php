@@ -1,6 +1,6 @@
 <?php
 
-class EmptyFilterBehaviorMockModelFixture extends NinjaTestFixture {
+class EmptyFilterBehaviorMockModelFixture extends CakeTestFixture {
 
 	public $name = 'EmptyFilterBehaviorMockModel';
 

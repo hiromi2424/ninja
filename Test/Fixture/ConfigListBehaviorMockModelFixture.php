@@ -1,6 +1,6 @@
 <?php
 
-class ConfigListBehaviorMockModelFixture extends NinjaTestFixture {
+class ConfigListBehaviorMockModelFixture extends CakeTestFixture {
 
 	public $name = 'ConfigListBehaviorMockModel';
 

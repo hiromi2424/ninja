@@ -1,7 +1,7 @@
 <?php
 /* AllowDeny Test cases generated on: 2011-05-22 14:43:09 : 1306042989*/
 
-App::import('Lib', 'Ninja.test' . DS . 'NinjaComponentTestCase');
+App::import('TestSuite', 'Ninja.NinjaComponentTestCase');
 
 class AllowDenyTestController extends Controller {
 

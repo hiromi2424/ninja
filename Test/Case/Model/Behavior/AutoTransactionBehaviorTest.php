@@ -1,7 +1,7 @@
 <?php
 
-App::import('Behavior', 'Ninja.AutoTransaction');
-App::import('Lib', 'Ninja.test' . DS . 'NinjaBehaviorTestCase', false);
+App::uses('AutoTransactionBehavior', 'Ninja.Model/Behavior');
+App::import('TestSuite', 'Ninja.NinjaBehaviorTestCase');
 
 class MockAutoTransactionBehavior extends AutoTransactionBehavior {
 

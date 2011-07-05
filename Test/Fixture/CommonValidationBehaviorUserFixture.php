@@ -1,6 +1,6 @@
 <?php
 
-class CommonValidationBehaviorUserFixture extends NinjaTestFixture {
+class CommonValidationBehaviorUserFixture extends CakeTestFixture {
 	public $name = 'CommonValidationBehaviorUser';
 
 	public $fields = array(

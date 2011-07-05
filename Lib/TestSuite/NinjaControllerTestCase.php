@@ -1,6 +1,7 @@
 <?php
 
-App::import('Lib', 'Ninja.test' . DS . 'NinjaTestCase');
+App::uses('NinjaTestCase', 'Ninja.TestSuite');
+App::uses('Controller', 'Controller');
 
 abstract class NinjaControllerTestCase extends NinjaTestCase {
 
@@ -9,7 +10,7 @@ abstract class NinjaControllerTestCase extends NinjaTestCase {
 	public $controllerClass;
 	public $controllerName;
 
-	public function startCase() {
+	public function setUp() {
 		$this->controllerClass = preg_replace('/TestCase$/', '', get_class($this));
 		$this->controllerName = preg_replace('/Controller$/', '', $this->controllerClass);
 
@@ -36,9 +37,6 @@ abstract class NinjaControllerTestCase extends NinjaTestCase {
  * @return Controller loaded controller object
  **/
 	public function loadController($params = array()) {
-		if (!class_exists('Controller')) {
-			App::import('Controller', 'Controller', false);
-		}
 
 		if ($this->Controller !== null) {
 			$this->shutdownController();
@@ -49,19 +47,20 @@ abstract class NinjaControllerTestCase extends NinjaTestCase {
 			$controllerClass = 'Controller';
 		}
 
-		$Controller = new $controllerClass();
-		$Controller->params = array_merge(array(
+		$request = new CakeRequest;
+		$Controller = new $controllerClass($request);
+		$request->addParams(array_merge(array(
 			'controller' => $this->_guessControllerName($Controller, $params),
 			'action' => 'test_action',
-		), $params);
-		$Controller->action = $Controller->params['action'];
+		), $params));
+		$Controller->action = $request->params['action'];
 
 		if ($controllerClass === 'Controller') {
 			$Controller->uses = null;
 		}
 
 		$Controller->constructClasses();
-		$Controller->Component->initialize($Controller);
+		$Controller->Components->trigger('initialize', array(&$Controller));
 		$Controller->beforeFilter();
 
 		return $this->Controller = $Controller;
@@ -86,7 +85,7 @@ abstract class NinjaControllerTestCase extends NinjaTestCase {
 	}
 
 	public function shutdownController() {
-		$this->Controller->Component->shutdown($this->Controller);
+		$this->Controller->Components->trigger('shutdown', array(&$Controller));
 		$this->Controller = null;
 	}
 

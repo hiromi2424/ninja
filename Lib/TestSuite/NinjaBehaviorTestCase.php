@@ -1,7 +1,9 @@
 <?php
 
-App::import('Lib', 'Ninja.test' . DS . 'NinjaTestCase');
-App::import('Model', 'AppModel');
+App::uses('NinjaTestCase', 'Ninja.TestSuite');
+App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
+App::uses('ModelBehavior', 'Model');
 
 abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 
@@ -11,7 +13,7 @@ abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 	public $behaviorClass;
 	public $modelName;
 
-	public function startCase() {
+	public function setUp() {
 		$this->behaviorName = str_replace('BehaviorTestCase', '', get_class($this));
 		$this->behaviorClass = $this->behaviorName . 'Behavior';
 
@@ -23,11 +25,11 @@ abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 			$this->behaviorClass = 'Mock' . $this->behaviorClass;
 			$this->behaviorName = 'Mock' . $this->behaviorName;
 		} elseif (!class_exists($this->behaviorClass)) {
-			App::import('Behavior', $this->plugin . $this->behaviorName);
+			App::uses($this->behaviorName, $this->plugin . 'Model/Behavior');
 		}
 
 
-		parent::startCase();
+		parent::setUp();
 	}
 
 	public function startTest($method = null) {
@@ -35,9 +37,13 @@ abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 
 		if ($this->modelName) {
 			$this->Model = ClassRegistry::init($this->modelName);
+			if (!$this->Model->Behaviors->attached($this->behaviorName)) {
+				$this->Model->Behaviors->load($this->behaviorName);
+			}
+			$this->Behavior = $this->_getBehavior();
+		} else {
+			$this->Behavior = new $this->behaviorClass;
 		}
-
-		$this->Behavior = new $this->behaviorClass;
 	}
 
 	public function endTest($method = null) {

@@ -1,9 +1,6 @@
 <?php
 
-App::import('Lib', 'Ninja.test' . DS . 'FixtureLoaderTestCase');
-App::import('Lib', 'Ninja.test' . DS . 'NinjaTestFixture');
-
-abstract class NinjaTestCase extends FixtureLoaderTestCase {
+abstract class NinjaTestCase extends CakeTestCase {
 
 	public $plugin;
 
@@ -20,27 +17,33 @@ abstract class NinjaTestCase extends FixtureLoaderTestCase {
 		return TESTS . 'files' . DS . $name;
 	}
 
-	function _isTest($method) {
-		if ($isTest = parent::_isTest($method)) {
-			if ($this->runOnly !== null) {
-				$candidates = (array)$this->runOnly;
-			}
-
-			if ($this->excludeCase !== null) {
-				$excludes = (array)$this->excludeCase;
-			}
-
-			switch (true) {
-				case isset($candidates, $excludes):
-					return in_array($method, array_diff($candidates, $excludes));
-				case isset($candidates):
-					return in_array($method, $candidates);
-				case isset($excludes):
-					return !in_array($method, $excludes);
-			}
+	public function startTest($method) {
+		if (!$this->_isTest($method)) {
+			$this->markTestSkipped();
 		}
 
-		return $isTest;
+		parent::startTest($method);
+	}
+
+	protected function _isTest($method) {
+		if ($this->runOnly !== null) {
+			$candidates = (array)$this->runOnly;
+		}
+
+		if ($this->excludeCase !== null) {
+			$excludes = (array)$this->excludeCase;
+		}
+
+		switch (true) {
+			case isset($candidates, $excludes):
+				return in_array($method, array_diff($candidates, $excludes));
+			case isset($candidates):
+				return in_array($method, $candidates);
+			case isset($excludes):
+				return !in_array($method, $excludes);
+		}
+
+		return true;
 	}
 
 }

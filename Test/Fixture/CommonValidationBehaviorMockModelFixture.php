@@ -1,6 +1,6 @@
 <?php
 
-class CommonValidationBehaviorMockModelFixture extends NinjaTestFixture {
+class CommonValidationBehaviorMockModelFixture extends CakeTestFixture {
 	public $name = 'CommonValidationBehaviorMockModel';
 
 	public $fields = array(

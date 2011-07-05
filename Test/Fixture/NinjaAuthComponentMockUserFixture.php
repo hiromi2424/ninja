@@ -1,6 +1,6 @@
 <?php
 
-class NinjaAuthComponentMockUserFixture extends NinjaTestFixture {
+class NinjaAuthComponentMockUserFixture extends CakeTestFixture {
 
 	public $name = 'NinjaAuthComponentMockUser';
 

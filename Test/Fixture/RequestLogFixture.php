@@ -1,6 +1,6 @@
 <?php
 /* RequestLog Fixture generated on: 2011-03-09 18:57:15 : 1299664635 */
-class RequestLogFixture extends NinjaTestFixture {
+class RequestLogFixture extends CakeTestFixture {
 	public $name = 'RequestLog';
 
 	public $fields = array(

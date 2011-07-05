@@ -1,9 +1,10 @@
 <?php
 /* AllowDeny Test cases generated on: 2011-05-22 14:43:09 : 1306042989*/
 
-App::import('Component', 'Ninja.NinjaAuth');
-App::import('Model', 'AppModel');
-App::import('Lib', 'Ninja.test' . DS . 'NinjaComponentTestCase');
+App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
+App::uses('NinjaAuthComponent', 'Ninja.Controller/Component');
+App::import('TestSuite', 'Ninja.NinjaComponentTestCase');
 
 class NinjaAuthTestController extends Controller {
 

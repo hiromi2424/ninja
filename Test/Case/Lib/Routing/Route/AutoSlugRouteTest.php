@@ -1,8 +1,8 @@
 <?php
 
-App::import('Core', 'Router');
-App::import('Lib', 'Ninja.route' . DS . 'AutoSlugRoute');
-App::import('Lib', 'Ninja.test' . DS . 'NinjaTestCase');
+App::uses('Router', 'Routing');
+App::uses('AutoSlugRoute', 'Ninja.Routing/Route');
+App::import('TestSuite', 'Ninja.NinjaTestCase');
 
 class AutoSlugRouteTestPost extends CakeTestModel {
 
