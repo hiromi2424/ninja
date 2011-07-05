@@ -1,6 +1,6 @@
 <?php
 /* CommonValidation Test cases generated on: 2010-11-23 09:11:17 : 1290472577*/
-App::import('Lib', 'Ninja.test' . DS . 'NinjaBehaviorTestCase');
+App::import('TestSuite', 'Ninja.NinjaBehaviorTestCase');
 
 class CommonValidationBehaviorMockModel extends Model {
 	public $actsAs = array('Ninja.CommonValidation' => array('userModel' => 'CommonValidationBehaviorUser'));

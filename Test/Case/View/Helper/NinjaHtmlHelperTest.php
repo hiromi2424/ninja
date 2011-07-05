@@ -1,6 +1,6 @@
 <?php
 /* NinjaHtml Test cases generated on: 2011-05-22 08:41:25 : 1306021285*/
-App::import('Lib', 'Ninja.test' . DS . 'NinjaHelperTestCase');
+App::import('TestSuite', 'Ninja.NinjaHelperTestCase');
 
 class NinjaHtmlHelperTestCase extends NinjaHelperTestCase {
 

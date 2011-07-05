@@ -1,6 +1,6 @@
 <?php
 
-class CurrentUserBehaviorMockModelFixture extends NinjaTestFixture {
+class CurrentUserBehaviorMockModelFixture extends CakeTestFixture {
 	public $name = 'CurrentUserBehaviorMockModel';
 
 	public $fields = array(

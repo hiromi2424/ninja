@@ -1,8 +1,8 @@
 <?php
 /* AllowDeny Test cases generated on: 2011-05-22 14:43:09 : 1306042989*/
 
-App::import('Component', 'Ninja.DisableActions');
-App::import('Lib', 'Ninja.test' . DS . 'NinjaComponentTestCase');
+App::uses('DisableActionsComponent', 'Ninja.Controller/Component');
+App::import('TestSuite', 'Ninja.NinjaComponentTestCase');
 
 class DisableActionsTestController extends Controller {
 

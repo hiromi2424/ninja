@@ -1,6 +1,6 @@
 <?php
 
-App::import('Lib', 'Ninja.test' . DS . 'NinjaBehaviorTestCase');
+App::import('TestSuite', 'Ninja.NinjaBehaviorTestCase');
 
 class ConfigListBehaviorMockModel extends Model {
 	public $actsAs = array('Ninja.ConfigList');

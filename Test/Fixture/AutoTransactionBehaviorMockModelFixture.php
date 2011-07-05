@@ -1,6 +1,6 @@
 <?php
 
-class AutoTransactionBehaviorMockModelFixture extends NinjaTestFixture {
+class AutoTransactionBehaviorMockModelFixture extends CakeTestFixture {
 	public $name = 'AutoTransactionBehaviorMockModel';
 
 

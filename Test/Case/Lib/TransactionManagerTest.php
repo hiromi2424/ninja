@@ -1,7 +1,7 @@
 <?php
 
-App::import('Lib', 'Ninja.TransactionManager');
-App::import('Lib', 'Ninja.NinjaTestCase');
+App::uses('TransactionManager', 'Ninja.Lib');
+App::import('TestSuite', 'Ninja.NinjaTestCase');
 
 class MockTransactionManager extends TransactionManager {
 	public static $begun = array();
