@@ -52,7 +52,7 @@ class EmptyFilterBehavior extends ModelBehavior {
 			}
 			return $data;
 		}
-		trigger_error(sprintf(__d('ninja', 'Could not trim %s type', true), gettype($data)));
+		trigger_error(__d('ninja', 'Could not trim %s type', gettype($data)));
 	}
 
 	protected function _trim($data, $space) {

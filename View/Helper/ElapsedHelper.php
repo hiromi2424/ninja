@@ -25,23 +25,23 @@ class ElapsedHelper extends AppHelper {
 		}
 
 		if ($settings['msec'] && $seconds < 1.0) {
-			return sprintf('%d ', (int)round(1000 * $seconds)) . __d('elapsed', 'msec', true);
+			return sprintf('%d ', (int)round(1000 * $seconds)) . __d('elapsed', 'msec');
 		}
 
 		$time = array();
 		if ($seconds >= HOUR) {
 			$hours = (int)floor($seconds / HOUR);
-			$time['H'] = $hours . ' ' . __d('elapsed', 'hour', true);
+			$time['H'] = $hours . ' ' . __d('elapsed', 'hour');
 			$seconds -= $hours * ((double)HOUR);
 		}
 
 		if ($seconds >= MINUTE) {
 			$minutes = (int)floor($seconds / MINUTE);
-			$time['M'] = $minutes . ' ' . __d('elapsed', 'min', true);
+			$time['M'] = $minutes . ' ' . __d('elapsed', 'min');
 			$seconds -= $minutes * ((double)MINUTE);
 		}
 
-		$time['S'] = sprintf("%.{$settings['decimal']}f", $seconds) . ' ' . __d('elapsed', 'sec', true);
+		$time['S'] = sprintf("%.{$settings['decimal']}f", $seconds) . ' ' . __d('elapsed', 'sec');
 
 		$format = strtoupper($settings['format']);
 		for ($i = 0, $result = array(), $l = strlen($format); $i < $l; $i++) {
