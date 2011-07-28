@@ -3,7 +3,11 @@
 App::import('Lib', 'Ninja.test' . DS . 'FixtureLoaderTestCase');
 App::import('Lib', 'Ninja.test' . DS . 'NinjaTestFixture');
 
-abstract class NinjaTestCase extends FixtureLoaderTestCase {
+if (!App::import('Lib', 'test' . DS . 'AppTestCase')) {
+	App::import('Lib', 'Ninja.test' . DS . 'AppTestCase');
+}
+
+abstract class NinjaTestCase extends AppTestCase {
 
 	public $plugin;
 
