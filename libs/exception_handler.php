@@ -45,7 +45,7 @@ class ExceptionHandler extends Object {
 	protected static function _text($params) {
 
 		$error = String::insert(
-			__d('ninja', "** Unexpected Exception::class\n#########\n:message\n#########\n\n:file at line :line\n\n* Stack Trace:\n:trace"),
+			__d('ninja', "** Unexpected Exception::class\n#########\n:message\n#########\n\n:file at line :line\n\n* Stack Trace:\n:trace", true),
 			$params
 		);
 		return $error;
