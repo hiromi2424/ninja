@@ -2,7 +2,7 @@
 
 class BaseService {
 
-	public $catchTry = true
+	public $catchTry = true;
 
 	public function __get($name) {
 
