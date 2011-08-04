@@ -2,6 +2,8 @@
 
 class BaseService {
 
+	public $catchTry = true
+
 	public function __get($name) {
 
 		$class = Inflector::classify($name);
@@ -15,12 +17,28 @@ class BaseService {
 
 	public function simpleTransaction($lambda) {
 		$this->Transaction->begin();
-		$result = $lambda($this);
-		if (!$result) {
-			$this->Transaction->rollback();
+		if ($this->catchTry) {
+			try {
+				$result = $lambda($this);
+				if (!$result) {
+					$this->Transaction->rollback();
+				} else {
+					$this->Transaction->commit();
+				}
+			} catch (Exception $e) {
+				$this->Transaction->rollback();
+				$this->log($e->getMessage());
+				$result = false;
+			}
 		} else {
-			$this->Transaction->commit();
+			$result = $lambda($this);
+			if (!$result) {
+				$this->Transaction->rollback();
+			} else {
+				$this->Transaction->commit();
+			}
 		}
+
 		return $result;
 	}
 
