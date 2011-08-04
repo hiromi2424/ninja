@@ -12,8 +12,8 @@ class RoleAuthorizeComponent extends Object {
 
 		if (!empty($this->controller->params['prefix'])) {
 			$requireAuth = $this->controller->params['prefix'];
-		} elseif (isset($this->controller->requireAuth[$this->action]) && is_array($this->controller->requireAuth)) {
-			$requireAuth = $this->controller->requireAuth[$this->action];
+		} elseif (isset($this->controller->requireAuth[$this->controller->action]) && is_array($this->controller->requireAuth)) {
+			$requireAuth = $this->controller->requireAuth[$this->controller->action];
 		} elseif (isset($this->controller->requireAuth)) {
 			$requireAuth = $this->controller->requireAuth;
 		}
