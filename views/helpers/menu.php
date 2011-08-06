@@ -76,7 +76,7 @@ class MenuHelper extends AppHelper {
 		$this->_initSection($section);
 
 		if (!empty($this->_data[$section])) {
-			return array_shift($this->_data[$section]);
+			array_shift($this->_data[$section]);
 		}
 
 		return $this;
