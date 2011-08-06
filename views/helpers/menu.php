@@ -139,17 +139,7 @@ class MenuHelper extends AppHelper {
 		$item = $title;
 
 		if ($current && ($this->Html->url($url) === $this->here)) {
-			if ($current === true) {
-				$current = 'disable';
-			}
-
-			if (is_callable($current)) {
-				$current($item, $url, $itemOptions['link_options']);
-			} elseif (is_array($current)) {
-				$itemOptions['linkOptions'] = Set::merge($itemOptions['link_options'], $current);
-			} elseif ($current === 'disable') {
-				$url = false;
-			}
+			$this->_processCurrent($current, $item, $url, $itemOptions['link_options']);
 		}
 
 		if ($url !== false) {
@@ -168,6 +158,27 @@ class MenuHelper extends AppHelper {
 
 		return $item;
 
+	}
+
+	protected function _processCurrent($current, &$item, &$url, &$options) {
+		if ($current === true) {
+			$current = 'disable';
+		}
+
+		if (is_callable($current)) {
+			$current($item, $url, $options);
+		} elseif (is_array($current)) {
+			$options = Set::merge($options, $current);
+		} elseif ($current === 'disable') {
+			$url = false;
+		} elseif ($current === 'class') {
+			if (isset($options['class'])) {
+				$options['class'] = (array)$options['class'];
+				$options['class'][] = 'current';
+			} else {
+				$options['class'] = array('current');
+			}
+		}
 	}
 
 	protected function _attribute($param) {
