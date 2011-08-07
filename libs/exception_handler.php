@@ -7,9 +7,7 @@ set_exception_handler(array('ExceptionHandler', 'process'));
  *
  */
 
-class ExceptionHandler extends Object {
-
-	protected static $_instance = null;
+class ExceptionHandler {
 
 	public static function &getInstance() {
 		if (self::$_instance === null) {
@@ -24,7 +22,7 @@ class ExceptionHandler extends Object {
 		}
 
 		$params = array(
-			'class' => get_class($exception),
+			'class' => ($class = get_class($exception)),
 			'message' => $exception->getMessage(),
 			'file' => str_replace(ROOT, 'ROOT', $exception->getFile()),
 			'line' => $exception->getLine(),
@@ -32,13 +30,33 @@ class ExceptionHandler extends Object {
 		);
 
 		$textError = self::_text($params);
-		Object::log($textError);
+		if (Configure::read('debug') == 0) {
+			Object::log($textError);
+			switch (true) {
+				case $class === 'DatabaseError':
+					return Object::cakeError('error503', array(array(
+						'code' => 503,
+						'name' => 'Service Unavailable',
+						'message' => '',
+					)));
+				case isset($exception->httpCode):
+					$error = $exception->httpCode === 403 ? 'forbidden' : ('error' . $exception->httpCode);
+					return Object::cakeError($error);
+			}
 
-		if (php_sapi_name() == 'cli') {
-			echo $textError;
+			return Object::cakeError('error500', array(array(
+				'code' => 500,
+				'name' => 'An Internal Error Has Occurred',
+				'message' => '',
+			)));
+
 		} else {
-			header('Content-Type: text/html; charset=UTF-8');
-			echo self::_html($params);
+			if (php_sapi_name() == 'cli') {
+				echo $textError;
+			} else {
+				header('Content-Type: text/html; charset=UTF-8');
+				echo self::_html($params);
+			}
 		}
 	}
 
@@ -115,3 +133,14 @@ class LogicError extends NinjaException {
 
 }
 
+class NotFoundException extends NinjaException {
+
+	public $httpCode = 404;
+
+}
+
+class ForbiddenException extends NinjaException {
+
+	public $httpCode = 403;
+
+}
