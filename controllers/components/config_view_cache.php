@@ -3,6 +3,7 @@
 class ConfigViewCacheComponent extends Object {
 
 	public $configName = 'ViewCache';
+	public $useCallback = null;
 
 	public function initialize($Controller, $settings = array()) {
 
@@ -22,6 +23,17 @@ class ConfigViewCacheComponent extends Object {
 			}
 
 			$Controller->cacheAction = array_merge($config, $Controller->cacheAction);
+
+			if (!is_null($this->useCallback) && is_array($Controller->cacheAction)) {
+				foreach ($Controller->cacheAction as &$cacheSettings) {
+					if (!is_array($cacheSettings)) {
+						$cacheSettings = array(
+							'duration' => $cacheSettings,
+						);
+					}
+					$cacheSettings['callbacks'] = $this->useCallback;
+				}
+			}
 
 		}
 
