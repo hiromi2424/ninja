@@ -15,30 +15,31 @@ class BaseService {
 
 	}
 
-	public function simpleTransaction($lambda) {
-		$this->Transaction->begin();
-		if ($this->catchTry) {
+	public function simpleTransaction($lambda, $options = array()) {
+		$options += array('catchTry' => true);
+		if ($options['catchTry']) {
 			try {
-				$result = $lambda($this);
-				if (!$result) {
-					$this->Transaction->rollback();
-				} else {
-					$this->Transaction->commit();
-				}
+				$result = $this->_dispatchLambda($lambda);
 			} catch (Exception $e) {
 				$this->Transaction->rollback();
-				$this->log($e->getMessage());
+				Object::log($e->getMessage());
 				$result = false;
 			}
 		} else {
-			$result = $lambda($this);
-			if (!$result) {
-				$this->Transaction->rollback();
-			} else {
-				$this->Transaction->commit();
-			}
+			$result = $this->_dispatchLambda($lambda);
 		}
 
+		return $result;
+	}
+
+	protected function _dispatchLambda($lambda) {
+		$this->Transaction->begin();
+		$result = $lambda($this);
+		if (!$result) {
+			$this->Transaction->rollback();
+		} else {
+			$this->Transaction->commit();
+		}
 		return $result;
 	}
 
