@@ -4,6 +4,10 @@ class BaseService {
 
 	public $catchTry = true;
 
+	public function __construct() {
+		ClassRegistry::addObject(__CLASS__, $this);
+	}
+
 	public function __get($name) {
 
 		$class = Inflector::classify($name);
