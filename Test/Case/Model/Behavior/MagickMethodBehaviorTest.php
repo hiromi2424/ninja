@@ -239,6 +239,10 @@ class MagickMethodBehaviorTestCase extends NinjaBehaviorTestCase {
 		$expected = array('userFindType', array());
 		$this->assertEqual($expected, $result);
 
+		$result = $this->Model->findCount(array('contain' => false));
+		$expected = array('count', array('contain' => false));
+		$this->assertEqual($expected, $result);
+
 	}
 
 	public function testAssociatedField() {

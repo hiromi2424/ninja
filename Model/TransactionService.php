@@ -4,6 +4,10 @@ class TransactionService {
 
 	protected $_ds = array('default');
 
+	public function __construct() {
+		ClassRegistry::addObject(__CLASS__, $this);
+	}
+
 	public function setDataSources($ds) {
 		if ($ds !== null) {
 			$this->_ds = (array)$ds;

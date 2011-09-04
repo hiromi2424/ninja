@@ -14,6 +14,7 @@ class MenuHelper extends AppHelper {
 		'item_options' => null,
 		'before' => '',
 		'after' => '',
+		'current' => false,
 	);
 
 	public $defaultItemOptions = array(
@@ -21,13 +22,17 @@ class MenuHelper extends AppHelper {
 		'class' => false,
 		'before' => '',
 		'after' => '',
+		'link_options' => array(),
 	);
 
 	public $sectionSettings = array();
 
 	public function configure($section, $settings = array(), $return = false) {
 
-		$settings = Set::merge($this->defaultSettings, $settings);
+		if (!isset($this->sectionSettings[$section])) {
+			$this->sectionSettings[$section] = $this->defaultSettings;
+		}
+		$settings = Set::merge($this->sectionSettings[$section], $settings);
 
 		if ($return) {
 			return $settings;
@@ -41,17 +46,18 @@ class MenuHelper extends AppHelper {
 		$this->_initSection($section);
 		array_push($this->_data[$section], $this->_parseArgs($title, $url, $options));
 
+		return $this;
 	}
 
 	public function pop($section) {
 
 		$this->_initSection($section);
 
-		if (empty($this->_data[$section])) {
-			return null;
+		if (!empty($this->_data[$section])) {
+			array_pop($this->_data[$section]);
 		}
 
-		return array_pop($this->_data[$section]);
+		return $this;
 
 	}
 
@@ -61,17 +67,19 @@ class MenuHelper extends AppHelper {
 
 		array_unshift($this->_data[$section], $this->_parseArgs($title, $url, $options));
 
+		return $this;
+
 	}
 
 	public function shift($section) {
 
 		$this->_initSection($section);
 
-		if (empty($this->_data[$section])) {
-			return null;
+		if (!empty($this->_data[$section])) {
+			array_shift($this->_data[$section]);
 		}
 
-		return array_shift($this->_data[$section]);
+		return $this;
 
 	}
 
@@ -130,8 +138,12 @@ class MenuHelper extends AppHelper {
 
 		$item = $title;
 
+		if ($current && ($this->Html->url($url) === $this->here)) {
+			$this->_processCurrent($current, $item, $url, $itemOptions['link_options']);
+		}
+
 		if ($url !== false) {
-			$item = $this->Html->link($item, $url);
+			$item = $this->Html->link($item, $url, $item_options['link_options']);
 		}
 
 		$item_before = $item_options['before'];
@@ -146,6 +158,27 @@ class MenuHelper extends AppHelper {
 
 		return $item;
 
+	}
+
+	protected function _processCurrent($current, &$item, &$url, &$options) {
+		if ($current === true) {
+			$current = 'disable';
+		}
+
+		if (is_callable($current)) {
+			$current($item, $url, $options);
+		} elseif (is_array($current)) {
+			$options = Set::merge($options, $current);
+		} elseif ($current === 'disable') {
+			$url = false;
+		} elseif ($current === 'class') {
+			if (isset($options['class'])) {
+				$options['class'] = (array)$options['class'];
+				$options['class'][] = 'current';
+			} else {
+				$options['class'] = array('current');
+			}
+		}
 	}
 
 	protected function _attribute($param) {

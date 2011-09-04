@@ -58,7 +58,14 @@ class MagickMethodBehavior extends ModelBehavior {
 
 		list($fields, $operators) = $this->_extract($parts);
 
-		$query = empty($fields) ? array() : $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method'));
+		if (empty($fields)) {
+			$query = array();
+			if (!empty($args)) {
+				$query = array_shift($args);
+			}
+		} else {
+			$query = $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method'));
+		}
 
 		return $Model->find($type, $query);
 

@@ -2,16 +2,23 @@
 
 class RoleAuthorizeComponent extends Object {
 
-	public function authorize($user, $controller, $action) {
-		if (!empty($controller->params['prefix'])) {
-			$requireAuth = $controller->params['prefix'];
-		} elseif (isset($controller->requireAuth[$this->action]) && is_array($controller->requireAuth)) {
-			$requireAuth = $this->requireAuth[$this->action];
-		} elseif (isset($controller->requireAuth)) {
-			$requireAuth = $controller->requireAuth;
+	public $controller;
+
+	public function initialize($controller, $settings) {
+		$this->controller = $controller;
+	}
+
+	public function authorize() {
+
+		if (!empty($this->controller->params['prefix'])) {
+			$requireAuth = $this->controller->params['prefix'];
+		} elseif (isset($this->controller->requireAuth[$this->controller->action]) && is_array($this->controller->requireAuth)) {
+			$requireAuth = $this->controller->requireAuth[$this->controller->action];
+		} elseif (isset($this->controller->requireAuth)) {
+			$requireAuth = $this->controller->requireAuth;
 		}
 
-		if (isset($requireAuth) && Configure::read('Role.level.' . $requireAuth) > $controller->Auth->user('Group.level')) {
+		if (isset($requireAuth) && Configure::read('Role.level.' . $requireAuth) > $this->controller->Auth->user('Group.level')) {
 			return false;
 
 		}

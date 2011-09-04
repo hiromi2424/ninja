@@ -1,6 +1,12 @@
 <?php
 
-abstract class NinjaTestCase extends CakeTestCase {
+App::uses('AppTestCase', 'TestSuite');
+
+if (!class_exists('AppTestCase')) {
+	App::uses('AppTestCase', 'Ninja.TestSuite');
+}
+
+abstract class NinjaTestCase extends AppTestCase {
 
 	public $plugin;
 
