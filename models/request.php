@@ -9,34 +9,42 @@ class Request extends HttpSocket {
 
 	public $logId;
 
-	public function __construct() {
-		parent::__construct();
-		$this->RequestLog = ClassRegistry::init('Ninja.RequestLog');
-	}
-
 	public function get($url, $query = array(), $request = array()) {
 		$log = false;
-		if (array_key_exists('_log', $query)) {
-			$log = $query['_log'];
-			unset($query['_log']);
+		if (array_key_exists('_log', $request)) {
+			$log = $request['_log'];
+			unset($request['_log']);
 		}
 
-		$response = parent::get($url, $query, $request);
-		if ($this->_shouldRetry($response)) {
-			$i = 1;
-			do {
-				$response = parent::get($url, $query, $request);
-			} while ($this->_shouldRetry($response) && ($i++ < $this->retryLimit));
-		}
+		$i = 0;
+		do {
+			$response = parent::get($url, $query, $request);
+		} while ($this->_shouldRetry($response) && ($i++ < $this->retryLimit));
+
 		if ($log) {
+			if ($this->RequestLog === null) {
+				$this->RequestLog = ClassRegistry::init('Ninja.RequestLog');
+			}
 			$this->logId = $this->RequestLog->write($url, $this->request, $this->response);
 		}
 		return $response;
 	}
 
 	public function post($url, $query = array(), $request = array()) {
+		$log = false;
+		if (array_key_exists('_log', $request)) {
+			$log = $request['_log'];
+			unset($request['_log']);
+		}
+
 		$response = parent::post($url, $query, $request);
-		$this->logId = $this->RequestLog->write($url, $this->request, $this->response);
+
+		if ($log) {
+			if ($this->RequestLog === null) {
+				$this->RequestLog = ClassRegistry::init('Ninja.RequestLog');
+			}
+			$this->logId = $this->RequestLog->write($url, $this->request, $this->response);
+		}
 		return $response;
 	}
 
