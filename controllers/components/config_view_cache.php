@@ -31,6 +31,11 @@ class ConfigViewCacheComponent extends Object {
 							'duration' => $cacheSettings,
 						);
 					}
+
+					if (isset($cacheSettings['callbacks'])) {
+						continue;
+					}
+
 					$cacheSettings['callbacks'] = $this->useCallback;
 				}
 			}
