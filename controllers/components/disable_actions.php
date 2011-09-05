@@ -25,7 +25,7 @@ class DisableActionsComponent extends Object {
 
 		$this->disableActions = Set::merge($disableActions, $settings);
 
-		if ($this->judge($this->disableActions)) {
+		if ($this->auto && $this->judge($this->disableActions)) {
 			$this->blackHole();
 		}
 
