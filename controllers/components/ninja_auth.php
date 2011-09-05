@@ -6,8 +6,10 @@ class NinjaAuthComponent extends AuthComponent {
 
 	public $recursiveForUserdata = 0;
 
+	public $controller;
+
 	public function initialize($controller, $settings = array()){
-		$this->Controller = $controller;
+		$this->controller = $controller;
 		return parent::initialize($controller, $settings);
 	}
 

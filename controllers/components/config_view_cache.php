@@ -5,7 +5,7 @@ class ConfigViewCacheComponent extends Object {
 	public $configName = 'ViewCache';
 	public $useCallback = null;
 
-	public function initialize($Controller, $settings = array()) {
+	public function initialize($controller, $settings = array()) {
 
 		$this->_set($settings);
 
@@ -13,19 +13,19 @@ class ConfigViewCacheComponent extends Object {
 
 	}
 
-	public function startup($Controller) {
+	public function startup($controller) {
 
-		$config = Configure::read($this->configName . '.' . $Controller->name);
+		$config = Configure::read($this->configName . '.' . $controller->name);
 		if ($config) {
 
-			if (empty($Controller->cacheAction)) {
-				$Controller->cacheAction = array();
+			if (empty($controller->cacheAction)) {
+				$controller->cacheAction = array();
 			}
 
-			$Controller->cacheAction = array_merge($config, $Controller->cacheAction);
+			$controller->cacheAction = array_merge($config, $controller->cacheAction);
 
-			if (!is_null($this->useCallback) && is_array($Controller->cacheAction)) {
-				foreach ($Controller->cacheAction as &$cacheSettings) {
+			if (!is_null($this->useCallback) && is_array($controller->cacheAction)) {
+				foreach ($controller->cacheAction as &$cacheSettings) {
 					if (!is_array($cacheSettings)) {
 						$cacheSettings = array(
 							'duration' => $cacheSettings,

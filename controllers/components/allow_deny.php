@@ -8,26 +8,26 @@ class AllowDenyComponent extends Object {
 	public $allowProperty = 'allowActions';
 	public $denyProperty = 'loginRequired';
 
-	public $Controller;
+	public $controller;
 	public $Auth;
 
-	public function initialize($Controller, $settings = array()) {
+	public function initialize($controller, $settings = array()) {
 		$this->_set($settings);
-		$this->Controller = $Controller;
-		$this->Auth = $this->Controller->{$this->auth};
+		$this->controller = $controller;
+		$this->Auth = $this->controller->{$this->auth};
 
-		$allowNonPrefix = isset($this->Controller->{$this->allowNonPrefixProperty}) ? $this->Controller->{$this->allowNonPrefixProperty} : $this->allowNonPrefix;
+		$allowNonPrefix = isset($this->controller->{$this->allowNonPrefixProperty}) ? $this->controller->{$this->allowNonPrefixProperty} : $this->allowNonPrefix;
 
-		if ($allowNonPrefix && empty($this->Controller->params['prefix'])) {
+		if ($allowNonPrefix && empty($this->controller->params['prefix'])) {
 			$this->Auth->allow('*');
 		}
 
-		if (!empty($this->Controller->{$this->denyProperty})) {
-			$this->Auth->deny($this->Controller->{$this->denyProperty});
+		if (!empty($this->controller->{$this->denyProperty})) {
+			$this->Auth->deny($this->controller->{$this->denyProperty});
 		}
 
-		if (!empty($this->Controller->{$this->allowProperty})) {
-			$this->Auth->allow($this->Controller->{$this->allowProperty});
+		if (!empty($this->controller->{$this->allowProperty})) {
+			$this->Auth->allow($this->controller->{$this->allowProperty});
 		}
 	}
 }

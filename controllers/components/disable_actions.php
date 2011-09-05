@@ -7,11 +7,11 @@ class DisableActionsComponent extends Object {
 	public $components = array('Security');
 	public $disableActions = array();
 
-	protected $_Controller;
+	public $controller;
 
-	public function initialize($Controller, $settings = array()) {
+	public function initialize($controller, $settings = array()) {
 
-		$this->_Controller = $Controller;
+		$this->controller = $controller;
 
 		$this->_set($settings);
 		unset($settings['auto']);
@@ -44,18 +44,18 @@ class DisableActionsComponent extends Object {
 	}
 
 	protected function _judgeController($controller) {
-		return $controller === '*' || Inflector::camelize($controller) === Inflector::camelize($this->_Controller->name);
+		return $controller === '*' || Inflector::camelize($controller) === Inflector::camelize($this->controller->name);
 	}
 
 	protected function _judgeAction($actions) {
 
 		$actions = array_map('strtolower', (array)$actions);
-		return $actions === array('*') || in_array(strtolower($this->_Controller->action), $actions);
+		return $actions === array('*') || in_array(strtolower($this->controller->action), $actions);
 
 	}
 
 	public function blackHole() {
-		$this->Security->blackHole($this->_Controller, 'disableActions');
+		$this->Security->blackHole($this->controller, 'disableActions');
 	}
 
 }
