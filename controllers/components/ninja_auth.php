@@ -38,7 +38,7 @@ class NinjaAuthComponent extends AuthComponent {
 			return null;
 		}
 
-		$user = $model->find('first', array(
+		$user = $this->readUserdata($model, array(
 			'recursive' => $this->recursiveForUserdata,
 			'conditions' => $scope,
 		));
@@ -48,6 +48,10 @@ class NinjaAuthComponent extends AuthComponent {
 		}
 
 		return $this->adjustUserdataForStore($user);
+	}
+
+	public function readUserdata($model, $query) {
+		return $model->find('first', $query);
 	}
 
 	public function adjustUserdataForStore($user) {
