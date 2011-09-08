@@ -2,177 +2,187 @@
 
 class CommonValidationBehavior extends ModelBehavior {
 
-	public $user_class = 'User';
-	public $current_user_config = 'CurrentUser.id';
-	public $wait_double_check = 1;
-	public $auto_set_created = true;
+	public $defaultSettings = array(
+		'userModel' => 'User',
+		'currentUserConfig' => 'CurrentUser.id',
+		'waitDoubleCheck' => 1,
+		'autoSetCreated' => true,
+	);
+
+	public static $errorMessages = array();
 
 	public function setup($model, $config = array()) {
-		$this->_set($config);
+		if (empty(self::$errorMessages)) {
+			self::$errorMessages = $this->_buildDefaultErrorMessages($model);
+		}
+
+		$this->settings[$model->alias] = Set::merge($this->defaultSettings, $config);
 		return true;
+	}
+
+	protected function _buildDefaultErrorMessages($model) {
+		return array(
+			'currentUser' => __d('ninja', 'Current user was not configured. To use %s(), make sure to write configration with "%s" key.', true),
+			'emptyModelId' => __d('ninja', 'The id of model %s was empty. To use %s(), make sure validator is on update', true),
+			'modelHasNotField' => __d('ninja', 'The %s model has not %s field', true),
+			'belongingModelNotFound' => __d('ninja', 'Detecting associated model and field failed: field name = :fieldName, class name = :className', true),
+			'emptyValue' => __d('ninja', 'The value of %s field was empty. To use %s(), make sure validator allows empty value.', true),
+			'foreignHasNotBelongsTo' => __d('ninja', 'The foreign model %s has not belongsTo association for %s model. To use %s(), make sure to create association for it.', true),
+		);
+	}
+
+	protected function _getCurrentUserId($model, $methodName) {
+		$id = Configure::read($this->settings[$model->alias]['currentUserConfig']);
+		if (empty($id)) {
+			throw new BadMethodCallException(sprintf(self::$errorMessages['currentUser'], $methodName, $this->settings[$model->alias]['currentUserConfig']));
+		}
+		return $id;
 	}
 
 	public function isCurrentUser($model, $check) {
-		$user_id = current($check);
-		if ($user_id  !== Configure::read($this->current_user_config)) {
-			return false;
-		}
-
-		$User = ClassRegistry::init($this->user_class);
-		$User->id = $user_id;
-		if (!$User->exists()) {
-			return false;
-		}
-		return true;
+		return $this->_isCurrentUser($model, $check, __FUNCTION__);
 	}
 
 	public function isNotCurrentUser($model, $check) {
-		return !$this->isCurrentUser($model, $check);
+		return !$this->_isCurrentUser($model, $check, __FUNCTION__);
 	}
 
-	public function currentUserHas($model, $check, $class_name = false) {
-		if (!Configure::read($this->current_user_config)) {
-			return false;
+	protected function _isCurrentUser($model, $check, $methodName) {
+		list($fieldName, $user_id) = each($check);
+		if (!$user_id || is_array($user_id)) {
+			throw new BadMethodCallException(sprintf(self::$errorMessages['emptyValue'], $fieldName, $methodName));
 		}
-		list($field_name, $foreign_id) = each($check);
 
-		$foreign = $this->_detectBelongingModel($model, $field_name, $class_name);
-		if ($foreign === false) {
-			return false;
-		}
-		
-		$foreign->id = $foreign_id;
+		return $user_id == $this->_getCurrentUserId($model, $methodName);
+	}
+
+	public function currentUserHas($model, $check, $className = false) {
+		return $this->_currentUserHas($model, $check, $className, __FUNCTION__);
+	}
+
+	public function currentUserHasNot($model, $check, $className = false) {
+		return !$this->_currentUserHas($model, $check, $className, __FUNCTION__);
+	}
+
+	protected function _currentUserHas($model, $check, $className, $methodName) {
+		list($fieldName, $foreignId) = each($check);
+
+		$foreign = $this->_detectBelongingModel($model, $fieldName, $className);
+
+		$currentUserId = $this->_getCurrentUserId($model, $methodName);
+		$userClass = get_class(ClassRegistry::init($this->settings[$model->alias]['userModel']));
+		$foreign->id = $foreignId;
 		foreach ($foreign->belongsTo as $alias => $assoc) {
-			if ($this->user_class == $assoc['className']) {
-				if( $foreign->field($assoc['foreignKey']) == Configure::read($this->current_user_config)) {
-					return true;
-				}
+			if ($userClass === $assoc['className']) {
+				return $foreign->field($assoc['foreignKey']) == $currentUserId;
 			}
 		}
-		return false;
+
+		throw new BadMethodCallException(sprintf(self::$errorMessages['foreignHasNotBelongsTo'], $foreign->alias, $userClass, $methodName));
 	}
 
-	public function currentUserHasNot($model, $check, $class_name = false) {
-		return !$this->currentUserHas($model, $check, $class_name);
+	protected function _getModelId($model, $methodName) {
+		$modelId = $model->getID();
+		if (empty($modelId)) {
+			throw new BadMethodCallException(sprintf(self::$errorMessages['emptyModelId'], $model->alias, $methodName));
+		}
+		return $modelId;
 	}
 
 	public function hasThis($model, $check) {
-		if (!$model->id || is_array($model->id)) {
-			return false;
-		}
-		list($field_name, $id) = each($check);
-
-		if (!$id || is_array($id) || !$model->hasField($field_name)) {
-			return false;
-		}
-		if ($model->field($field_name) != $id) {
-			return false;
-		}
-		return true;
+		return $this->_hasThis($model, $check, __FUNCTION__);
 	}
 
 	public function hasNotThis($model, $check) {
-		if (!$model->id || is_array($model->id)) {
-			return false;
-		}
-		list($field_name, $id) = each($check);
-
-		if (!$id || is_array($id) || !$model->hasField($field_name)) {
-			return false;
-		}
-		if ($model->field($field_name) == $id) {
-			return false;
-		}
-		return true;
+		return !$this->_hasThis($model, $check, __FUNCTION__);
 	}
 
-	public function thisHas($model, $check, $class_name = false) {
-		list($field_name, $foreign_id) = each($check);
+	protected function _hasThis($model, $check, $methodName) {
+		$modelId = $this->_getModelId($model, $methodName);
 
-		$foreign = $this->_detectBelongingModel($model, $field_name, $class_name);
-		if ($foreign === false) {
-			return false;
+		list($fieldName, $id) = each($check);
+		if (!$model->hasField($fieldName)) {
+			throw new BadMethodCallException(sprintf(self::$errorMessages['modelHasNotField'], $model->alias, $fieldName));
 		}
 
-		$foreignKey = Inflector::singularize($model->table) . '_id';
-		if ($foreign->hasField($foreignKey)) {
-			$foreign->id = $foreign_id;
-			if ($foreign->field($foreignKey) == $model->id) {
-				return true;
-			}
+		if (!$id || is_array($id)) {
+			throw new BadMethodCallException(sprintf(self::$errorMessages['emptyValue'], $fieldName, $methodName));
 		}
-		return false;
+
+		return $model->field($fieldName) == $id;
 	}
 
-	public function thisHasNot($model, $check, $class_name = false) {
-		list($field_name, $foreign_id) = each($check);
-		if (!$foreign_id || is_array($foreign_id) || !$model->id || is_array($model->id)) {
-			return false;
+	public function thisHas($model, $check, $className = false, $foreignKey = false) {
+		return $this->_thisHas($model, $check, $className, $foreignKey, __FUNCTION__);
+	}
+
+	public function thisHasNot($model, $check, $className = false, $foreignKey = false) {
+		return !$this->_thisHas($model, $check, $className, $foreignKey, __FUNCTION__);
+	}
+
+	protected function _thisHas($model, $check, $className, $foreignKey, $methodName) {
+		list($fieldName, $foreignId) = each($check);
+		$modelId = $this->_getModelId($model, $methodName);
+		if (!$foreignId || is_array($foreignId)) {
+			throw new BadMethodCallException(sprintf(self::$errorMessages['emptyValue'], $fieldName, $methodName));
 		}
 
-		$foreign = $this->_detectBelongingModel($model, $field_name, $class_name);
-		if ($foreign === false) {
-			return false;
+		$foreign = $this->_detectBelongingModel($model, $fieldName, $className);
+
+		if (empty($foreignKey)) {
+			$foreignKey = Inflector::singularize($model->table) . '_id';
 		}
 
-		$foreignKey = Inflector::singularize($model->table) . '_id';
-		if ($foreign->hasField($foreignKey)) {
-			$foreign->id = $foreign_id;
-			if ($foreign->field($foreignKey) != $model->id) {
-				return true;
-			}
+		if (!$foreign->hasField($foreignKey)) {
+			throw new BadMethodCallException(sprintf(self::$errorMessages['modelHasNotField'], $foreign->alias, $foreignKey));
 		}
-		return false;
+
+		$foreign->id = $foreignId;
+		return $foreign->field($foreignKey) == $modelId;
 	}
 
 	public function notExists($Model) {
 		return !$Model->exists();
 	}
 
-	public function existsForeign($model, $check, $class_name = false) {
-		list($field_name, $foreign_id) = each($check);
+	public function existsForeign($model, $check, $className = false) {
+		return $this->_existsForeign($model, $check, $className, __FUNCTION__);
+	}
 
-		$foreign = $this->_detectBelongingModel($model, $field_name, $class_name);
-		if ($foreign === false) {
-			return false;
+	public function notExistsForeign($model, $check, $className = false) {
+		return !$this->_existsForeign($model, $check, $className, __FUNCTION__);
+	}
+
+	protected function _existsForeign($model, $check, $className, $methodName) {
+		list($fieldName, $foreignId) = each($check);
+		if (!$foreignId || is_array($foreignId)) {
+			throw new BadMethodCallException(sprintf(self::$errorMessages['emptyValue'], $fieldName, $methodName));
 		}
-		$foreign->id = $foreign_id;
+
+		$foreign = $this->_detectBelongingModel($model, $fieldName, $className);
+		$foreign->id = $foreignId;
 		return $foreign->exists();
 	}
 
-	public function notExistsForeign($model, $check, $class_name = false) {
-		list($field_name, $foreign_id) = each($check);
-		if (!$foreign_id || is_array($foreign_id)) {
-			return false;
+	protected function _detectBelongingModel($model, $fieldName, $className) {
+		if (is_array($className)) {
+			$className = false;
 		}
 
-
-		$foreign = $this->_detectBelongingModel($model, $field_name, $class_name);
-		if ($foreign === false) {
-			return false;
-		}
-		$foreign->id = $foreign_id;
-		return !$foreign->exists();
-	}
-
-	protected function _detectBelongingModel($model, $field_name, $class_name) {
-		if (is_array($class_name)) {
-			$class_name = false;
-		}
-		if ($class_name === false) {
+		if ($className === false) {
 			foreach ($model->belongsTo as $alias => $assoc) {
-				if ($field_name == $assoc['foreignKey']) {
-					$class_name = $assoc['className'];
+				if ($fieldName == $assoc['foreignKey']) {
+					$className = $assoc['className'];
 					break;
 				}
 			}
 		}
-		if ($class_name === false) {
-			trigger_error(String::insert(__d('ninja', 'Detecting associated model and field failed: field name = :field_name, class name = :class_name', true), compact('field_name', 'class_name')));
-			return false;
+
+		if ($className === false || !($foreignModel = ClassRegistry::init(array('class' => $className)))) {
+			throw new BadMethodCallException(String::insert(self::$errorMessages['belongingModelNotFound'], compact('fieldName', 'className')));
 		}
-		$foreign = ClassRegistry::init(array('class' => $class_name));
-		return $foreign;
+
+		return $foreignModel;
 	}
 
 	public function maxCount($model, $check, $count = false) {
@@ -191,7 +201,7 @@ class CommonValidationBehavior extends ModelBehavior {
 
 	public function beforeValidate($model) {
 		$create =
-			$this->auto_set_created &&
+			$this->settings[$model->alias]['autoSetCreated'] &&
 			$model->hasField('created') &&
 			empty($model->data[$model->alias]['created']) &&
 			empty($model->id) &&
@@ -215,9 +225,9 @@ class CommonValidationBehavior extends ModelBehavior {
 		if (is_array(end($args))) {
 			array_pop($args);
 		}
-		$wait = $this->wait_double_check;
+		$wait = $this->settings[$model->alias]['waitDoubleCheck'];
 		if (is_numeric(end($args))) {
-			$wait = intval(end($args));
+			$wait = intval(array_pop($args));
 		}
 
 		$fields = $args;

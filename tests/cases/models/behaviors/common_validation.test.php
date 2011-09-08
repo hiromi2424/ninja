@@ -3,7 +3,7 @@
 App::import('Lib', 'Ninja.test' . DS . 'NinjaBehaviorTestCase');
 
 class CommonValidationBehaviorMockModel extends Model {
-	public $actsAs = array('Ninja.CommonValidation' => array('user_class' => 'CommonValidationBehaviorUser'));
+	public $actsAs = array('Ninja.CommonValidation' => array('userModel' => 'CommonValidationBehaviorUser'));
 	public $validate = array(
 		'common_validation_behavior_belonged_id' => array(
 			'existsForeign' => array(
@@ -45,17 +45,24 @@ class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 	);
 
 	public function testIsCurrentUser() {
-		Configure::write('CurrentUser.id', null);
-		$this->assertFalse($this->Model->isCurrentUser(array('common_validation_behavior_user_id' => 1)));
-		$this->assertFalse($this->Model->isCurrentUser(array('common_validation_behavior_user_id' => null)));
-
 		Configure::write('CurrentUser.id', 1);
-		$this->assertFalse($this->Model->isCurrentUser(array('common_validation_behavior_user_id' => null)));
 		$this->assertFalse($this->Model->isCurrentUser(array('common_validation_behavior_user_id' => 3)));
 		$this->assertTrue($this->Model->isCurrentUser(array('common_validation_behavior_user_id' => 1)));
 
-		Configure::write('CurrentUser.id', 10);
-		$this->assertFalse($this->Model->isCurrentUser(array('common_validation_behavior_user_id' => 10)));
+		try {
+			$this->Model->isCurrentUser(array('common_validation_behavior_user_id' => null));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/common_validation_behavior_user_id/', $e->getMessage());
+		}
+
+		try {
+			Configure::write('CurrentUser.id', null);
+			$this->Model->isCurrentUser(array('common_validation_behavior_user_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/CurrentUser\.id/', $e->getMessage());
+		}
 	}
 
 	public function testIsNotCurrentUser() {
@@ -65,17 +72,36 @@ class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 	}
 
 	public function testCurrentUserHas() {
-		Configure::write('CurrentUser.id', null);
-		$this->assertFalse($this->Model->currentUserHas(array('common_validation_behavior_belonged_id' => null)));
-		$this->assertFalse($this->Model->currentUserHas(array('common_validation_behavior_belonged_id' => 1)));
-
 		Configure::write('CurrentUser.id', 2);
-		$this->expectError();
-		$this->assertFalse($this->Model->currentUserHas(array('not_valid_id' => 1)));
 		$this->assertTrue($this->Model->currentUserHas(array('common_validation_behavior_belonged_id' => 1)));
 
 		Configure::write('CurrentUser.id', 1);
 		$this->assertFalse($this->Model->currentUserHas(array('common_validation_behavior_belonged_id' => 1)));
+
+		try {
+			Configure::write('CurrentUser.id', null);
+			$this->Model->currentUserHas(array('common_validation_behavior_belonged_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/CurrentUser\.id/', $e->getMessage());
+		}
+
+		try {
+			Configure::write('CurrentUser.id', 2);
+			$this->Model->currentUserHas(array('not_valid_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/not_valid_id/', $e->getMessage());
+		}
+
+		try {
+			ClassRegistry::init('CommonValidationBehaviorBelonged')->belongsTo = array();
+			Configure::write('CurrentUser.id', 2);
+			$this->Model->currentUserHas(array('common_validation_behavior_belonged_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/CommonValidationBehaviorBelonged/', $e->getMessage());
+		}
 	}
 
 	public function testCurrentUserHasNot() {
@@ -87,76 +113,124 @@ class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 	}
 
 	public function testHasThis() {
-		$this->Model->id = false;
-		$this->assertFalse($this->Model->hasThis(array('common_validation_behavior_belonged_id' => 1)));
-
 		$this->Model->id = array(1, 2);
 		$this->assertFalse($this->Model->hasThis(array('common_validation_behavior_belonged_id' => 1)));
 
 		$this->Model->id = 1;
-		$this->assertFalse($this->Model->hasThis(array('common_validation_behavior_belonged_id' => null)));
 		$this->assertFalse($this->Model->hasThis(array('common_validation_behavior_belonged_id' => 1)));
 
 		$this->Model->id = 2;
 		$this->assertFalse($this->Model->hasThis(array('common_validation_behavior_belonged_id' => 2)));
 		$this->assertTrue($this->Model->hasThis(array('common_validation_behavior_belonged_id' => 1)));
 
-		$this->assertFalse($this->Model->hasThis(array('not_valid_id' => 1)));
+		try {
+			$this->Model->hasThis(array('common_validation_behavior_belonged_id' => null));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/common_validation_behavior_belonged_id/', $e->getMessage());
+		}
+
+		try {
+			$this->Model->hasThis(array('not_valid_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/not_valid_id/', $e->getMessage());
+		}
+
+		try {
+			$this->Model->id = false;
+			$this->Model->hasThis(array('common_validation_behavior_belonged_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/CommonValidationBehaviorMockModel/', $e->getMessage());
+		}
 	}
 
 	public function testHasNotThis() {
-		$this->assertFalse($this->Model->hasNotThis(array('common_validation_behavior_belonged_id' => 1)));
+		try {
+			$this->Model->id = false;
+			$this->Model->hasNotThis(array('common_validation_behavior_belonged_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/CommonValidationBehaviorMockModel/', $e->getMessage());
+		}
 
-		$this->Model->id = array(1, 2);
+		$this->Model->id = array(2, 1);
+		$this->assertTrue($this->Model->hasNotThis(array('common_validation_behavior_belonged_id' => 2)));
 		$this->assertFalse($this->Model->hasNotThis(array('common_validation_behavior_belonged_id' => 1)));
 
 		$this->Model->id = 1;
-		$this->assertFalse($this->Model->hasNotThis(array('common_validation_behavior_belonged_id' => null)));
 		$this->assertTrue($this->Model->hasNotThis(array('common_validation_behavior_belonged_id' => 1)));
 
 		$this->Model->id = 2;
 		$this->assertTrue($this->Model->hasNotThis(array('common_validation_behavior_belonged_id' => 2)));
 		$this->assertFalse($this->Model->hasNotThis(array('common_validation_behavior_belonged_id' => 1)));
-
-		$this->assertFalse($this->Model->hasNotThis(array('not_valid_id' => 1)));
 	}
 
 	public function testThisHas() {
-		$this->Model->id = false;
-		$this->assertFalse($this->Model->thisHas(array('common_validation_behavior_belonged_id' => 1)));
+		try {
+			$this->Model->id = false;
+			$this->Model->thisHas(array('common_validation_behavior_belonged_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/CommonValidationBehaviorMockModel/', $e->getMessage());
+		}
 
 		$this->Model->id = array(1, 2);
-		$this->assertFalse($this->Model->thisHas(array('common_validation_behavior_belonged_id' => 1)));
+		$this->assertTrue($this->Model->thisHas(array('common_validation_behavior_belonged_id' => 1)));
 
 		$this->Model->id = 3;
-		$this->assertFalse($this->Model->thisHas(array('common_validation_behavior_belonged_id' => null)));
 		$this->assertFalse($this->Model->thisHas(array('common_validation_behavior_belonged_id' => 5)));
 
 		$this->Model->id = 4;
-		$this->assertFalse($this->Model->thisHas(array('common_validation_behavior_belonged_id' => null)));
 		$this->assertTrue($this->Model->thisHas(array('common_validation_behavior_belonged_id' => 5)));
 
-		$this->expectError();
-		$this->assertFalse($this->Model->thisHas(array('not_valid_id' => 1)));
+		try {
+			$this->Model->thisHas(array('common_validation_behavior_belonged_id' => null));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/thisHas/', $e->getMessage());
+		}
+
+		try {
+			$this->Model->thisHas(array('not_valid_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/not_valid_id/', $e->getMessage());
+		}
 	}
 
 	public function testThisHasNot() {
-		$this->Model->id = false;
-		$this->assertFalse($this->Model->thisHasNot(array('common_validation_behavior_belonged_id' => 1)));
+		try {
+			$this->Model->id = false;
+			$this->Model->thisHasNot(array('common_validation_behavior_belonged_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/CommonValidationBehaviorMockModel/', $e->getMessage());
+		}
 
 		$this->Model->id = array(1, 2);
 		$this->assertFalse($this->Model->thisHasNot(array('common_validation_behavior_belonged_id' => 1)));
 
 		$this->Model->id = 3;
-		$this->assertFalse($this->Model->thisHasNot(array('common_validation_behavior_belonged_id' => null)));
 		$this->assertTrue($this->Model->thisHasNot(array('common_validation_behavior_belonged_id' => 5)));
 
 		$this->Model->id = 4;
-		$this->assertFalse($this->Model->thisHasNot(array('common_validation_behavior_belonged_id' => null)));
 		$this->assertFalse($this->Model->thisHasNot(array('common_validation_behavior_belonged_id' => 5)));
 
-		$this->expectError();
-		$this->assertFalse($this->Model->thisHasNot(array('not_valid_id' => 1)));
+		try {
+			$this->Model->thisHasNot(array('common_validation_behavior_belonged_id' => null));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/common_validation_behavior_belonged_id/', $e->getMessage());
+		}
+
+		try {
+			$this->Model->thisHasNot(array('not_valid_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/not_valid_id/', $e->getMessage());
+		}
 	}
 
 	public function testNotExists() {
@@ -168,21 +242,41 @@ class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 	}
 
 	public function testExistsForeign() {
-		$this->assertFalse($this->Model->existsForeign(array('common_validation_behavior_belonged_id' => null)));
 		$this->assertFalse($this->Model->existsForeign(array('common_validation_behavior_belonged_id' => 100)));
 		$this->assertTrue($this->Model->existsForeign(array('common_validation_behavior_belonged_id' => 5)));
 
-		$this->expectError();
-		$this->assertFalse($this->Model->existsForeign(array('not_valid_id' => 1)));
+		try {
+			$this->Model->existsForeign(array('common_validation_behavior_belonged_id' => null));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/common_validation_behavior_belonged_id/', $e->getMessage());
+		}
+
+		try {
+			$this->Model->existsForeign(array('not_valid_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/not_valid_id/', $e->getMessage());
+		}
 	}
 
 	public function testNotExistsForeign() {
-		$this->assertFalse($this->Model->notExistsForeign(array('common_validation_behavior_belonged_id' => null)));
 		$this->assertFalse($this->Model->notExistsForeign(array('common_validation_behavior_belonged_id' => 5)));
 		$this->assertTrue($this->Model->notExistsForeign(array('common_validation_behavior_belonged_id' => 100)));
 
-		$this->expectError();
-		$this->assertFalse($this->Model->notExistsForeign(array('not_valid_id' => 1)));
+		try {
+			$this->Model->notExistsForeign(array('common_validation_behavior_belonged_id' => null));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/common_validation_behavior_belonged_id/', $e->getMessage());
+		}
+
+		try {
+			$this->Model->notExistsForeign(array('not_valid_id' => 1));
+			$this->fail('Expected BadMethodCallException was not thrown');
+		} catch (BadMethodCallException $e) {
+			$this->assertPattern('/not_valid_id/', $e->getMessage());
+		}
 	}
 
 	public function testValidation() {
@@ -223,7 +317,9 @@ class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 	}
 
 	public function testCheckDoubleSave() {
-		$this->Model->Behaviors->CommonValidation->wait_double_check = 10;
+		$this->Model->Behaviors->attach('Ninja.CommonValidation', array(
+			'waitDoubleCheck' => 10,
+		));
 
 		$this->Model->validate = array(
 			'created' => array(
