@@ -1,6 +1,6 @@
 <?php
 
-class SessionQueueComponent extends Object {
+class SessionQueueComponent extends Object implements ArrayAccess, IteratorAggregate, Countable {
 
 	public $sessionBaseKey = 'SessionQueue';
 	public $sessionKey = 'default';
@@ -16,14 +16,29 @@ class SessionQueueComponent extends Object {
 		$queue = $this->read();
 
 		$queue[] = $data;
-		$this->write($queue);
-		return true;
+		return $this->write($queue);
+	}
+
+	public function unshift($data) {
+		$queue = $this->read();
+
+		array_unshift($queue, $data);
+		return $this->write($queue);
 	}
 
 	public function pop() {
 		$queue = $this->read();
 
-		$data = array_pop($queue, $data);
+		$data = array_pop($queue);
+		$this->write($queue);
+
+		return $data;
+	}
+
+	public function shift() {
+		$queue = $this->read();
+
+		$data = array_shift($queue);
 		$this->write($queue);
 
 		return $data;
@@ -51,26 +66,36 @@ class SessionQueueComponent extends Object {
 		return $this->Session->write($this->sessionKey(), $queue);
 	}
 
-	public function delete($index = null) {
-		if ($index === null) {
-			return $this->clear();
-		}
-		return $this->Session->delete($this->sessionKey($index));
+	protected function _delete($key) {
+		return !$this->Session->check($key) || $this->Session->delete($key);
 	}
 
-	public function search($destination) {
+	public function delete($index) {
+		return $this->_delete($this->sessionKey($index));
+	}
+
+	public function search($destination, $options = array()) {
 		$queue = $this->read();
 
-		foreach ($queue as $index => $value) {
-			if ($value == $destination) {
-				return $index;
-			}
+		$options += array(
+			'strict' => false,
+			'multiple' => false,
+		);
+
+		if ($options['multiple']) {
+			return array_keys($queue, $destination, $options['strict']);
+		} else {
+			return array_search($destination, $queue, $options['strict']);
 		}
-		return null;
+
 	}
 
 	public function clear() {
-		return $this->Session->delete($this->sessionKey());
+		return $this->delete(null);
+	}
+
+	public function purge() {
+		return $this->_delete($this->sessionBaseKey);
 	}
 
 	protected function _init() {
@@ -81,4 +106,41 @@ class SessionQueueComponent extends Object {
 
 		return $queue;
 	}
+
+	public function isEmpty() {
+		return count($this) === 0;
+	}
+
+	public function count() {
+		$queue = $this->read();
+		return count($queue);
+	}
+
+	public function getIterator() {
+		return new ArrayIterator($this->read());
+	}
+
+	public function offsetExists($offset) {
+		$queue = $this->read();
+		return array_key_exists($offset, $queue);
+	}
+
+	public function offsetGet($offset) {
+		return $this->read($offset);
+	}
+
+	public function offsetSet($offset, $value) {
+		$queue = $this->read();
+		if ($offset === null) {
+			$queue[] = $value;
+		} else {
+			$queue[$offset] = $value;
+		}
+		$this->write($queue);
+	}
+
+	public function offsetUnset($offset) {
+		$this->delete($offset);
+	}
+
 }
