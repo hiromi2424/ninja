@@ -69,6 +69,7 @@ class SessionQueueComponentTestCase extends NinjaComponentTestCase {
 		$this->SessionQueue[] = 'hoge';
 		$this->assertIdentical($this->SessionQueue[0], 'fuga');
 		$this->assertIdentical($this->SessionQueue[1], 'hoge');
+		$this->assertIdentical(count($this->SessionQueue), 2);
 
 		$iterated = array();
 		foreach ($this->SessionQueue as $key => $val) {

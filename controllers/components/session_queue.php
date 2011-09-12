@@ -45,10 +45,13 @@ class SessionQueueComponent extends Object implements ArrayAccess, IteratorAggre
 	}
 
 	public function read($index = null) {
-		if ($index === null) {
-			return $this->_init();
+		$data = $this->Session->read($this->sessionKey($index));
+
+		if ($index === null && !is_array($data)) {
+			$data = array();
 		}
-		return $this->Session->read($this->sessionKey($index));
+
+		return $data;
 	}
 
 	public function sessionKey($index = null) {
@@ -90,21 +93,17 @@ class SessionQueueComponent extends Object implements ArrayAccess, IteratorAggre
 
 	}
 
+	public function extract($path) {
+		$queue = $this->read();
+		return Set::extract($path, $queue);
+	}
+
 	public function clear() {
 		return $this->delete(null);
 	}
 
 	public function purge() {
 		return $this->_delete($this->sessionBaseKey);
-	}
-
-	protected function _init() {
-		$queue = $this->Session->read($this->sessionKey());
-		if (empty($queue)) {
-			$queue = array();
-		}
-
-		return $queue;
 	}
 
 	public function isEmpty() {
