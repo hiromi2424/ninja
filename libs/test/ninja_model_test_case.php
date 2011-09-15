@@ -6,16 +6,22 @@ abstract class NinjaModelTestCase extends NinjaTestCase {
 
 	public $fixtures = array('IMPORT' => 'default');
 	public $modelName;
+	public $modelClass;
 
 	public function startCase() {
 		$this->modelName = str_replace('TestCase', '', get_class($this));
+		$this->modelClass = $this->modelName;
+
+		if (class_exists('Test' . $this->modelClass)) {
+			$this->modelClass = 'Test' . $this->modelClass;
+		}
 		parent::startCase();
 	}
 
 	public function startTest($method = null) {
 		parent::startTest($method);
 
-		$this->{$this->modelName} = ClassRegistry::init($this->plugin . $this->modelName);
+		$this->{$this->modelName} = ClassRegistry::init($this->plugin . $this->modelClass);
 	}
 
 	public function endTest($method = null) {
