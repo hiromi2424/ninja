@@ -1,8 +1,9 @@
 <?php
 
-class BaseService {
+abstract class BaseService {
 
 	public $catchTry = true;
+	public $logException = true;
 
 	public function __construct() {
 		ClassRegistry::addObject(__CLASS__, $this);
@@ -20,35 +21,17 @@ class BaseService {
 	}
 
 	public function simpleTransaction($lambda, $options = array()) {
-		$options += array('catchTry' => true);
-		if ($options['catchTry']) {
-			try {
-				$result = $this->_dispatchLambda($lambda);
-			} catch (Exception $e) {
-				$this->Transaction->rollback();
-				Object::log($e->getMessage());
-				$result = false;
-			}
-		} else {
-			$result = $this->_dispatchLambda($lambda);
-		}
+		$options += array(
+			'catchTry' => $this->catchTry,
+			'logException' => $this->logException,
+		);
 
-		return $result;
-	}
+		return $this->Transaction->setService($this)->lambda($lambda, $options);
 
-	protected function _dispatchLambda($lambda) {
-		$this->Transaction->begin();
-		$result = $lambda($this);
-		if (!$result) {
-			$this->Transaction->rollback();
-		} else {
-			$this->Transaction->commit();
-		}
-		return $result;
 	}
 
 	public function transaction($datasources = null) {
-		return $this->Transaction->setDataSources($datasources);
+		return $this->Transaction->setService($this)->setDataSources($datasources);
 	}
 
 }
