@@ -141,6 +141,7 @@ class MenuHelper extends AppHelper {
 		if ($current && ($this->Html->url($url) === $this->here)) {
 			$this->_processCurrent($current, $item, $url, $item_options);
 		}
+		debug($item_options);
 
 		if ($url !== false) {
 			$item = $this->Html->link($item, $url, $item_options['link_options']);
