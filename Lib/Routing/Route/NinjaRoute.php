@@ -15,7 +15,11 @@ abstract class NinjaRoute extends CakeRoute {
 
 	protected function _match($params) {
 
-		foreach ($this->defaults as $key => $value) {
+		$defaults = $this->defaults;
+		if ($defaults['action'] === 'index') {
+			unset($defaults['action']);
+		}
+		foreach ($defaults as $key => $value) {
 			if (!array_key_exists($key, $params) || $params[$key] !== $value) {
 				return false;
 			}
