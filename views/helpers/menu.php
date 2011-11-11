@@ -11,7 +11,7 @@ class MenuHelper extends AppHelper {
 		'item_tag' => 'li',
 		'id' => false,
 		'separator' => '',
-		'item_options' => null,
+		'item_options' => array(),
 		'before' => '',
 		'after' => '',
 		'current' => false,
@@ -131,15 +131,15 @@ class MenuHelper extends AppHelper {
 
 		if (!empty($sectionSettings['item_options'])) {
 			$item_options = Set::merge($item_options, $sectionSettings['item_options']);
-			unset($sectionSettings['item_options']);
 		}
+		unset($sectionSettings['item_options']);
 
 		extract($sectionSettings);
 
 		$item = $title;
 
 		if ($current && ($this->Html->url($url) === $this->here)) {
-			$this->_processCurrent($current, $item, $url, $itemOptions['link_options']);
+			$this->_processCurrent($current, $item, $url, $item_options);
 		}
 
 		if ($url !== false) {
@@ -153,7 +153,7 @@ class MenuHelper extends AppHelper {
 		if ($item_tag !== false) {
 			$item_id = $this->_attribute(array('id' => $item_options['id']));
 			$item_class = $this->_attribute(array('class' => $item_options['class']));
-			$item = "<{$item_tag}>$item</$item_tag>";
+			$item = "<{$item_tag}{$item_id}{$item_class}>{$item}</{$item_tag}>";
 		}
 
 		return $item;
@@ -172,11 +172,10 @@ class MenuHelper extends AppHelper {
 		} elseif ($current === 'disable') {
 			$url = false;
 		} elseif ($current === 'class') {
-			if (isset($options['class'])) {
-				$options['class'] = (array)$options['class'];
-				$options['class'][] = 'current';
+			if (empty($options['class'])) {
+				$options['class'] = 'current';
 			} else {
-				$options['class'] = array('current');
+				$options['class'] .= ' current';
 			}
 		}
 	}
