@@ -26,8 +26,8 @@ class PageTitleComponent extends Object {
 			'suffix' => true,
 		);
 
-		if (isset($controller->pageTitle)) {
-			$title = $controller->pageTitle;
+		if (isset($this->controller->pageTitle)) {
+			$title = $this->controller->pageTitle;
 		} elseif (isset($this->controller->pageTitles) && array_key_exists($options['action'], $this->controller->pageTitles)) {
 			$title = $this->controller->pageTitles[$options['action']];
 		} elseif (isset($this->controller->defaultTitle)) {
