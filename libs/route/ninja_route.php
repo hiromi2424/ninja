@@ -50,4 +50,16 @@ abstract class NinjaRoute extends CakeRoute {
 
 	}
 
+	protected function _validateType($model, $id) {
+		$model = $this->_getModel();
+		$primaryType = $model->getColumnType($model->primaryKey);
+		if ($primaryType === 'integer') {
+			if (!is_numeric($id)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 }

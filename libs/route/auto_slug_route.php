@@ -107,7 +107,7 @@ class AutoSlugRoute extends NinjaRoute {
 
 			if (isset($slugs[$id])) {
 				$slug = $slugs[$id];
-			} elseif ($result = $this->_lookup(array($this->lookup => $id))) {
+			} elseif ($this->_validateType($this->_getModel(), $id) && $result = $this->_lookup(array($this->lookup => $id))) {
 				$slug = $result[$this->_getModel()->alias][$this->display];
 			}
 

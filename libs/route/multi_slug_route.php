@@ -103,6 +103,9 @@ class MultiSlugRoute extends NinjaRoute {
 		if (isset($params[0])) {
 			$id = $params[0];
 			if (!($slugs = $this->mapped($id))) {
+				if (!$this->_validateType($this->_getModel(), $id)) {
+					return false;
+				}
 				$data = $this->_lookup(array(
 					$this->_getModel()->escapeField() => $id,
 				));
