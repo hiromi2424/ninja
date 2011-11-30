@@ -25,6 +25,7 @@ class RoleAuthorizeComponentTestCase extends NinjaComponentTestCase {
 		));
 		$this->Controller->Auth = new MockAuthComponent;
 		$this->Controller->Auth->setReturnReference('user', $this->_currentLevel);
+		$this->RoleAuthorize->configName = $this->_testConfigName;
 	}
 
 	public function endTest($method = null) {
