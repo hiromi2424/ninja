@@ -185,8 +185,24 @@ class AutoSlugRoute extends NinjaRoute {
 	public static function clearCache($identity) {
 		if (isset(self::$_instances[$identity])) {
 			$instance = self::$_instances[$identity];
+			$instance->__cached = null;
 			return Cache::delete($instance->cacheName(), $instance->cacheConfig);
 		}
+	}
+
+	public static function clearCacheAll() {
+		if (empty(self::$_instances)) {
+			return null;
+		}
+
+		$result = true;
+		foreach (array_keys(self::$_instances) as $identity) {
+			if (!self::clearCache($identity)) {
+				$result = false;
+			}
+		}
+
+		return $result;
 	}
 
 	public static function readCache($identity) {
