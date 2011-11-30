@@ -1,10 +1,11 @@
 <?php
 /* RoleAuthorize Test cases generated on: 2011-09-12 23:38:00 : 1315838280*/
 
-App::import('Lib', 'Ninja.test' . DS . 'NinjaComponentTestCase');
+App::uses('NinjaComponentTestCase', 'Ninja.TestSuite');
 App::import('Component', 'Auth');
 
-Mock::generate('AuthComponent');
+App::uses('RoleAuthorizeComponent', 'Ninja.Controller/Component/Auth');
+class_exists('RoleAuthorizeComponent'); // loading
 
 class RoleAuthorizeComponentTestCase extends NinjaComponentTestCase {
 
@@ -23,9 +24,16 @@ class RoleAuthorizeComponentTestCase extends NinjaComponentTestCase {
 			'moderator' => 400,
 			'admin' => 800,
 		));
-		$this->Controller->Auth = new MockAuthComponent;
-		$this->Controller->Auth->setReturnReference('user', $this->_currentLevel);
+		$this->Controller->Auth = $this->getMock('AuthComponent', array('user'), array(new ComponentCollection));
+		$this->Controller->Auth->staticExpects($this->any())
+			->method('user')
+			->will($this->returnCallback(array($this, 'currentLevel')));
+
 		$this->RoleAuthorize->configName = $this->_testConfigName;
+	}
+
+	public function currentLevel() {
+		return $this->_currentLevel;
 	}
 
 	public function endTest($method = null) {
@@ -39,11 +47,11 @@ class RoleAuthorizeComponentTestCase extends NinjaComponentTestCase {
 	public function testAuthorize() {
 		$this->assertTrue($this->RoleAuthorize->authorize());
 
-		$this->Controller->params['prefix'] = 'admin';
+		$this->Controller->request->params['prefix'] = 'admin';
 		$this->assertFalse($this->RoleAuthorize->authorize());
-		$this->Controller->params['prefix'] = 'member';
+		$this->Controller->request->params['prefix'] = 'member';
 		$this->assertTrue($this->RoleAuthorize->authorize());
-		unset($this->Controller->params['prefix']);
+		unset($this->Controller->request->params['prefix']);
 
 		$this->Controller->requireAuth = 'admin';
 		$this->assertFalse($this->RoleAuthorize->authorize());

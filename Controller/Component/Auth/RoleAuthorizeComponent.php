@@ -1,6 +1,6 @@
 <?php
 
-class RoleAuthorizeComponent extends Object {
+class RoleAuthorizeComponent extends Component {
 
 	public $auth = 'Auth';
 	public $configName = 'Role.level';
@@ -9,9 +9,8 @@ class RoleAuthorizeComponent extends Object {
 
 	public $controller;
 
-	public function initialize($controller, $settings = array()) {
+	public function initialize($controller) {
 		$this->controller = $controller;
-		$this->_set($settings);
 	}
 
 	public function authorize() {
@@ -20,8 +19,8 @@ class RoleAuthorizeComponent extends Object {
 			$requireAuth = $this->controller->requireAuth;
 		} elseif (!empty($this->controller->requireAuth) && is_array($this->controller->requireAuth) && !empty($this->controller->requireAuth[$this->controller->action])) {
 			$requireAuth = $this->controller->requireAuth[$this->controller->action];
-		} elseif ($this->usePrefix && !empty($this->controller->params['prefix'])) {
-			$requireAuth = $this->controller->params['prefix'];
+		} elseif ($this->usePrefix && !empty($this->controller->request->params['prefix'])) {
+			$requireAuth = $this->controller->request->params['prefix'];
 		}
 
 		if (isset($requireAuth)) {

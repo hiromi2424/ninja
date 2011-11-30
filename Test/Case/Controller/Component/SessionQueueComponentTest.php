@@ -1,20 +1,23 @@
 <?php
 
-App::import('Lib', 'Ninja.test' . DS . 'NinjaComponentTestCase');
+App::uses('NinjaComponentTestCase', 'Ninja.TestSuite');
 
 class SessionQueueComponentTestCase extends NinjaComponentTestCase {
 
 	protected $_backup;
 
-	public function startTest($method = null) {
-		parent::startTest($method);
-		$this->_backup = $_SESSION;
+	public function setUp() {
+		parent::setUp();
+		$this->_backup = isset($_SESSION) ? $_SESSION : null;
 		$this->SessionQueue->Session->delete('SessionQueue');
 	}
 
-	public function endTest($method = null) {
-		parent::endTest($method);
-		$_SESSION = $this->_backup;
+	public function tearDown() {
+		parent::tearDown();
+		if ($this->_backup !== null) {
+			$_SESSION = $this->_backup;
+			$this->_backup = null;
+		}
 	}
 
 	public function testBasics() {

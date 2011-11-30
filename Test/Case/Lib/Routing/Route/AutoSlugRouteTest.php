@@ -37,10 +37,15 @@ class AutoSlugRouteTest extends NinjaTestCase {
 		Configure::write('Cache', self::$_cacheBackup);
 	}
 
-	public function endTest($method) {
+	public function setUp() {
+		ClassRegistry::init(array('class' => 'AutoSlugRouteTestPost', 'alias' => 'Post'));
+		parent::setUp();
+	}
+
+	public function tearDown() {
 		AutoSlugRoute::clearCache('AutoSlugRouteTestPost');
 		AutoSlugRoute::clearCache('AutoSlugRouteTestPostBody');
-		parent::endTest($method);
+		parent::tearDown();
 	}
 
 	public function testParse() {

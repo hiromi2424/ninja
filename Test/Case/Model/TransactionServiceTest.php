@@ -1,13 +1,10 @@
 <?php
 /* TransactionService Test cases generated on: 2011-09-15 18:44:46 : 1316079886*/
 
-App::import('Lib', 'Ninja.test' . DS . 'NinjaModelTestCase');
+App::uses('NinjaModelTestCase', 'Ninja.TestSuite');
 App::import('Datasource', 'DboSource', false);
 
 App::import('Model', 'Ninja.BaseService');
-Mock::generate('BaseService', null, array('testMethod'));
-
-$code = Mock::generate('DboSource');
 
 class TransactionServiceTestCase extends NinjaModelTestCase {
 
@@ -15,30 +12,24 @@ class TransactionServiceTestCase extends NinjaModelTestCase {
 	public static $lambdaResult = true;
 	public $lambda;
 
+	public static $mockClasses = array();
 	public $MockDboSource;
 	public $MockBaseService;
 
-	public function startCase() {
-		parent::startCase();
-	}
-
-	public function startTest($method = null) {
-		parent::startTest($method);
-
-		$this->MockDboSource = ConnectionManager::create('_transactionServiceMock', array(
-			'datasource' => 'MockDboSource',
-		));
-		/* 
-		 * replace instance if already created. this is workaround failing expecting counts for mock.
-		 * this workaround will not be needed since ConnectionManager::drop() was implemented in 2.0.
-		 */
-		if (null === $this->MockDboSource) {
-			$dboReference =& ConnectionManager::getDataSource('_transactionServiceMock');
-			$dboReference = new MockDboSource();
-			$this->MockDboSource = $dboReference;
+	public function setUp() {
+		parent::setUp();
+		if (empty(self::$mockClasses)) {
+			self::$mockClasses = array(
+				'DboSource' => $this->getMockClass('DboSource', array('begin', 'commit', 'rollback', 'connect')),
+				'BaseService' => $this->getMockClass('BaseService', array('testMethod')),
+			);
 		}
 
-		$this->MockBaseService = ClassRegistry::init('MockBaseService');
+		$this->MockDboSource = ConnectionManager::create('_transactionServiceMock', array(
+			'datasource' => self::$mockClasses['DboSource'],
+		));
+
+		$this->MockBaseService = ClassRegistry::init(self::$mockClasses['BaseService']);
 		$this->TransactionService->setDataSources('_transactionServiceMock')->setService($this->MockBaseService)->logException = false;
 		$this->lambda = create_function('', '
 			TransactionServiceTestCase::$lambdaArguments = func_get_args();
@@ -46,24 +37,24 @@ class TransactionServiceTestCase extends NinjaModelTestCase {
 		');
 	}
 
-	public function endTest($method = null) {
-		$this->MockDboSource = $this->MockBaseService = null;
-		parent::endTest($method);
+	public function tearDown() {	
+		ConnectionManager::drop('_transactionServiceMock');
+		parent::tearDown();
 	}
 
 	public function testLambda() {
-		$this->MockDboSource->expectOnce('begin');
-		$this->MockDboSource->expectOnce('commit');
-		$this->MockDboSource->expectNever('rollback');
+		$this->MockDboSource->expects($this->once())->method('begin');
+		$this->MockDboSource->expects($this->once())->method('commit');
+		$this->MockDboSource->expects($this->never())->method('rollback');
 		$result = $this->TransactionService->lambda($this->lambda);
 		$this->assertTrue($result);
-		$this->assertIsA(self::$lambdaArguments[0], 'MockBaseService');
+		$this->assertInstanceOf(self::$mockClasses['BaseService'], self::$lambdaArguments[0]);
 	}
 
 	public function testLambdaFailed() {
-		$this->MockDboSource->expectOnce('begin');
-		$this->MockDboSource->expectNever('commit');
-		$this->MockDboSource->expectOnce('rollback');
+		$this->MockDboSource->expects($this->once())->method('begin');
+		$this->MockDboSource->expects($this->never())->method('commit');
+		$this->MockDboSource->expects($this->once())->method('rollback');
 		self::$lambdaResult = false;
 		$result = $this->TransactionService->lambda($this->lambda);
 		$this->assertFalse($result);
@@ -71,39 +62,45 @@ class TransactionServiceTestCase extends NinjaModelTestCase {
 
 	public function testMagicCall() {
 		$this->TransactionService->catchTry = false;
-		$this->MockDboSource->expectOnce('begin');
-		$this->MockDboSource->expectOnce('commit');
-		$this->MockDboSource->expectNever('rollback');
-		$this->MockBaseService->setReturnValue('testMethod', true);
+		$this->MockDboSource->expects($this->once())->method('begin');
+		$this->MockDboSource->expects($this->once())->method('commit');
+		$this->MockDboSource->expects($this->never())->method('rollback');
+		$this->MockBaseService->expects($this->once())
+			->method('testMethod')
+			->will($this->returnValue(true));
 		$result = $this->TransactionService->testMethod();
 		$this->assertTrue($result);
 	}
 
 	public function testMagicCallFailed() {
 		$this->TransactionService->catchTry = false;
-		$this->MockDboSource->expectOnce('begin');
-		$this->MockDboSource->expectNever('commit');
-		$this->MockDboSource->expectOnce('rollback');
-		$this->MockBaseService->setReturnValue('testMethod', false);
+		$this->MockDboSource->expects($this->once())->method('begin');
+		$this->MockDboSource->expects($this->never())->method('commit');
+		$this->MockDboSource->expects($this->once())->method('rollback');
+		$this->MockBaseService->expects($this->once())
+			->method('testMethod')
+			->will($this->returnValue(false));
 		$result = $this->TransactionService->testMethod();
 		$this->assertFalse($result);
 	}
 
 	public function testMagicCallThrowException() {
 		$this->TransactionService->catchTry = true;
-		$this->MockDboSource->expectOnce('begin');
-		$this->MockDboSource->expectNever('commit');
-		$this->MockDboSource->expectOnce('rollback');
-		$this->MockBaseService->throwOn('testMethod');
+		$this->MockDboSource->expects($this->once())->method('begin');
+		$this->MockDboSource->expects($this->never())->method('commit');
+		$this->MockDboSource->expects($this->once())->method('rollback');
+		$this->MockBaseService->expects($this->once())
+			->method('testMethod')
+			->will($this->throwException(new Exception));
 		$result = $this->TransactionService->testMethod();
 		$this->assertFalse($result);
 	}
 
 	public function testInvalidMagicCall() {
-		$this->MockDboSource->expectNever('begin');
-		$this->MockDboSource->expectNever('commit');
-		$this->MockDboSource->expectNever('rollback');
-		$this->expectException('BadMethodCallException');
+		$this->MockDboSource->expects($this->never())->method('begin');
+		$this->MockDboSource->expects($this->never())->method('commit');
+		$this->MockDboSource->expects($this->never())->method('rollback');
+		$this->setExpectedException('BadMethodCallException');
 		$this->TransactionService->notDefinedMethod();
 	}
 

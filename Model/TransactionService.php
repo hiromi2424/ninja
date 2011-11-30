@@ -15,7 +15,7 @@ class TransactionService {
 
 	public function __call($methodName, $params) {
 		if (!method_exists($this->_service, $methodName)) {
-			throw new BadMethodCallException(sprintf(__d('ninja', 'The method %s is not defined in %s class.', true), $methodName, get_class($this->_service)));
+			throw new BadMethodCallException(__d('ninja', 'The method %s is not defined in %s class.', $methodName, get_class($this->_service)));
 		}
 
 		return $this->_dispatchService(array($this->_service, $methodName), $params);

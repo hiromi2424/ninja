@@ -1,7 +1,7 @@
 <?php
 /* BaseService Test cases generated on: 2011-09-14 22:21:05 : 1316006465*/
 
-App::import('Lib', 'Ninja.test' . DS . 'NinjaModelTestCase');
+App::uses('NinjaModelTestCase', 'Ninja.TestSuite');
 App::import('Model', 'Ninja.BaseService');
 
 class TestBaseService extends BaseService {

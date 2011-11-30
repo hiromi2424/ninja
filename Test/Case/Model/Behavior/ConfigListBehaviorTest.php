@@ -18,17 +18,17 @@ class ConfigListBehaviorTestCase extends NinjaBehaviorTestCase {
 		),
 	);
 
-	public function startTest() {
-		parent::startTest();
+	public function setUp() {
+		parent::setUp();
 		Configure::write('TestConfig.ConfigListBehaviorMockModel', $this->_config);
 		$this->_reattach(array('config' => 'TestConfig.:class'));
 	}
 
-	public function endCase() {
+	public function tearDown() {
 		if (Configure::read('TestConfig')) {
 			Configure::delete('TestConfig');
 		}
-		parent::endCase();
+		parent::tearDown();
 	}
 
 	protected function _reattach($options = array()) {

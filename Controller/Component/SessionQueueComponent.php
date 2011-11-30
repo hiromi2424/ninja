@@ -1,6 +1,6 @@
 <?php
 
-class SessionQueueComponent extends Component extends Object implements ArrayAccess, IteratorAggregate, Countable {
+class SessionQueueComponent extends Component implements ArrayAccess, IteratorAggregate, Countable {
 
 	public $sessionBaseKey = 'SessionQueue';
 	public $sessionKey = 'default';

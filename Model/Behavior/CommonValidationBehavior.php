@@ -22,12 +22,12 @@ class CommonValidationBehavior extends ModelBehavior {
 
 	protected function _buildDefaultErrorMessages($model) {
 		return array(
-			'currentUser' => __d('ninja', 'Current user was not configured. To use %s(), make sure to write configration with "%s" key.', true),
-			'emptyModelId' => __d('ninja', 'The id of model %s was empty. To use %s(), make sure validator is on update', true),
-			'modelHasNotField' => __d('ninja', 'The %s model has not %s field', true),
-			'belongingModelNotFound' => __d('ninja', 'Detecting associated model and field failed: field name = :fieldName, class name = :className', true),
-			'emptyValue' => __d('ninja', 'The value of %s field was empty. To use %s(), make sure validator allows empty value.', true),
-			'foreignHasNotBelongsTo' => __d('ninja', 'The foreign model %s has not belongsTo association for %s model. To use %s(), make sure to create association for it.', true),
+			'currentUser' => __d('ninja', 'Current user was not configured. To use %s(), make sure to write configration with "%s" key.'),
+			'emptyModelId' => __d('ninja', 'The id of model %s was empty. To use %s(), make sure validator is on update'),
+			'modelHasNotField' => __d('ninja', 'The %s model has not %s field'),
+			'belongingModelNotFound' => __d('ninja', 'Detecting associated model and field failed: field name = :fieldName, class name = :className'),
+			'emptyValue' => __d('ninja', 'The value of %s field was empty. To use %s(), make sure validator allows empty value.'),
+			'foreignHasNotBelongsTo' => __d('ninja', 'The foreign model %s has not belongsTo association for %s model. To use %s(), make sure to create association for it.'),
 		);
 	}
 
