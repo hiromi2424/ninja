@@ -41,6 +41,7 @@ class AutoSlugRouteTest extends NinjaTestCase {
 
 	public function endTest($method = null) {
 		AutoSlugRoute::clearCache('AutoSlugRouteTestPost');
+		AutoSlugRoute::clearCache('AutoSlugRouteTestPostBody');
 		parent::endTest($method);
 	}
 
@@ -144,6 +145,28 @@ class AutoSlugRouteTest extends NinjaTestCase {
 		$this->assertTrue(AutoSlugRoute::clearCache('AutoSlugRouteTestPost'));
 		$result = AutoSlugRoute::readCache('AutoSlugRouteTestPost');
 		$this->assertFalse($result);
+
+		$route->parse('/post/invalid');
+		$route = new AutoSlugRoute('/post/body/:body/*', array('controller' => 'posts', 'action' => 'view'), array(
+			'named' => 'body',
+			'display' => 'body',
+			'identity' => 'AutoSlugRouteTestPostBody',
+		));
+		$route->parse('/post/body/invalid');
+
+		$result = AutoSlugRoute::readCache('AutoSlugRouteTestPost');
+		$this->assertTrue(!empty($result));
+		$result = AutoSlugRoute::readCache('AutoSlugRouteTestPostBody');
+		$this->assertTrue(!empty($result));
+
+		$this->assertTrue(AutoSlugRoute::clearCacheAll());
+
+		$result = AutoSlugRoute::readCache('AutoSlugRouteTestPost');
+		$this->assertTrue(empty($result));
+		$result = AutoSlugRoute::readCache('AutoSlugRouteTestPostBody');
+		$this->assertTrue(empty($result));
+
+		$this->assertFalse(AutoSlugRoute::clearCacheAll());
 	}
 
 }
