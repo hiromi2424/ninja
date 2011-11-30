@@ -11,7 +11,7 @@ abstract class NinjaComponentTestCase extends NinjaControllerTestCase {
 	public $componentName;
 	public $testComponent;
 
-	public function setUp() {
+	protected function _determineClassName() {
 		$this->componentClass = preg_replace('/TestCase$/', '', get_class($this));
 		$this->componentName = preg_replace('/Component$/', '', $this->componentClass);
 
@@ -22,14 +22,13 @@ abstract class NinjaComponentTestCase extends NinjaControllerTestCase {
 		}
 	}
 
-	public function startTest($method = null) {
-		parent::startTest($method);
+	protected function _instantiate() {
 		$this->loadComponent();
 	}
 
-	public function endTest($method = null) {
+	public function tearDown() {
 		unset($this->{$this->componentName});
-		parent::endTest($method);
+		parent::tearDown();
 	}
 
 	protected function _guessControllerClass($params) {

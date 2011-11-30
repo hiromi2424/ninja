@@ -1,7 +1,7 @@
 <?php
 
-if (!App::import('Lib', 'test' . DS . 'AppTestCase')) {
-	App::import('Lib', 'Ninja.test' . DS . 'AppTestCase');
+if (!class_exists('AppTestCase')) {
+	App::uses('AppTestCase', 'Ninja.TestSuite');
 }
 
 abstract class NinjaTestCase extends AppTestCase {
@@ -48,6 +48,19 @@ abstract class NinjaTestCase extends AppTestCase {
 		}
 
 		return true;
+	}
+
+	public function setUp() {
+		$this->_determineClassName();
+		$this->_instantiate();
+
+		parent::setUp();
+	}
+
+	protected function _determineClassName() {
+	}
+
+	protected function _instantiate() {
 	}
 
 }

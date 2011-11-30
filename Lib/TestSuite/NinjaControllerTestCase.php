@@ -10,7 +10,7 @@ abstract class NinjaControllerTestCase extends NinjaTestCase {
 	public $controllerClass;
 	public $controllerName;
 
-	public function setUp() {
+	protected function _determineClassName() {
 		$this->controllerClass = preg_replace('/TestCase$/', '', get_class($this));
 		$this->controllerName = preg_replace('/Controller$/', '', $this->controllerClass);
 
@@ -19,16 +19,15 @@ abstract class NinjaControllerTestCase extends NinjaTestCase {
 		}
 	}
 
-	public function startTest($method = null) {
-		parent::startTest($method);
+	protected function _instantiate() {
 		$this->loadController();
 	}
 
-	public function endTest($method = null) {
+	public function tearDown() {
 		$this->shutdownController();
 		ClassRegistry::flush();
 
-		parent::endTest($method);
+		parent::tearDown();
 	}
 
 /**

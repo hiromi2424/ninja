@@ -14,12 +14,10 @@ abstract class NinjaHelperTestCase extends NinjaTestCase {
 
 	public $view;
 
-	public function setUp() {
+	public function _determineClassName() {
 		$this->helperClass = preg_replace('/TestCase$/', '', get_class($this));
 		$this->helperName = preg_replace('/Helper$/', '', $this->helperClass);
 		$this->view = new View(new Controller(new CakeRequest));
-
-		parent::setUp();
 	}
 
 	public function loadHelper($options = array()) {
@@ -29,15 +27,14 @@ abstract class NinjaHelperTestCase extends NinjaTestCase {
 		return $this->{$this->helperName} = $this->view->loadHelper($this->plugin . $this->helperName, $options);
 	}
 
-	public function startTest($method = null) {
-		parent::startTest($method);
+	public function _instantiate() {
 		$this->loadHelper();
 	}
 
-	public function endTest($method = null) {
+	public function tearDown() {
 		unset($this->{$this->helperName});
 		ClassRegistry::flush();
 
-		parent::endTest($method);
+		parent::tearDown();
 	}
 }

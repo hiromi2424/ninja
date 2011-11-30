@@ -1,5 +1,5 @@
 <?php
 
-abstract class AppTestCase extends FixtureLoaderTestCase {
+abstract class AppTestCase extends CakeTestCase {
 
 }

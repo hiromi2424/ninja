@@ -13,7 +13,7 @@ abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 	public $behaviorClass;
 	public $modelName;
 
-	public function setUp() {
+	public function _determineClassName() {
 		$this->behaviorName = str_replace('BehaviorTestCase', '', get_class($this));
 		$this->behaviorClass = $this->behaviorName . 'Behavior';
 
@@ -28,13 +28,9 @@ abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 			App::uses($this->behaviorName, $this->plugin . 'Model/Behavior');
 		}
 
-
-		parent::setUp();
 	}
 
-	public function startTest($method = null) {
-		parent::startTest($method);
-
+	public function _instantiate() {
 		if ($this->modelName) {
 			$this->Model = ClassRegistry::init($this->modelName);
 			if (!$this->Model->Behaviors->attached($this->behaviorName)) {
@@ -46,12 +42,12 @@ abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 		}
 	}
 
-	public function endTest($method = null) {
+	public function tearDown() {
 		$this->Model = null;
 		$this->Behavior = null;
 		ClassRegistry::flush();
 
-		parent::endTest($method);
+		parent::tearDown();
 	}
 
 	protected function _getBehavior() {

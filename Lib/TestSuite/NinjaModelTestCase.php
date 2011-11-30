@@ -10,27 +10,24 @@ abstract class NinjaModelTestCase extends NinjaTestCase {
 	public $modelName;
 	public $modelClass;
 
-	public function startCase() {
+	protected function _determineClassName() {
 		$this->modelName = str_replace('TestCase', '', get_class($this));
 		$this->modelClass = $this->modelName;
 
 		if (class_exists('Test' . $this->modelClass)) {
 			$this->modelClass = 'Test' . $this->modelClass;
 		}
-		parent::startCase();
 	}
 
-	public function startTest($method = null) {
-		parent::startTest($method);
-
+	protected function _instantiate() {
 		$this->{$this->modelName} = ClassRegistry::init($this->plugin . $this->modelClass);
 	}
 
-	public function endTest($method = null) {
+	public function tearDown() {
 		unset($this->{$this->modelName});
 		ClassRegistry::flush();
 
-		parent::endTest($method);
+		parent::tearDown();
 	}
 
 	public function _repeat($field, $name = 'maxlength', $additional = 0, $char = 'a') {
