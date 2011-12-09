@@ -25,7 +25,7 @@ class MagickMethodBehavior extends ModelBehavior {
 	protected function _matched($regex, $method) {
 		$trace = debug_backtrace(false);
 
-		for ($i = 4; $i <= 6; $i++) {
+		for ($i = 0; $i < count($trace); $i++) {
 			if (preg_match($regex . 'i', $trace[$i]['function'], $matched)) {
 				return $matched[1];
 			}
