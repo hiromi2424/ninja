@@ -3,19 +3,22 @@
 class PageTitleComponent extends Component {
 
 	public $controller;
+	public $autoSet = true;
 
 	public function initialize($controller, $settings = array()) {
 		$this->controller = $controller;
+		$this->_set($settings);
 	}
 
 	public function beforeRender($controller) {
 
-		$title = $this->getTitle();
-		if (!$title) {
+		if (!$this->autoSet || !($title = $this->getTitle())) {
 			return;
 		}
 
-		$this->controller->set('title_for_layout', $title);
+		$varName = $this->autoSet === true ? 'title_for_layout' : $this->autoSet;
+
+		$this->controller->set($varName, $title);
 
 	}
 
