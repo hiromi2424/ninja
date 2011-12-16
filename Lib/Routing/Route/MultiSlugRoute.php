@@ -1,5 +1,6 @@
 <?php
 
+App::uses('ClassRegistry', 'Utility');
 App::uses('NinjaRoute', 'Ninja.Routing/Route');
 
 class MultiSlugRoute extends NinjaRoute {
