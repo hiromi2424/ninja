@@ -10,6 +10,7 @@ class MultiSlugRoute extends NinjaRoute {
 		'cacheConfig' => 'default',
 		'identity' => ':alias',
 		'urlencode' => true,
+		'urldecode' => true,
 		'conditions' => array(),
 	);
 
@@ -53,7 +54,7 @@ class MultiSlugRoute extends NinjaRoute {
 			);
 
 			$this->_slugOptions[$slug] = Set::merge(
-				array_intersect_key($this->options, array_flip(array('model', 'urlencode'))),
+				array_intersect_key($this->options, array_flip(array('model', 'urlencode', 'urldecode'))),
 				$defaultBySlug,
 				self::$defaultSlugOptions,
 				$options
@@ -172,6 +173,11 @@ class MultiSlugRoute extends NinjaRoute {
 			$callbacks = $this->getOption('callbacks', $options);
 			if ($callbacks['parse'] !== false) {
 				$slugs[$slug] = $callbacks['parse']($slugs[$slug]);
+			}
+
+			if ($urldecode = $this->getOption('urldecode', $options)) {
+				$decodeMethod = $urldecode === true ? 'rawurldecode' : $urldecode;
+				$slugs[$slug] = $decodeMethod($slugs[$slug]);
 			}
 		}
 

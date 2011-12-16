@@ -14,6 +14,7 @@ class AutoSlugRoute extends NinjaRoute {
 		'named' => ':displayField',
 		'identity' => ':name',
 		'urlencode' => true,
+		'urldecode' => true,
 	);
 
 	protected $_model;
@@ -24,6 +25,7 @@ class AutoSlugRoute extends NinjaRoute {
 	protected $_named;
 	protected $_identity;
 	protected $_urlencode;
+	protected $_urldecode;
 
 	private $__cached;
 
@@ -78,9 +80,11 @@ class AutoSlugRoute extends NinjaRoute {
 		}
 
 		$slugs = $this->_read();
-		if (false === ($id = array_search($params[$this->named], $slugs))) {
+		$slug = $parans[$this->named];
+		$slug = $this->_urldecode ? rawurldecode($slug) : $slug;
+		if (false === ($id = array_search($slug, $slugs))) {
 
-			if (!($result = $this->_lookup(array($this->display => $params[$this->named])))) {
+			if (!($result = $this->_lookup(array($this->display => $slug)))) {
 				return false;
 			}
 
