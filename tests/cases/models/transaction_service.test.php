@@ -18,6 +18,8 @@ class TransactionServiceTestCase extends NinjaModelTestCase {
 	public $MockDboSource;
 	public $MockBaseService;
 
+	public $fixtures = false;
+
 	public function startCase() {
 		parent::startCase();
 	}
