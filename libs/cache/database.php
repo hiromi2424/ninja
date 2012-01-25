@@ -68,6 +68,9 @@ class DatabaseEngine extends CacheEngine {
  */
 	public function getModel() {
 		if (!$this->_initialized) {
+			if (!class_exists('ClassRegistry')) {
+				App::import('Core', 'ClassRegistry');
+			}
 			$this->_model = ClassRegistry::init($this->settings['model']);
 			$this->_initialized = true;
 		}
