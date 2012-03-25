@@ -9,7 +9,7 @@ class DatabaseEngine extends CacheEngine {
 /**
  * Settings
  *
- * - model = model name to be used for store, default => 'CaceData'
+ * - model = model name to be used for store, default => 'Temporariness'
  * - prefix = string prefix for filename, default => ''
  * - serialize = serialize the data, default => true
  * - fields = fields definition.
@@ -130,8 +130,8 @@ class DatabaseEngine extends CacheEngine {
 				'conditions' => array(
 					$this->settings['fields']['key'] => $key,
 					'OR' => array(
-						'expires' => 0,
-						'expires >= ' => time(),
+						$this->settings['fields']['expires'] => 0,
+						$this->settings['fields']['expires'] . ' >= ' => time(),
 					),
 				),
 				'recursive' => -1
@@ -217,8 +217,8 @@ class DatabaseEngine extends CacheEngine {
 
 		if ($check) {
 			$conditions = array(
-				'expires != ' => 0,
-				'expires < ' => time(),
+				$this->settings['fields']['expires'] . ' != ' => 0,
+				$this->settings['fields']['expires'] . ' < ' => time(),
 			);
 		}
 		$records = $model->find('all', array(
