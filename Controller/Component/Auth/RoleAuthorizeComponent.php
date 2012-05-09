@@ -4,7 +4,8 @@ class RoleAuthorizeComponent extends Component {
 
 	public $auth = 'Auth';
 	public $configName = 'Role.level';
-	public $levelField = 'Group.level';
+	public $groupIdField = 'group_id';
+	public $model = 'Group';
 	public $usePrefix = true;
 
 	public $controller;
@@ -26,7 +27,8 @@ class RoleAuthorizeComponent extends Component {
 		if (isset($requireAuth)) {
 			$config = Configure::read($this->configName);
 			if (array_key_exists($requireAuth, $config)) {
-				return $config[$requireAuth] <= $this->controller->{$this->auth}->user($this->levelField);
+				$userLevel = ClassRegistry::init($this->model)->field('level', array('id' => $this->controller->{$this->auth}->user($this->groupIdField)));
+				return $config[$requireAuth] <= $userLevel;
 			}
 
 		}
