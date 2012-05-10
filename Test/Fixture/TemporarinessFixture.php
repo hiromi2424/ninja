@@ -1,7 +1,7 @@
 <?php
 
 
-class TemporarinessFixture extends NinjaTestFixture {
+class TemporarinessFixture extends CakeTestFixture {
 
 	public $name = 'Temporariness';
 

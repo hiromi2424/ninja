@@ -1,7 +1,7 @@
 <?php
 /* PageTitle Test cases generated on: 2011-12-10 12:46:52 : 1323488812*/
 
-App::import('Lib', 'Ninja.test' . DS . 'NinjaComponentTestCase');
+App::import('TestSuite', 'Ninja.NinjaComponentTestCase');
 
 class PageTitleComponentTestCase extends NinjaComponentTestCase {
 

@@ -85,7 +85,7 @@ class DatabaseEngine extends CacheEngine {
  * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
  */
-	public function write($key, &$value, $duration) {
+	public function write($key, $value, $duration) {
 		$model = $this->getModel();
 
 		if (method_exists($model, 'writeCache')) {
@@ -110,7 +110,7 @@ class DatabaseEngine extends CacheEngine {
 			$model->set($model->primaryKey, $id);
 		}
 
-		return $model->save();
+		return !!$model->save();
 	}
 
 /**
@@ -253,5 +253,30 @@ class DatabaseEngine extends CacheEngine {
 	public function gc() {
 		return $this->clear(true);
 	}
+
+/**
+ * Not implemented
+ *
+ * @param string $key
+ * @param integer $offset
+ * @return void
+ * @throws CacheException
+ */
+	public function decrement($key, $offset = 1) {
+		throw new CacheException(__d('cake_dev', 'Files cannot be atomically decremented.'));
+	}
+
+/**
+ * Not implemented
+ *
+ * @param string $key
+ * @param integer $offset
+ * @return void
+ * @throws CacheException
+ */
+	public function increment($key, $offset = 1) {
+		throw new CacheException(__d('cake_dev', 'Files cannot be atomically incremented.'));
+	}
+
 
 }

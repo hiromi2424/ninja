@@ -84,7 +84,7 @@ abstract class NinjaControllerTestCase extends NinjaTestCase {
 	}
 
 	public function shutdownController() {
-		$this->Controller->Components->trigger('shutdown', array(&$Controller));
+		$this->Controller->Components->trigger('shutdown', array($this->Controller));
 		$this->Controller = null;
 	}
 

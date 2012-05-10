@@ -3,10 +3,8 @@
  * DatabaseEngineTest file
  *
  */
-if (!class_exists('Cache')) {
-	require LIBS . 'cache.php';
-}
-App::import('Lib', 'Ninja.NinjaTestCase');
+App::uses('Cache', 'Cache');
+App::import('TestSuite', 'Ninja.NinjaTestCase');
 
 /**
  * DatabaseEngineTest class
@@ -96,34 +94,34 @@ class DatabaseEngineTest extends NinjaTestCase {
  * @return void
  */
 	public function testExpiry() {
-		Cache::set(array('duration' => 1));
+		Cache::set(array('duration' => 1), 'database_test');
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('other_test', $data);
+		$result = Cache::write('other_test', $data, 'database_test');
 		$this->assertTrue($result);
 
 		sleep(2);
-		$result = Cache::read('other_test');
+		$result = Cache::read('other_test', 'database_test');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' => 1));
+		Cache::set(array('duration' => 1), 'database_test');
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('other_test', $data);
+		$result = Cache::write('other_test', $data, 'database_test');
 		$this->assertTrue($result);
 
 		sleep(2);
-		$result = Cache::read('other_test');
+		$result = Cache::read('other_test', 'database_test');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' => 0));
+		Cache::set(array('duration' => 0), 'database_test');
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('persistent', $data);
+		$result = Cache::write('persistent', $data, 'database_test');
 		$this->assertTrue($result);
 
 		sleep(1);
-		$result = Cache::read('persistent');
+		$result = Cache::read('persistent', 'database_test');
 		$this->assertEqual($result, $data);
 	}
 
