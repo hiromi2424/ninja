@@ -80,7 +80,7 @@ class AutoSlugRoute extends NinjaRoute {
 		}
 
 		$slugs = $this->_read();
-		$slug = $parans[$this->named];
+		$slug = $params[$this->named];
 		$slug = $this->_urldecode ? rawurldecode($slug) : $slug;
 		if (false === ($id = array_search($slug, $slugs))) {
 
