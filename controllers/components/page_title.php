@@ -12,7 +12,7 @@ class PageTitleComponent extends Object {
 
 	public function beforeRender($controller) {
 
-		if (!$this->autoSet || !($title = $this->getTitle())) {
+		if (!$this->autoSet || null !== ($title = $this->getTitle())) {
 			return;
 		}
 
