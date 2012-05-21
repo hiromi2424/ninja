@@ -12,12 +12,13 @@ class AllowDenyComponent extends Component {
 	public $Auth;
 
 	public function initialize($controller) {
-		$this->controller = $controller;		$this->Auth = $this->controller->{$this->auth};
+		$this->controller = $controller;
+		$this->Auth = $this->controller->{$this->auth};
 
 		$allowNonPrefix = isset($this->controller->{$this->allowNonPrefixProperty}) ? $this->controller->{$this->allowNonPrefixProperty} : $this->allowNonPrefix;
 
 		if ($allowNonPrefix && empty($this->controller->request->params['prefix'])) {
-			$this->Auth->allow('*');
+			$this->Auth->allow();
 		}
 
 		if (!empty($this->controller->{$this->denyProperty})) {
