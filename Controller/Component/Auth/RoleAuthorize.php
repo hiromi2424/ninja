@@ -1,6 +1,8 @@
 <?php
 
-class RoleAuthorizeComponent extends Component {
+App::uses('BaseAuthorize', 'Controller/Component/Auth');
+
+class RoleAuthorize extends BaseAuthorize {
 
 	public $auth = 'Auth';
 	public $configName = 'Role.level';
@@ -8,36 +10,26 @@ class RoleAuthorizeComponent extends Component {
 	public $model = 'Group';
 	public $usePrefix = true;
 
-	public $controller;
+	public function authorize($user, CakeRequest $request) {
 
-	public function initialize($controller) {
-		$this->controller = $controller;
-	}
-
-	public function authorize() {
-
-		if (!empty($this->controller->requireAuth) && !is_array($this->controller->requireAuth)) {
-			$requireAuth = $this->controller->requireAuth;
-		} elseif (!empty($this->controller->requireAuth) && is_array($this->controller->requireAuth) && !empty($this->controller->requireAuth[$this->controller->action])) {
-			$requireAuth = $this->controller->requireAuth[$this->controller->action];
-		} elseif ($this->usePrefix && !empty($this->controller->request->params['prefix'])) {
-			$requireAuth = $this->controller->request->params['prefix'];
+		if (!empty($this->_Controller->requireAuth) && !is_array($this->_Controller->requireAuth)) {
+			$requireAuth = $this->_Controller->requireAuth;
+		} elseif (!empty($this->_Controller->requireAuth) && is_array($this->_Controller->requireAuth) && !empty($this->_Controller->requireAuth[$this->_Controller->action])) {
+			$requireAuth = $this->_Controller->requireAuth[$this->_Controller->action];
+		} elseif ($this->usePrefix && !empty($request->params['prefix'])) {
+			$requireAuth = $request->params['prefix'];
 		}
 
 		if (isset($requireAuth)) {
 			$config = Configure::read($this->configName);
 			if (array_key_exists($requireAuth, $config)) {
-				$userLevel = ClassRegistry::init($this->model)->field('level', array('id' => $this->controller->{$this->auth}->user($this->groupIdField)));
+				$userLevel = ClassRegistry::init($this->model)->field('level', array('id' => $this->_Controller->{$this->auth}->user($this->groupIdField)));
 				return $config[$requireAuth] <= $userLevel;
 			}
 
 		}
 
 		return true;
-	}
-
-	public function isAuthorized() {
-		return $this->authorize();
 	}
 
 }
