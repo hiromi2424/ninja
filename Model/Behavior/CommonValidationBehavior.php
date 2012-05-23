@@ -49,7 +49,9 @@ class CommonValidationBehavior extends ModelBehavior {
 
 	protected function _isCurrentUser($model, $check, $methodName) {
 		list($fieldName, $user_id) = each($check);
-		if (!$user_id || is_array($user_id)) {
+		if ($user_id === '') {
+			return true;
+		} elseif (empty($user_id) || is_array($user_id)) {
 			throw new BadMethodCallException(sprintf(self::$errorMessages['emptyValue'], $fieldName, $methodName));
 		}
 
@@ -123,7 +125,9 @@ class CommonValidationBehavior extends ModelBehavior {
 	protected function _thisHas($model, $check, $className, $foreignKey, $methodName) {
 		list($fieldName, $foreignId) = each($check);
 		$modelId = $this->_getModelId($model, $methodName);
-		if (!$foreignId || is_array($foreignId)) {
+		if ($foreignId === '') {
+			return true;
+		} elseif (empty($foreignId) || is_array($foreignId)) {
 			throw new BadMethodCallException(sprintf(self::$errorMessages['emptyValue'], $fieldName, $methodName));
 		}
 
@@ -155,7 +159,9 @@ class CommonValidationBehavior extends ModelBehavior {
 
 	protected function _existsForeign($model, $check, $className, $methodName) {
 		list($fieldName, $foreignId) = each($check);
-		if (!$foreignId || is_array($foreignId)) {
+		if ($foreignId === '') {
+			return true;
+		} elseif (empty($foreignId) || is_array($foreignId)) {
 			throw new BadMethodCallException(sprintf(self::$errorMessages['emptyValue'], $fieldName, $methodName));
 		}
 

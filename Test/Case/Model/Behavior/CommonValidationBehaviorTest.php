@@ -260,6 +260,10 @@ class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 		}
 	}
 
+	public function testEmptyValue() {
+		$this->assertTrue($this->Model->existsForeign(array('common_validation_behavior_belonged_id' => '')));
+	}
+
 	public function testNotExistsForeign() {
 		$this->assertFalse($this->Model->notExistsForeign(array('common_validation_behavior_belonged_id' => 5)));
 		$this->assertTrue($this->Model->notExistsForeign(array('common_validation_behavior_belonged_id' => 100)));
