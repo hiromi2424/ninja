@@ -21,6 +21,11 @@ class MagickMethodBehaviorMockBase extends Model {
 		return $this->hasField;
 	}
 
+	public function field() {
+		$args = func_get_args();
+		return $args;
+	}
+
 }
 
 
@@ -299,6 +304,29 @@ class MagickMethodBehaviorTestCase extends NinjaBehaviorTestCase {
 
 		$result = $this->Model->scopeEnabledAndInsertId(true);
 		$expected = array('conditions' => array(
+			$this->Model->escapeField('enabled') => true,
+			$this->Model->escapeField('id') => 2,
+		));
+		$this->assertEqual($expected, $result);
+
+	}
+
+	public function testField() {
+
+		$result = $this->Model->fieldById('hoge', 1);
+		$expected = array('hoge', array(
+			$this->Model->escapeField('id') => 1,
+		));
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Model->fieldByInsertId('fuga');
+		$expected = array('fuga', array(
+			$this->Model->escapeField('id') => 2,
+		));
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Model->fieldByEnabledAndInsertId('piyo', true);
+		$expected = array('piyo', array(
 			$this->Model->escapeField('enabled') => true,
 			$this->Model->escapeField('id') => 2,
 		));

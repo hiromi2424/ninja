@@ -6,6 +6,7 @@ class MagickMethodBehavior extends ModelBehavior {
 
 	protected $_findMap = array('/^find(.+)$/' => '_findMagick');
 	protected $_scopeMap = array('/^scope(.+)$/' => '_scopeMagick');
+	protected $_fieldMap = array('/^fieldBy(.+)$/' => '_fieldMagick');
 
 	public static $defaultSettings = array(
 		'callbackPrefix' => 'by',
@@ -18,7 +19,7 @@ class MagickMethodBehavior extends ModelBehavior {
 	);
 
 	public function setup($Model, $config = array()) {
-		$this->mapMethods = array_merge($this->_findMap, $this->_scopeMap);
+		$this->mapMethods = array_merge($this->_findMap, $this->_scopeMap, $this->_fieldMap);
 		$this->settings[$Model->alias] = Set::merge(self::$defaultSettings, $config);
 	}
 
@@ -64,7 +65,8 @@ class MagickMethodBehavior extends ModelBehavior {
 				$query = array_shift($args);
 			}
 		} else {
-			$query = $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method'));
+			list($conditions, $query) = $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method'));
+			$query = Set::merge(compact('conditions'), $query);
 		}
 
 		return $Model->find($type, $query);
@@ -82,10 +84,28 @@ class MagickMethodBehavior extends ModelBehavior {
 
 		list($fields, $operators) = $this->_extract($matched);
 
-		$query = $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method'));
+		list($conditions, $query) = $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method'));
+		$query = Set::merge(compact('conditions'), $query);
 
 		return $query;
 
+	}
+
+	public function _fieldMagick($Model) {
+
+		$args = func_get_args();
+		/* $Model = */ array_shift($args);
+		$method = array_shift($args);
+		$field = array_shift($args);
+		$args = array_values($args);
+
+		$matched = $this->_matched(key($this->_fieldMap) , $method);
+		list($fields, $operators) = $this->_extract($matched);
+
+		list($generatedConditions, $conditions) = $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method'));
+		$conditions = Set::merge($generatedConditions, $conditions);
+
+		return $Model->field($field, $conditions);
 	}
 
 	protected function _extract($parts) {
@@ -169,7 +189,7 @@ class MagickMethodBehavior extends ModelBehavior {
 			$criteria = $this->_generatesOrCreteria($scopes, $operators);
 		}
 
-		return Set::merge(array('conditions' => $criteria), $query);
+		return array($criteria, $query);
 
 	}
 
