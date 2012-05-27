@@ -22,11 +22,19 @@ class AllowDenyComponent extends Component {
 		}
 
 		if (!empty($this->controller->{$this->denyProperty})) {
-			$this->Auth->deny($this->controller->{$this->denyProperty});
+			if ($this->controller->{$this->denyProperty} === true) {
+				$this->Auth->deny();
+			} else {
+				$this->Auth->deny($this->controller->{$this->denyProperty});
+			}
 		}
 
 		if (!empty($this->controller->{$this->allowProperty})) {
-			$this->Auth->allow($this->controller->{$this->allowProperty});
+			if ($this->controller->{$this->allowProperty} === true) {
+				$this->Auth->allow();
+			} else {
+				$this->Auth->allow($this->controller->{$this->allowProperty});
+			}
 		}
 	}
 }
