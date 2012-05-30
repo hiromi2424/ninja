@@ -4,6 +4,8 @@
  *
  * 
  */
+
+App::uses('ClassRegistry', 'Utility');
 class DatabaseEngine extends CacheEngine {
 
 /**
