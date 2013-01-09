@@ -6,7 +6,6 @@ App::uses('AppModel', 'Model');
 
 abstract class NinjaModelTestCase extends NinjaTestCase {
 
-	public $fixtures = array('IMPORT' => 'default');
 	public $modelName;
 	public $modelClass;
 
