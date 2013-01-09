@@ -321,6 +321,8 @@ class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 	}
 
 	public function testCheckDoubleSave() {
+		// workaround: formatter was replaced with CakeTestDispatcher::date(),
+		// that provides test start time so this test case failed.
 		$db = $this->Model->getDataSource();
 		$formatterBackup = $db->columns['datetime']['formatter'];
 		$db->columns['datetime']['formatter'] = 'date';
