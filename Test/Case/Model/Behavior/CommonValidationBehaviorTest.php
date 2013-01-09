@@ -321,6 +321,10 @@ class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 	}
 
 	public function testCheckDoubleSave() {
+		$db = $this->Model->getDataSource();
+		$formatterBackup = $db->columns['datetime']['formatter'];
+		$db->columns['datetime']['formatter'] = 'date';
+
 		$this->Model->Behaviors->attach('Ninja.CommonValidation', array(
 			'waitDoubleCheck' => 10,
 		));
@@ -336,8 +340,10 @@ class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 			'common_validation_behavior_belonged_id' => 4,
 			'common_validation_behavior_user_id' => 4,
 		);
-		$this->assertTrue(!!$this->Model->save($this->Model->create($data)));
-		$this->assertFalse($this->Model->save($this->Model->create($data)));
+		$result = $this->Model->save($this->Model->create($data));
+		$this->assertTrue(!!$result);
+		$result = $this->Model->save($this->Model->create($data));
+		$this->assertFalse($result);
 		$this->assertTrue(Set::check($this->Model->validationErrors, 'created'));
 
 		$this->Model->validate = array(
@@ -353,11 +359,13 @@ class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
 		$this->Model->validate['created']['checkDoubleSave']['rule'][] = 5;
 		$this->assertFalse($this->Model->save($this->Model->create($data)));
 		$this->assertTrue(Set::check($this->Model->validationErrors, 'created'));
+
+
+		$db->columns['datetime']['formatter'] = $formatterBackup;
 	}
 
 	public function testGenerateFormatedDatetime() {
-		$this->Behavior = new CommonValidationBehavior;
-		$result = $this->Behavior->generateFormatedDatetime(strtotime('2010-09-26 14:57:38'));
+		$result = $this->Model->generateFormatedDatetime(strtotime('2010-09-26 14:57:38'));
 		$expected = array('year' => '2010', 'month' => '09', 'day' => '26', 'hour' => '14', 'min' => '57', 'sec' => '38');
 		$this->assertEqual($result, $expected);
 

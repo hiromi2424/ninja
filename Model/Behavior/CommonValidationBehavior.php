@@ -214,7 +214,7 @@ class CommonValidationBehavior extends ModelBehavior {
 			empty($model->data[$model->alias][$model->primaryKey])
 		;
 		if ($create) {
-			$model->set('created', $this->generateFormatedDatetime());
+			$model->set('created', $model->generateFormatedDatetime());
 			if (!empty($model->whitelist) && !empty($model->validate['created'])) {
 				$model->whitelist[] = 'created';
 			}
@@ -241,7 +241,7 @@ class CommonValidationBehavior extends ModelBehavior {
 			$fields = array_keys($model->schema());
 			$fields = array_diff($fields, array($model->primaryKey, $field));
 		}
-		$ok = $this->generateFormatedDatetime(strtotime($created) - $wait);
+		$ok = $model->generateFormatedDatetime(strtotime($created) - $wait);
 		$ok = $model->deconstruct($field, $ok);
 
 		$data = array_intersect_key($model->data[$model->alias], array_flip($fields));
@@ -256,7 +256,7 @@ class CommonValidationBehavior extends ModelBehavior {
 		return true;
 	}
 
-	public function generateFormatedDatetime($now = null) {
+	public function generateFormatedDatetime($model, $now = null) {
 		if ($now === null) {
 			$now = time();
 		}
