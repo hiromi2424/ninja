@@ -2,45 +2,57 @@
 /**
  * Bake Template for Controller action generation.
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.console.libs.template.objects
+ * @package       Cake.Console.Templates.default.actions
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
 
-	function <?php echo $admin ?>index() {
+/**
+ * <?php echo $admin ?>index method
+ *
+ * @return void
+ */
+	public function <?php echo $admin ?>index() {
 		$this-><?php echo $currentModelName ?>->recursive = 0;
 		$this->set('<?php echo $pluralName ?>', $this->paginate());
 	}
 
-	function <?php echo $admin ?>view($id = null) {
-		if (!$id) {
-<?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(__('Invalid <?php echo strtolower($singularHumanName) ?>'));
-			$this->redirect(array('action' => 'index'));
-<?php else: ?>
-			$this->flash(__('Invalid <?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
-<?php endif; ?>
+/**
+ * <?php echo $admin ?>view method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function <?php echo $admin ?>view($id = null) {
+		if (!$this-><?php echo $currentModelName; ?>->exists($id)) {
+			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
-		$this->set('<?php echo $singularName; ?>', $this-><?php echo $currentModelName; ?>->read(null, $id));
+		$options = array('conditions' => array('<?php echo $currentModelName; ?>.' . $this-><?php echo $currentModelName; ?>->primaryKey => $id));
+		$this->set('<?php echo $singularName; ?>', $this-><?php echo $currentModelName; ?>->find('first', $options));
 	}
 
 <?php $compact = array(); ?>
-	function <?php echo $admin ?>add() {
-		if (!empty($this->data)) {
+/**
+ * <?php echo $admin ?>add method
+ *
+ * @return void
+ */
+	public function <?php echo $admin ?>add() {
+		if ($this->request->is('post')) {
 			$this-><?php echo $currentModelName; ?>->create();
-			if ($this-><?php echo $currentModelName; ?>->save($this->data)) {
+			if ($this-><?php echo $currentModelName; ?>->save($this->request->data)) {
 <?php if ($wannaUseSession): ?>
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved'));
 				$this->redirect(array('action' => 'index'));
@@ -71,17 +83,19 @@
 	}
 
 <?php $compact = array(); ?>
-	function <?php echo $admin; ?>edit($id = null) {
-		if (!$id && empty($this->data)) {
-<?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
-			$this->redirect(array('action' => 'index'));
-<?php else: ?>
-			$this->flash(sprintf(__('Invalid <?php echo strtolower($singularHumanName); ?>')), array('action' => 'index'));
-<?php endif; ?>
+/**
+ * <?php echo $admin ?>edit method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function <?php echo $admin; ?>edit($id = null) {
+		if (!$this-><?php echo $currentModelName; ?>->exists($id)) {
+			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
-		if (!empty($this->data)) {
-			if ($this-><?php echo $currentModelName; ?>->save($this->data)) {
+		if ($this->request->is('post') || $this->request->is('put')) {
+			if ($this-><?php echo $currentModelName; ?>->save($this->request->data)) {
 <?php if ($wannaUseSession): ?>
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved'));
 				$this->redirect(array('action' => 'index'));
@@ -93,9 +107,9 @@
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
 <?php endif; ?>
 			}
-		}
-		if (empty($this->data)) {
-			$this->data = $this-><?php echo $currentModelName; ?>->read(null, $id);
+		} else {
+			$options = array('conditions' => array('<?php echo $currentModelName; ?>.' . $this-><?php echo $currentModelName; ?>->primaryKey => $id));
+			$this->request->data = $this-><?php echo $currentModelName; ?>->find('first', $options);
 		}
 <?php
 		foreach (array('belongsTo', 'hasAndBelongsToMany') as $assoc):
@@ -114,19 +128,24 @@
 	?>
 	}
 
-	function <?php echo $admin; ?>delete($id = null) {
-		if (!$id) {
-<?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(__('Invalid id for <?php echo strtolower($singularHumanName); ?>'));
-			$this->redirect(array('action'=>'index'));
-<?php else: ?>
-			$this->flash(sprintf(__('Invalid <?php echo strtolower($singularHumanName); ?>')), array('action' => 'index'));
-<?php endif; ?>
+/**
+ * <?php echo $admin ?>delete method
+ *
+ * @throws NotFoundException
+ * @throws MethodNotAllowedException
+ * @param string $id
+ * @return void
+ */
+	public function <?php echo $admin; ?>delete($id = null) {
+		$this-><?php echo $currentModelName; ?>->id = $id;
+		if (!$this-><?php echo $currentModelName; ?>->exists()) {
+			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
-		if ($this-><?php echo $currentModelName; ?>->delete($id)) {
+		$this->request->onlyAllow('post', 'delete');
+		if ($this-><?php echo $currentModelName; ?>->delete()) {
 <?php if ($wannaUseSession): ?>
 			$this->Session->setFlash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> deleted'));
-			$this->redirect(array('action'=>'index'));
+			$this->redirect(array('action' => 'index'));
 <?php else: ?>
 			$this->flash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> deleted'), array('action' => 'index'));
 <?php endif; ?>

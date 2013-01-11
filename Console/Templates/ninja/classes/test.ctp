@@ -23,11 +23,10 @@ $baseTestCaseExists = in_array($type, array('Controller', 'Component', 'Model', 
 $testClass = 'Ninja' . ($baseTestCaseExists ? $type : '') . 'TestCase';
 
 echo "<?php\n";
-echo "/* ". $className ." Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n";
 ?>
-<?php if (!$baseTestCaseExists): ?>App::import('<?php echo $type; ?>', '<?php echo $plugin . $className;?>');<?php endif ?>
+<?php if (!$baseTestCaseExists): ?>App::uses('<?php echo $className; ?>', '<?php echo $plugin . $type; ?>');<?php endif; ?>
 
-App::import('Lib', 'Ninja.test' . DS . '<?php echo $testClass ?>');
+App::uses('<?php echo $testClass; ?>', 'Ninja.TestSuite');
 
 <?php if ($mock and strtolower($type) == 'controller'): ?>
 class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
@@ -39,26 +38,55 @@ class Test<?php echo $fullClassName; ?> extends <?php echo $fullClassName; ?> {
 }
 
 <?php endif; ?>
-class <?php echo $fullClassName; ?>TestCase extends <?php echo $testClass ?> {
+/**
+ * <?php echo $fullClassName; ?> Test Case
+ *
+ */
+class <?php echo $fullClassName; ?>Test extends <?php echo $testClass; ?> {
 <?php if (!empty($fixtures)): ?>
 
-	public $fixtures = array('<?php echo join("', '", $fixtures); ?>');
+/**
+ * Fixtures
+ *
+ * @var array
+ */
+	public $fixtures = array(
+<?php
+	foreach ($fixtures as $f) {
+		echo "\t\t'$f',", PHP_EOL;
+	}
+?>
+	);
 <?php endif; ?>
-<?php if (!$baseTestCaseExists): ?>
+<?php if (!$baseTestCaseExists && !empty($construction)): ?>
 
-	public function startTest() {
+/**
+ * setUp method
+ *
+ * @return void
+ */
+	public function setUp() {
 		$this-><?php echo $className . ' = ' . $construction; ?>
+
+		parent::setUp();
 	}
 
-	public function endTest() {
-		unset($this-><?php echo $className;?>);
+/**
+ * tearDown method
+ *
+ * @return void
+ */
+	public function tearDown() {
+		unset($this-><?php echo $className; ?>);
 		ClassRegistry::flush();
+
+		parent::tearDown();
 	}
-<?php endif ?>
+<?php endif; ?>
 <?php foreach ($methods as $method): ?>
 
 	public function test<?php echo Inflector::classify($method); ?>() {
 
 	}
-<?php endforeach;?>
+<?php endforeach; ?>
 }
