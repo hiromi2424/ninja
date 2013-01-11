@@ -37,7 +37,7 @@ class CommonValidationBehaviorBelonged extends Model {
 	);
 }
 
-class CommonValidationBehaviorTestCase extends NinjaBehaviorTestCase {
+class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 	public $fixtures = array(
 		'plugin.Ninja.CommonValidationBehaviorMockModel',
 		'plugin.Ninja.CommonValidationBehaviorBelonged',

@@ -40,7 +40,7 @@ class TestDisableActionsComponent extends DisableActionsComponent {
 
 }
 
-class DisableActionsComponentTestCase extends NinjaComponentTestCase {
+class DisableActionsComponentTest extends NinjaComponentTestCase {
 
 	public $fixtures = false;
 

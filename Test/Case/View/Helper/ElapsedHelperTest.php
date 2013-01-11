@@ -2,7 +2,7 @@
 /* Elapsed Test cases generated on: 2011-05-21 14:06:44 : 1305954404*/
 App::import('TestSuite', 'Ninja.NinjaHelperTestCase');
 
-class ElapsedHelperTestCase extends NinjaHelperTestCase {
+class ElapsedHelperTest extends NinjaHelperTestCase {
 
 	public function testNice() {
 		$msec = __d('elapsed', 'msec');

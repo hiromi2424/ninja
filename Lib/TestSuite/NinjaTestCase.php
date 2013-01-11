@@ -1,5 +1,6 @@
 <?php
 
+App::uses('AppTestCase', 'TestSuite');
 if (!class_exists('AppTestCase')) {
 	App::uses('AppTestCase', 'Ninja.TestSuite');
 }

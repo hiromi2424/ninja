@@ -54,7 +54,7 @@ ConnectionManager::create('transaction_manager_test', array_merge($testDb->confi
 
 unset($testDb, $testDbClass);
 
-class TransactionManagerTestCase extends NinjaTestCase {
+class TransactionManagerTest extends NinjaTestCase {
 
 	public $datasource = 'transaction_manager_test';
 	public $mockModel;

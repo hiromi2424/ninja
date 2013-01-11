@@ -6,7 +6,7 @@ App::import('Datasource', 'DboSource', false);
 
 App::import('Model', 'Ninja.BaseService');
 
-class TransactionServiceTestCase extends NinjaModelTestCase {
+class TransactionServiceTest extends NinjaModelTestCase {
 
 	public static $lambdaArguments;
 	public static $lambdaResult = true;
@@ -32,8 +32,8 @@ class TransactionServiceTestCase extends NinjaModelTestCase {
 		$this->MockBaseService = ClassRegistry::init(self::$mockClasses['BaseService']);
 		$this->TransactionService->setDataSources('_transactionServiceMock')->setService($this->MockBaseService)->logException = false;
 		$this->lambda = create_function('', '
-			TransactionServiceTestCase::$lambdaArguments = func_get_args();
-			return TransactionServiceTestCase::$lambdaResult;
+			TransactionServiceTest::$lambdaArguments = func_get_args();
+			return TransactionServiceTest::$lambdaResult;
 		');
 	}
 

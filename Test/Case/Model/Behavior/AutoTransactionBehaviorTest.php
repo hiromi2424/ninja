@@ -20,7 +20,7 @@ class AutoTransactionBehaviorMockModel extends Model {
 	public $actsAs = array('MockAutoTransaction');
 }
 
-class AutoTransactionBehaviorTestCase extends NinjaBehaviorTestCase {
+class AutoTransactionBehaviorTest extends NinjaBehaviorTestCase {
 	public $fixtures = array('plugin.ninja.auto_transaction_behavior_mock_model');
 
 	protected function _reset($auto = true) {

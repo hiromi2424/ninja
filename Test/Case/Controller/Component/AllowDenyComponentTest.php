@@ -23,7 +23,7 @@ class AllowDenyTestController extends Controller {
 
 }
 
-class AllowDenyComponentTestCase extends NinjaComponentTestCase {
+class AllowDenyComponentTest extends NinjaComponentTestCase {
 
 	protected function _allowed($action) {
 		$allowedActions = array_map('strtolower', $this->Controller->Auth->allowedActions);

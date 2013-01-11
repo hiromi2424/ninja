@@ -1,6 +1,6 @@
 <?php
 
-abstract class NinjaGroupTestCase extends PHPUnit_Framework_TestSuite {
+abstract class NinjaGroupTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * Suite define the tests for this suite

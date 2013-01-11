@@ -93,7 +93,7 @@ class MagickMethodBehaviorMockHabtm extends MagickMethodBehaviorMockBase {
 
 }
 
-class MagickMethodBehaviorTestCase extends NinjaBehaviorTestCase {
+class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 
 	public function testNormalConditions() {
 

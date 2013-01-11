@@ -6,7 +6,7 @@ class ConfigListBehaviorMockModel extends Model {
 	public $actsAs = array('Ninja.ConfigList');
 }
 
-class ConfigListBehaviorTestCase extends NinjaBehaviorTestCase {
+class ConfigListBehaviorTest extends NinjaBehaviorTestCase {
 
 	public $fixtures = array('plugin.Ninja.ConfigListBehaviorMockModel');
 

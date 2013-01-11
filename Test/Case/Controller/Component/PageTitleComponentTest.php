@@ -3,7 +3,7 @@
 
 App::import('TestSuite', 'Ninja.NinjaComponentTestCase');
 
-class PageTitleComponentTestCase extends NinjaComponentTestCase {
+class PageTitleComponentTest extends NinjaComponentTestCase {
 
 	public $fixtures = false;
 

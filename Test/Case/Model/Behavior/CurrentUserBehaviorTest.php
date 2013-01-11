@@ -6,7 +6,7 @@ class CurrentUserBehaviorMockModel extends Model {
 	public $actsAs = array('Ninja.CurrentUser');
 }
 
-class CurrentUserBehaviorTestCase extends NinjaBehaviorTestCase {
+class CurrentUserBehaviorTest extends NinjaBehaviorTestCase {
 
 	public $fixtures = array('plugin.Ninja.CurrentUserBehaviorMockModel');
 

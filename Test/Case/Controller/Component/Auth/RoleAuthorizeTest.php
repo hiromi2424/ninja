@@ -9,7 +9,7 @@ App::import('Component', 'Auth');
 App::uses('RoleAuthorize', 'Ninja.Controller/Component/Auth');
 class_exists('RoleAuthorize'); // loading
 
-class RoleAuthorizeTestCase extends NinjaTestCase {
+class RoleAuthorizeTest extends NinjaTestCase {
 
 	public $fixtures = false;
 

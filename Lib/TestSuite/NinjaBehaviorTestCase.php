@@ -14,7 +14,7 @@ abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 	public $modelName;
 
 	public function _determineClassName() {
-		$this->behaviorName = str_replace('BehaviorTestCase', '', get_class($this));
+		$this->behaviorName = preg_replace('/BehaviorTest(Case)?$/', '', get_class($this));
 		$this->behaviorClass = $this->behaviorName . 'Behavior';
 
 		if (class_exists($this->behaviorClass . 'MockModel')) {

@@ -2,7 +2,7 @@
 /* NinjaHtml Test cases generated on: 2011-05-22 08:41:25 : 1306021285*/
 App::import('TestSuite', 'Ninja.NinjaHelperTestCase');
 
-class NinjaHtmlHelperTestCase extends NinjaHelperTestCase {
+class NinjaHtmlHelperTest extends NinjaHelperTestCase {
 
 	private $__assetFilterBackup;
 

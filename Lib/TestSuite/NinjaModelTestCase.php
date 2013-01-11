@@ -10,7 +10,7 @@ abstract class NinjaModelTestCase extends NinjaTestCase {
 	public $modelClass;
 
 	protected function _determineClassName() {
-		$this->modelName = str_replace('TestCase', '', get_class($this));
+		$this->modelName = preg_replace('/Test(Case)?$/', '', get_class($this));
 		$this->modelClass = $this->modelName;
 
 		if (class_exists('Test' . $this->modelClass)) {

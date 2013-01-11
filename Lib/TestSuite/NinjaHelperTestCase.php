@@ -15,7 +15,7 @@ abstract class NinjaHelperTestCase extends NinjaTestCase {
 	public $view;
 
 	public function _determineClassName() {
-		$this->helperClass = preg_replace('/TestCase$/', '', get_class($this));
+		$this->helperClass = preg_replace('/Test(Case)?$/', '', get_class($this));
 		$this->helperName = preg_replace('/Helper$/', '', $this->helperClass);
 		$this->view = new View(new Controller(new CakeRequest));
 	}

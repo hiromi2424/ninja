@@ -2,7 +2,7 @@
 
 App::uses('NinjaComponentTestCase', 'Ninja.TestSuite');
 
-class SessionQueueComponentTestCase extends NinjaComponentTestCase {
+class SessionQueueComponentTest extends NinjaComponentTestCase {
 
 	protected $_backup;
 

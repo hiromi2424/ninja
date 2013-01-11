@@ -11,7 +11,7 @@ abstract class NinjaControllerTestCase extends NinjaTestCase {
 	public $controllerName;
 
 	protected function _determineClassName() {
-		$this->controllerClass = preg_replace('/TestCase$/', '', get_class($this));
+		$this->controllerClass = preg_replace('/Test(Case)?$/', '', get_class($this));
 		$this->controllerName = preg_replace('/Controller$/', '', $this->controllerClass);
 
 		if (!class_exists($this->controllerClass)) {

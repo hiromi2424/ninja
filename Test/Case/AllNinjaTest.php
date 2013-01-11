@@ -1,12 +1,12 @@
 <?php
 
-require_once dirname(__FILE__) . DS . 'NinjaGroupTestCase.php';
+require_once dirname(__FILE__) . DS . 'NinjaGroupTest.php';
 
 /**
  * Group Test for Ninja
  */
 
-class AllNinjaTest extends NinjaGroupTestCase {
+class AllNinjaTest extends NinjaGroupTest {
 
 	public $plugin = 'Ninja';
 

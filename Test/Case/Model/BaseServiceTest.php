@@ -13,7 +13,7 @@ class BaseServiceTestModel extends CakeTestModel {
 
 }
 
-class BaseServiceTestCase extends NinjaModelTestCase {
+class BaseServiceTest extends NinjaModelTestCase {
 
 	public $fixtures = false;
 

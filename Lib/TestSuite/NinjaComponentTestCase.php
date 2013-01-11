@@ -12,7 +12,7 @@ abstract class NinjaComponentTestCase extends NinjaControllerTestCase {
 	public $testComponent;
 
 	protected function _determineClassName() {
-		$this->componentClass = preg_replace('/TestCase$/', '', get_class($this));
+		$this->componentClass = preg_replace('/Test(Case)?$/', '', get_class($this));
 		$this->componentName = preg_replace('/Component$/', '', $this->componentClass);
 
 		if (class_exists('Test' . $this->componentClass)) {

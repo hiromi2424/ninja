@@ -6,7 +6,7 @@ class EmptyFilterBehaviorMockModel extends Model {
 	public $actsAs = array('Ninja.EmptyFilter');
 }
 
-class EmptyFilterBehaviorTestCase extends NinjaBehaviorTestCase {
+class EmptyFilterBehaviorTest extends NinjaBehaviorTestCase {
 
 	public $fixtures = array('plugin.Ninja.EmptyFilterBehaviorMockModel');
 
