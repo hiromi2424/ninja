@@ -11,7 +11,7 @@ class AllowDenyComponent extends Component {
 	public $controller;
 	public $Auth;
 
-	public function initialize($controller) {
+	public function initialize(Controller $controller) {
 		$this->controller = $controller;
 		$this->Auth = $this->controller->{$this->auth};
 

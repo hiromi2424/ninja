@@ -18,7 +18,7 @@ class MagickMethodBehavior extends ModelBehavior {
 		),
 	);
 
-	public function setup($Model, $config = array()) {
+	public function setup(Model $Model, $config = array()) {
 		$this->mapMethods = array_merge($this->_findMap, $this->_scopeMap, $this->_fieldMap);
 		$this->settings[$Model->alias] = Set::merge(self::$defaultSettings, $config);
 	}

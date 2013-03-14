@@ -22,7 +22,7 @@ class EmptyFilterBehavior extends ModelBehavior {
 		'date',
 	);
 
-	public function setup($Model, $settings = array()) {
+	public function setup(Model $Model, $settings = array()) {
 		$this->settings[$Model->alias] = array_merge(self::$defaultSettings, (array)$settings);
 	}
 
@@ -59,7 +59,7 @@ class EmptyFilterBehavior extends ModelBehavior {
 		return preg_replace("/(^$space+|$space+$)/mu", '', $data);
 	}
 
-	public function beforeValidate($Model) {
+	public function beforeValidate(Model $Model) {
 		extract($this->settings[$Model->alias]);
 		if ($autoTrim) {
 			$Model->data = $this->trimSpaces($Model, $Model->data);

@@ -6,12 +6,12 @@ class CurrentUserBehavior extends ModelBehavior {
 	public $config_name = 'CurrentUser.id';
 	public $foreign_key = 'user_id';
 
-	public function setup($model, $config = array()) {
+	public function setup(Model $model, $config = array()) {
 		$this->_set($config);
 		return true;
 	}
 
-	public function beforeValidate($model) {
+	public function beforeValidate(Model $model) {
 		if ($this->auto === true || $this->auto === 'set') {
 			$model->setCurrentUser();
 		}
@@ -27,7 +27,7 @@ class CurrentUserBehavior extends ModelBehavior {
 		return true;
 	}
 
-	public function beforeDelete($model, $cascade = true) {
+	public function beforeDelete(Model $model, $cascade = true) {
 		if ($this->auto === true || $this->auto === 'delete') {
 			return $model->validateCurrentUserDelete();
 		}

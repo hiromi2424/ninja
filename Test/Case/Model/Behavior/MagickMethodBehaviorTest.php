@@ -9,7 +9,7 @@ class MagickMethodBehaviorMockBase extends Model {
 
 	public $hasField = true;
 
-	public function find() {
+	public function find($type = 'first', $query = array()) {
 		$args = func_get_args();
 		return $args;
 	}
@@ -17,11 +17,11 @@ class MagickMethodBehaviorMockBase extends Model {
 	/*
 	 * @override
 	 */
-	public function hasField() {
+	public function hasField($name, $checkVirtual = false) {
 		return $this->hasField;
 	}
 
-	public function field() {
+	public function field($name, $conditions = NULL, $order = NULL) {
 		$args = func_get_args();
 		return $args;
 	}

@@ -252,7 +252,7 @@ class DatabaseEngine extends CacheEngine {
  * Permanently remove all expired and deleted data
  *
  */
-	public function gc() {
+	public function gc($expires = null) {
 		return $this->clear(true);
 	}
 

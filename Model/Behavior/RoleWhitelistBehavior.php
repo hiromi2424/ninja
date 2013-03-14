@@ -12,12 +12,12 @@ class RoleWhitelistBehavior extends ModelBehavior {
 		'configName' => 'CurrentUser.Group.role',
 	);
 
-	public function setup($Model, $settings = array()) {
+	public function setup(Model $Model, $settings = array()) {
 		$this->settings[$Model->alias] = array_merge($this->_defaultSetting, (array)$settings);
 		return true;
 	}
 
-	public function beforeValdiate($Model) {
+	public function beforeValdiate(Model $Model) {
 		if ($this->settings[$Model->alias]['auto']) {
 			if ($role = Configure::read($this->settings[$Model->alias]['configName'])) {
 				$this->setWhitelistRole($Model, $role);

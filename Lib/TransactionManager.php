@@ -50,7 +50,7 @@ class TransactionManager extends Object {
 		self::__getInstance($datasource)->autoCommit = $autoCommit;
 	}
 
-	protected function _instantiated($datasource) {
+	protected static function _instantiated($datasource) {
 		return isset(self::$__instances[$datasource]->_db);
 	}
 

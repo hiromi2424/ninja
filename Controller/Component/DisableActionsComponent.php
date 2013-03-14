@@ -9,7 +9,7 @@ class DisableActionsComponent extends Component {
 
 	public $controller;
 
-	public function initialize($controller) {
+	public function initialize(Controller $controller) {
 
 		$this->controller = $controller;
 		$settings = $this->settings;

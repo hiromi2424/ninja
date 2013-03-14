@@ -11,11 +11,11 @@ class ConfigListBehavior extends ModelBehavior {
 
 	private $__lists;
 
-	public function setup($Model, $settings = array()) {
+	public function setup(Model $Model, $settings = array()) {
 		$this->settings[$Model->name] = array_merge(self::$defaultSettings, (array)$settings);
 	}
 
-	public function afterFind($Model, $results) {
+	public function afterFind(Model $Model, $results, $primary) {
 
 		if (!empty($results[0][$Model->alias])) {
 
@@ -31,7 +31,7 @@ class ConfigListBehavior extends ModelBehavior {
 		return $results;
 	}
 
-	public function beforeSave($Model) {
+	public function beforeSave(Model $Model) {
 		if (isset($Model->data[$Model->alias])) {
 			$this->__lists = Configure::read($this->_compileConfigureName($Model, $this->settings[$Model->name]['config']));
 			$Model->data[$Model->alias] = $this->_convertData($Model, $Model->data[$Model->alias]);
@@ -40,7 +40,7 @@ class ConfigListBehavior extends ModelBehavior {
 		return true;
 	}
 
-	public function inConfigList($Model, $check) {
+	public function inConfigList(Model $Model, $check) {
 		extract($this->settings[$Model->name]);
 		$this->__lists = Configure::read($this->_compileConfigureName($Model, $config));
 
@@ -53,7 +53,7 @@ class ConfigListBehavior extends ModelBehavior {
 		return true;
 	}
 
-	protected function _convertResult($Model, $result) {
+	protected function _convertResult(Model $Model, $result) {
 		extract($this->settings[$Model->name]);
 
 		foreach ($result as $field => $row) {
@@ -64,7 +64,7 @@ class ConfigListBehavior extends ModelBehavior {
 		return $result;
 	}
 
-	protected function _convertData($Model, $data) {
+	protected function _convertData(Model $Model, $data) {
 		extract($this->settings[$Model->name]);
 
 		foreach ($data as $field => $row) {
@@ -124,7 +124,7 @@ class ConfigListBehavior extends ModelBehavior {
 		return implode($config['separator'], $array);
 	}
 
-	protected function _compileConfigureName($Model, $config) {
+	protected function _compileConfigureName(Model $Model, $config) {
 		$params = array(
 			'class' => get_class($Model),
 			'alias' => $Model->alias,

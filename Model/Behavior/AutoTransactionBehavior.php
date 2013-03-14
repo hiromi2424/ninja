@@ -14,7 +14,7 @@ class AutoTransactionBehavior extends ModelBehavior {
 		$this->settings[$model->name]['auto'] = $auto;
 	}
 
-	public function setup($model, $settings = array()) {
+	public function setup(Model $model, $settings = array()) {
 		if (!isset($this->started[$model->useDbConfig])) {
 			$this->started[$model->useDbConfig] = false;
 		}
@@ -46,28 +46,28 @@ class AutoTransactionBehavior extends ModelBehavior {
 		return $start ? TransactionManager::begin($model->useDbConfig) : TransactionManager::commit($model->useDbConfig);
 	}
 
-	public function beforeSave($model) {
+	public function beforeSave(Model $model) {
 		if ($this->_determineAutoTransaction($model, true)) {
 			$this->_transaction($model);
 		}
 		return true;
 	}
 
-	public function afterSave($model, $created) {
+	public function afterSave(Model $model, $created) {
 		if ($this->_determineAutoTransaction($model, false)) {
 			$this->_transaction($model, false);
 		}
 		return true;
 	}
 
-	public function beforeDelete($model, $cascade = true) {
+	public function beforeDelete(Model $model, $cascade = true) {
 		if ($this->_determineAutoTransaction($model, true)) {
 			$this->_transaction($model);
 		}
 		return true;
 	}
 
-	public function afterDelete($model) {
+	public function afterDelete(Model $model) {
 		if ($this->_determineAutoTransaction($model, false)) {
 			$this->_transaction($model, false);
 		}

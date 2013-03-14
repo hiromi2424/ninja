@@ -11,7 +11,7 @@ class CommonValidationBehavior extends ModelBehavior {
 
 	public static $errorMessages = array();
 
-	public function setup($model, $config = array()) {
+	public function setup(Model $model, $config = array()) {
 		if (empty(self::$errorMessages)) {
 			self::$errorMessages = $this->_buildDefaultErrorMessages($model);
 		}
@@ -205,7 +205,7 @@ class CommonValidationBehavior extends ModelBehavior {
 		return true;
 	}
 
-	public function beforeValidate($model) {
+	public function beforeValidate(Model $model) {
 		$create =
 			$this->settings[$model->alias]['autoSetCreated'] &&
 			$model->hasField('created') &&

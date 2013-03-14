@@ -31,7 +31,7 @@ class TestDisableActionsComponent extends DisableActionsComponent {
 		call_user_func_array('parent::__construct', $args);
 	}
 
-	public function initialize($Controller) {
+	public function initialize(Controller $Controller) {
 		$this->Security->blackHoleCallback = 'blackHole';
 		$Controller->blackHole = false;
 		$args = func_get_args();

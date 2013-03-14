@@ -5,7 +5,7 @@ class ConfigViewCacheComponent extends Component {
 	public $configName = 'ViewCache';
 	public $useCallback = null;
 
-	public function startup($controller) {
+	public function startup(Controller $controller) {
 
 		$config = Configure::read($this->configName . '.' . $controller->name);
 		if ($config) {

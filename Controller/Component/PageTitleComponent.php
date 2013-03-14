@@ -5,12 +5,12 @@ class PageTitleComponent extends Component {
 	public $controller;
 	public $autoSet = true;
 
-	public function initialize($controller, $settings = array()) {
+	public function initialize(Controller $controller, $settings = array()) {
 		$this->controller = $controller;
 		$this->_set($settings);
 	}
 
-	public function beforeRender($controller) {
+	public function beforeRender(Controller $controller) {
 
 		if (!$this->autoSet || null === ($title = $this->getTitle())) {
 			return;
