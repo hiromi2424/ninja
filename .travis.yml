@@ -11,9 +11,9 @@ env:
 
 before_script:
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
-  - git clone git://github.com/cakephp/cakephp cakephp && cd cakephp && git checkout $CAKEPHP && cd ..
-  - cp -R ../ninja ./cakephp/app/Plugin/Ninja
-  - chmod -R 777 ./cakephp/app/tmp
+  - git clone git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKEPHP
+  - cp -R ../ninja ./app/Plugin/Ninja
+  - chmod -R 777 ./app/tmp
   - echo "<?php
     class DATABASE_CONFIG {
     public \$default = array(
@@ -35,7 +35,7 @@ before_script:
       'prefix' => '',
       'encoding' => 'utf8'
     );
-    }" > ./cakephp/app/Config/database.php
+    }" > ./app/Config/database.php
 
 script:
-  - ./cakephp/lib/Cake/Console/cake test Ninja AllNinja --stderr
+  - ./lib/Cake/Console/cake test Ninja AllNinja --stderr
