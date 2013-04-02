@@ -48,6 +48,7 @@ eval( <<<EOC
 EOC
 );
 
+App::uses('TransationManagerTestDatasource', 'Model/Datasource');
 ConnectionManager::create('transaction_manager_test', array_merge($testDb->config, array(
 	'datasource' => 'TransationManagerTestDatasource',
 )));

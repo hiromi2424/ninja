@@ -25,6 +25,7 @@ class TransactionServiceTest extends NinjaModelTestCase {
 			);
 		}
 
+		App::uses(self::$mockClasses['DboSource'], 'Model/Datasource');
 		$this->MockDboSource = ConnectionManager::create('_transactionServiceMock', array(
 			'datasource' => self::$mockClasses['DboSource'],
 		));
