@@ -41,15 +41,15 @@ class MultiSlugRouteTest extends NinjaTestCase {
 		Configure::write('Cache', self::$_cacheBackup);
 	}
 
-	public function startTest($method) {
-		parent::startTest($method);
+	public function setUp() {
+		parent::setUp();
 		ClassRegistry::init(array('class' => 'MultiSlugRouteTestPost', 'alias' => 'Post'));
 	}
 
-	public function endTest($method) {
+	public function tearDown() {
 		MultiSlugRoute::clearCacheAll();
 		MultiSlugRoute::flush();
-		parent::endTest($method);
+		parent::tearDown();
 	}
 
 	protected function _createInstance($route = null, $defaults = null, $options = null) {

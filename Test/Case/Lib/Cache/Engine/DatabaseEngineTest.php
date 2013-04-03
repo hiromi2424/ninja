@@ -31,8 +31,8 @@ class DatabaseEngineTest extends NinjaTestCase {
  *
  * @return void
  */
-	public function startTest($method) {
-		parent::startTest($method);
+	public function setUp() {
+		parent::setUp();
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 		Cache::config('database_test', array('engine' => 'Ninja.Database', 'prefix' => 'database_test_'));
@@ -43,12 +43,12 @@ class DatabaseEngineTest extends NinjaTestCase {
  *
  * @return void
  */
-	public function endTest($method) {
+	public function tearDown() {
 		Cache::clear(false, 'database_test');
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::drop('database_test');
 		Cache::config('default');
-		parent::endTest($method);
+		parent::tearDown();
 	}
 
 /**

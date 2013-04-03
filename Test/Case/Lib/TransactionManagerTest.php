@@ -62,19 +62,19 @@ class TransactionManagerTest extends NinjaTestCase {
 
 	public $fixtures = null;
 
-	public function startTest($method) {
+	public function setUp() {
 
 		TransactionManager::rollback($this->datasource);
 		TransactionManager::destructs();
 		TransationManagerTestDatasource::resetTransationCounts();
 
-		parent::startTest($method);
+		parent::setUp();
 
 	}
 
-	public function endTest($method) {
+	public function tearDown() {
 		TransactionManager::destructs();
-		parent::endTest($method);
+		parent::tearDown();
 	}
 
 	public function testBasic() {

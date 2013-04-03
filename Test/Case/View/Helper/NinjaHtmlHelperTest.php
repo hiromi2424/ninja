@@ -6,14 +6,14 @@ class NinjaHtmlHelperTest extends NinjaHelperTestCase {
 
 	private $__assetFilterBackup;
 
-	public function startTest($method = null) {
+	public function setUp() {
 		$this->__assetFilterBackup = Configure::read('Asset.filter');
-		parent::startTest($method);
+		parent::setUp();
 	}
 
-	public function endTest($method = null) {
+	public function tearDown() {
 		Configure::write('Asset.filter', $this->__assetFilterBackup);
-		parent::endTest($method);
+		parent::tearDown();
 	}
 
 	public function testImage() {

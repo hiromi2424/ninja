@@ -46,17 +46,17 @@ class DisableActionsComponentTest extends NinjaComponentTestCase {
 
 	protected $_configBackup;
 
-	public function startTest($method = null) {
-		parent::startTest($method);
+	public function setUp() {
+		parent::setUp();
 		$this->_configBackup = Configure::read(TestDisableActionsComponent::$testConfigName);
 	}
 
-	public function endTest($method = null) {
+	public function tearDown() {
 		Configure::delete(TestDisableActionsComponent::$testConfigName);
 		if ($this->_configBackup !== false) {
 			Configure::write(TestDisableActionsComponent::$testConfigName, $this->_configBackup);
 		}
-		parent::endTest($method);
+		parent::tearDown();
 	}
 
 	public function testInitialize() {

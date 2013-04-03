@@ -25,15 +25,8 @@ class RoleAuthorizeTest extends NinjaTestCase {
 		$this->RoleAuthorize = new RoleAuthorize($this->Controller->Components);
 	}
 
-	public function tearDown() {
-		unset($this->RoleAuthorize);
-		unset($this->Controller);
-		ClassRegistry::flush();
-		parent::tearDown();
-	}
-
-	public function startTest($method = null) {
-		parent::startTest($method);
+	public function setUp() {
+		parent::setUp();
 		$this->_configBackup = Configure::read($this->_testConfigName);
 		Configure::write($this->_testConfigName, array(
 			'member' => 200,
@@ -60,12 +53,16 @@ class RoleAuthorizeTest extends NinjaTestCase {
 		return $this->_currentLevel;
 	}
 
-	public function endTest($method = null) {
+	public function tearDown() {
 		Configure::delete($this->_testConfigName);
 		if ($this->_configBackup !== false) {
 			Configure::write($this->_testConfigName, $this->_configBackup);
 		}
-		parent::endTest($method);
+
+		unset($this->RoleAuthorize);
+		unset($this->Controller);
+		ClassRegistry::flush();
+		parent::tearDown();
 	}
 
 	public function testAuthorize() {
