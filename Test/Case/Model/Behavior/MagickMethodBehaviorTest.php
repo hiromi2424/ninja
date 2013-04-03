@@ -101,25 +101,25 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 		$expected = array('first', array('conditions' => array(
 			$this->Model->escapeField('id') => 1,
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findAllById(1);
 		$expected = array('all', array('conditions' => array(
 			$this->Model->escapeField('id') => 1,
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findAllById(array(1, 2));
 		$expected = array('all', array('conditions' => array(
 			$this->Model->escapeField('id') => array(1, 2),
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findByUserId(1);
 		$expected = array('first', array('conditions' => array(
 			$this->Model->escapeField('user_id') => 1,
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findByIdAndUserNameAndPassword(1, 'john', 'I love you');
 		$expected = array('first', array('conditions' => array(
@@ -127,7 +127,7 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->escapeField('user_name') => 'john',
 			$this->Model->escapeField('password') => 'I love you',
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 	}
 
@@ -142,7 +142,7 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 				),
 			)
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findByIdOrUserIdOrName(1, 2, 'john');
 		$expected = array('first', array('conditions' => array(
@@ -154,7 +154,7 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 				),
 			)
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 	}
 
@@ -170,7 +170,7 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 			),
 			$this->Model->escapeField('name') => 'john',
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findByNameAndIdOrUserId('john', 1, 2);
 		$expected = array('first', array('conditions' => array(
@@ -182,7 +182,7 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 				),
 			),
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findByAgeOrNameAndIdOrUserId(12, 'john', 1, 2);
 		$expected = array('first', array('conditions' => array(
@@ -199,7 +199,7 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 				),
 			)
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 	}
 
@@ -209,20 +209,20 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 		$expected = array('first', array('conditions' => array(
 			$this->Model->escapeField('id') => 2,
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findByUserIdAndInsertId(1);
 		$expected = array('first', array('conditions' => array(
 			$this->Model->escapeField('user_id') => 1,
 			$this->Model->escapeField('id') => 2,
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findByUserDefined();
 		$expected = array('first', array('conditions' => array(
 			$this->Model->escapeField('specific_field') => 'value!',
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findByMultiParameters();
 		$expected = array('first', array('conditions' => array(
@@ -230,7 +230,7 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 			'fuga' => 'moge',
 			'untara' => 1,
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 	}
 
@@ -238,15 +238,15 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 
 		$result = $this->Model->findCount();
 		$expected = array('count', array());
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findUserFindType();
 		$expected = array('userFindType', array());
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findCount(array('contain' => false));
 		$expected = array('count', array('contain' => false));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 	}
 
@@ -258,25 +258,25 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 		$expected = array('first', array('conditions' => array(
 			$this->Model->BelongsTo->escapeField('field') => 'belongs to',
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findByHasOneField('has one');
 		$expected = array('first', array('conditions' => array(
 			$this->Model->HasOne->escapeField('field') => 'has one',
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findByHasManyField('has many');
 		$expected = array('first', array('conditions' => array(
 			$this->Model->HasMany->escapeField('field') => 'has many',
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->findByHabtmField('has and belongs to many');
 		$expected = array('first', array('conditions' => array(
 			$this->Model->Habtm->escapeField('field') => 'has and belongs to many',
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$this->Model->BelongsTo->hasField = false;
 
@@ -284,7 +284,7 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 		$expected = array('first', array('conditions' => array(
 			$this->Model->escapeField('belongs_to_field') => 'belongs to',
 		)));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 	}
 
@@ -294,20 +294,20 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 		$expected = array('conditions' => array(
 			$this->Model->escapeField('id') => 1,
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->scopeInsertId();
 		$expected = array('conditions' => array(
 			$this->Model->escapeField('id') => 2,
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->scopeEnabledAndInsertId(true);
 		$expected = array('conditions' => array(
 			$this->Model->escapeField('enabled') => true,
 			$this->Model->escapeField('id') => 2,
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 	}
 
@@ -317,20 +317,20 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 		$expected = array('hoge', array(
 			$this->Model->escapeField('id') => 1,
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->fieldByInsertId('fuga');
 		$expected = array('fuga', array(
 			$this->Model->escapeField('id') => 2,
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 		$result = $this->Model->fieldByEnabledAndInsertId('piyo', true);
 		$expected = array('piyo', array(
 			$this->Model->escapeField('enabled') => true,
 			$this->Model->escapeField('id') => 2,
 		));
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($result, $expected);
 
 	}
 

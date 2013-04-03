@@ -19,8 +19,8 @@ class BaseServiceTest extends NinjaModelTestCase {
 
 	public function testMagickInstantiate() {
 
-		$this->assertIsA($this->BaseService->BaseServiceTestModel, 'BaseServiceTestModel');
-		$this->assertIsA($this->BaseService->Transaction, 'TransactionService');
+		$this->assertInstanceOf('BaseServiceTestModel', $this->BaseService->BaseServiceTestModel);
+		$this->assertInstanceOf('TransactionService', $this->BaseService->Transaction);
 
 	}
 

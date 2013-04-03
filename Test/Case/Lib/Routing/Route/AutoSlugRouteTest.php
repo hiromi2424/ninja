@@ -52,15 +52,15 @@ class AutoSlugRouteTest extends NinjaTestCase {
 		$route = new AutoSlugRoute('/post/:title', array('controller' => 'posts', 'action' => 'view'));
 
 		$result = $route->parse('/post/First Post');
-		$this->assertEqual($result['controller'], 'posts');
-		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['pass'], array(1));
+		$this->assertEquals('posts', $result['controller']);
+		$this->assertEquals('view', $result['action']);
+		$this->assertEquals(array(1), $result['pass']);
 
 		// cached
 		$result = $route->parse('/post/First Post');
-		$this->assertEqual($result['controller'], 'posts');
-		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['pass'], array(1));
+		$this->assertEquals('posts', $result['controller']);
+		$this->assertEquals('view', $result['action']);
+		$this->assertEquals(array(1), $result['pass']);
 
 		$Post = ClassRegistry::init('Post');
 		$Post->save($Post->create(array(
@@ -69,17 +69,17 @@ class AutoSlugRouteTest extends NinjaTestCase {
 		)));
 
 		$result = $route->parse('/post/New Title');
-		$this->assertEqual($result['controller'], 'posts');
-		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['pass'], array($Post->getInsertId()));
+		$this->assertEquals('posts', $result['controller']);
+		$this->assertEquals('view', $result['action']);
+		$this->assertEquals(array($Post->getInsertId()), $result['pass']);
 
 
 		$route = new AutoSlugRoute('/post/:title/*', array('controller' => 'posts', 'action' => 'view'));
 
 		$result = $route->parse('/post/First Post/2');
-		$this->assertEqual($result['controller'], 'posts');
-		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['pass'], array(1, 2));
+		$this->assertEquals('posts', $result['controller']);
+		$this->assertEquals('view', $result['action']);
+		$this->assertEquals(array(1, 2), $result['pass']);
 
 
 		$result = $route->parse('/post/invalid');
@@ -93,11 +93,11 @@ class AutoSlugRouteTest extends NinjaTestCase {
 		$route = new AutoSlugRoute('/post/:title', array('controller' => 'posts', 'action' => 'view'));
 
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 1));
-		$this->assertEqual($result, '/post/' . rawurlencode('First Post'));
+		$this->assertEquals('/post/' . rawurlencode('First Post'), $result);
 
 		// cached
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 1));
-		$this->assertEqual($result, '/post/' . rawurlencode('First Post'));
+		$this->assertEquals('/post/' . rawurlencode('First Post'), $result);
 
 		$Post = ClassRegistry::init('Post');
 		$Post->save($Post->create(array(
@@ -105,13 +105,13 @@ class AutoSlugRouteTest extends NinjaTestCase {
 			'title' => 'New Title',
 		)));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', $Post->getInsertId()));
-		$this->assertEqual($result, '/post/' . rawurlencode('New Title'));
+		$this->assertEquals('/post/' . rawurlencode('New Title'), $result);
 
 
 		$route = new AutoSlugRoute('/post/:title/*', array('controller' => 'posts', 'action' => 'view'));
 
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 1, 2));
-		$this->assertEqual($result, sprintf('/post/%s/2', rawurlencode('First Post')));
+		$this->assertEquals(sprintf('/post/%s/2', rawurlencode('First Post')), $result);
 
 
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', -1));
@@ -125,7 +125,7 @@ class AutoSlugRouteTest extends NinjaTestCase {
 		$route = new AutoSlugRoute('/post/:title/*', array('controller' => 'posts', 'action' => 'view'));
 		$route->parse('/post/invalid');
 
-		$this->assertPattern('/^post.+title$/i', AutoSlugRoute::getCacheName('AutoSlugRouteTestPost'));
+		$this->assertRegExp('/^post.+title$/i', AutoSlugRoute::getCacheName('AutoSlugRouteTestPost'));
 
 		$result = AutoSlugRoute::readCache('AutoSlugRouteTestPost');
 		$expected = array(
@@ -133,7 +133,7 @@ class AutoSlugRouteTest extends NinjaTestCase {
 			2 => 'Second Post',
 			3 => 'Third Post',
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$data = array(
 			1 => 'Post1',
@@ -142,7 +142,7 @@ class AutoSlugRouteTest extends NinjaTestCase {
 		);
 		$this->assertTrue(AutoSlugRoute::storeCache('AutoSlugRouteTestPost', $data));
 		$result = AutoSlugRoute::readCache('AutoSlugRouteTestPost');
-		$this->assertEqual($result, $data);
+		$this->assertEquals($data, $result);
 
 		$this->assertTrue(AutoSlugRoute::clearCache('AutoSlugRouteTestPost'));
 		$result = AutoSlugRoute::readCache('AutoSlugRouteTestPost');

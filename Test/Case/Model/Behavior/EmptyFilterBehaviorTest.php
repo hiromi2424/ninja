@@ -11,22 +11,22 @@ class EmptyFilterBehaviorTest extends NinjaBehaviorTestCase {
 	public $fixtures = array('plugin.Ninja.EmptyFilterBehaviorMockModel');
 
 	public function testTrimSpaces() {
-		$this->assertIdentical($this->Model->trimSpaces(' a '), 'a');
-		$this->assertIdentical($this->Model->trimSpaces('      '), '');
-		$this->assertIdentical($this->Model->trimSpaces(array(' a ', ' b ')), array(' a ', ' b '));
-		$this->assertIdentical($this->Model->trimSpaces(array('string' => ' a ', 'unknown' => ' b ')), array('string' => 'a', 'unknown' => ' b '));
-		$this->assertIdentical($this->Model->trimSpaces(array('EmptyFilterBehaviorMockModel' => array('string' => ' a ', 'unknown' => ' b '))), array('EmptyFilterBehaviorMockModel' => array('string' => 'a', 'unknown' => ' b ')));
+		$this->assertSame('a', $this->Model->trimSpaces(' a '));
+		$this->assertSame('', $this->Model->trimSpaces('      '));
+		$this->assertSame(array(' a ', ' b '), $this->Model->trimSpaces(array(' a ', ' b ')));
+		$this->assertSame(array('string' => 'a', 'unknown' => ' b '), $this->Model->trimSpaces(array('string' => ' a ', 'unknown' => ' b ')));
+		$this->assertSame(array('EmptyFilterBehaviorMockModel' => array('string' => 'a', 'unknown' => ' b ')), $this->Model->trimSpaces(array('EmptyFilterBehaviorMockModel' => array('string' => ' a ', 'unknown' => ' b '))));
 	}
 
 	public function testFilterEmpty() {
-		$this->assertIdentical($this->Model->filterEmpty(null), null);
-		$this->assertIdentical($this->Model->filterEmpty(false), false);
-		$this->assertIdentical($this->Model->filterEmpty(1), 1);
-		$this->assertIdentical($this->Model->filterEmpty(""), "");
-		$this->assertIdentical($this->Model->filterEmpty("hoge"), "hoge");
-		$this->assertIdentical($this->Model->filterEmpty(array()), array());
-		$this->assertIdentical($this->Model->filterEmpty(array('Empty' => '')), array());
-		$this->assertIdentical($this->Model->filterEmpty(array('EmptyFilterBehaviorMockModel' => array())), array());
+		$this->assertSame(null, $this->Model->filterEmpty(null));
+		$this->assertSame(false, $this->Model->filterEmpty(false));
+		$this->assertSame(1, $this->Model->filterEmpty(1));
+		$this->assertSame("", $this->Model->filterEmpty(""));
+		$this->assertSame("hoge", $this->Model->filterEmpty("hoge"));
+		$this->assertSame(array(), $this->Model->filterEmpty(array()));
+		$this->assertSame(array(), $this->Model->filterEmpty(array('Empty' => '')));
+		$this->assertSame(array(), $this->Model->filterEmpty(array('EmptyFilterBehaviorMockModel' => array())));
 
 		$result = $this->Model->filterEmpty(array(
 			'EmptyFilterBehaviorMockModel' => array(
@@ -34,7 +34,7 @@ class EmptyFilterBehaviorTest extends NinjaBehaviorTestCase {
 			),
 		));
 		$expected = array();
-		$this->assertIdentical($result, $expected);
+		$this->assertSame($expected, $result);
 
 		$result = $this->Model->filterEmpty(array(
 			'EmptyFilterBehaviorMockModel' => array(
@@ -46,7 +46,7 @@ class EmptyFilterBehaviorTest extends NinjaBehaviorTestCase {
 				'string' => 1,
 			),
 		);
-		$this->assertIdentical($result, $expected);
+		$this->assertSame($expected, $result);
 
 		$result = $this->Model->filterEmpty(array(
 			'EmptyFilterBehaviorMockModel' => array(
@@ -60,7 +60,7 @@ class EmptyFilterBehaviorTest extends NinjaBehaviorTestCase {
 				'binary' => 'piyo',
 			),
 		);
-		$this->assertIdentical($result, $expected);
+		$this->assertSame($expected, $result);
 
 		$result = $this->Model->filterEmpty(array(
 			'EmptyFilterBehaviorMockModel' => array(
@@ -73,7 +73,7 @@ class EmptyFilterBehaviorTest extends NinjaBehaviorTestCase {
 				'string' => 0,
 			),
 		);
-		$this->assertIdentical($result, $expected);
+		$this->assertSame($expected, $result);
 
 		$result = $this->Model->filterEmpty(array(
 			'EmptyFilterBehaviorMockModel' => array(
@@ -82,7 +82,7 @@ class EmptyFilterBehaviorTest extends NinjaBehaviorTestCase {
 			),
 		));
 		$expected = array();
-		$this->assertIdentical($result, $expected);
+		$this->assertSame($expected, $result);
 
 		$result = $this->Model->filterEmpty(array(
 			array(
@@ -106,7 +106,7 @@ class EmptyFilterBehaviorTest extends NinjaBehaviorTestCase {
 				),
 			)
 		);
-		$this->assertIdentical($result, $expected);
+		$this->assertSame($expected, $result);
 	}
 
 	public function testBeforeValidate() {

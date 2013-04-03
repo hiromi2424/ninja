@@ -11,25 +11,25 @@ class PageTitleComponentTest extends NinjaComponentTestCase {
 		$this->assertNull($this->PageTitle->getTitle());
 
 		$this->Controller->pageTitle = 'pageTitle';
-		$this->assertEqual($this->PageTitle->getTitle(), 'pageTitle');
+		$this->assertEquals('pageTitle', $this->PageTitle->getTitle());
 
 		unset($this->Controller->pageTitle);
 		$this->Controller->pageTitles = array('undefined' => 'undefined');
 		$this->assertNull($this->PageTitle->getTitle());
 
 		$this->Controller->pageTitles = array('test_action' => 'pageTitles');
-		$this->assertEqual($this->PageTitle->getTitle(), 'pageTitles');
+		$this->assertEquals('pageTitles', $this->PageTitle->getTitle());
 
 		unset($this->Controller->pageTitles);
 		$this->Controller->defaultTitle = 'default';
-		$this->assertEqual($this->PageTitle->getTitle(), 'default');
+		$this->assertEquals('default', $this->PageTitle->getTitle());
 
 		$this->Controller->pageTitle = 'pageTitle';
 		$this->Controller->titlePrefix = 'prefix_';
-		$this->assertEqual($this->PageTitle->getTitle(), 'prefix_pageTitle');
+		$this->assertEquals('prefix_pageTitle', $this->PageTitle->getTitle());
 
 		$this->Controller->titleSuffix = '_suffix';
-		$this->assertEqual($this->PageTitle->getTitle(), 'prefix_pageTitle_suffix');
+		$this->assertEquals('prefix_pageTitle_suffix', $this->PageTitle->getTitle());
 
 	}
 
@@ -51,7 +51,7 @@ class PageTitleComponentTest extends NinjaComponentTestCase {
 		$result = isset($this->Controller->viewVars['formTitle']);
 		$this->assertTrue($result);
 		if ($result) {
-			$this->assertEqual($this->Controller->viewVars['formTitle'], 'pageTitle');
+			$this->assertEquals('pageTitle', $this->Controller->viewVars['formTitle']);
 		}
 
 	}

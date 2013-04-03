@@ -61,7 +61,7 @@ class DatabaseEngineTest extends NinjaTestCase {
 
 		$result = Cache::read('test');
 		$expecting = '';
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data);
@@ -69,7 +69,7 @@ class DatabaseEngineTest extends NinjaTestCase {
 
 		$result = Cache::read('test');
 		$expecting = $data;
-		$this->assertEqual($result, $expecting);
+		$this->assertEquals($expecting, $result);
 
 		Cache::delete('test');
 	}
@@ -85,7 +85,7 @@ class DatabaseEngineTest extends NinjaTestCase {
 		sleep(1);
 
 		$result = Cache::read('zero', 'database_test');
-		$this->assertEqual('Should save', $result);
+		$this->assertEquals($result, 'Should save');
 	}
 
 /**
@@ -122,7 +122,7 @@ class DatabaseEngineTest extends NinjaTestCase {
 
 		sleep(1);
 		$result = Cache::read('persistent', 'database_test');
-		$this->assertEqual($result, $data);
+		$this->assertEquals($data, $result);
 	}
 
 /**
@@ -158,14 +158,14 @@ class DatabaseEngineTest extends NinjaTestCase {
 		$this->_insertData($model, $settings);
 		$this->assertTrue(Cache::clear(false, 'database_test'));
 		$result = $model->find('count');
-		$this->assertEqual($result, 1);
+		$this->assertEquals(1, $result);
 		$result = $model->field($settings['fields']['key']);
-		$this->assertEqual($result, 'prefix_not_match');
+		$this->assertEquals('prefix_not_match', $result);
 
 		$this->_insertData($model, $settings);
 		$this->assertTrue(Cache::clear(true, 'database_test'));
 		$result = $model->find('list', array('fields' => array($settings['fields']['key']), 'order' => array($settings['fields']['key'] => 'ASC')));
-		$this->assertEqual(array_values($result), array('prefix_not_match', 'test_prefix_persistent', 'test_prefix_survive'));
+		$this->assertEquals(array('prefix_not_match', 'test_prefix_persistent', 'test_prefix_survive'), array_values($result));
 	}
 
 /**

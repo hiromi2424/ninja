@@ -46,7 +46,7 @@ class ConfigListBehaviorTest extends NinjaBehaviorTestCase {
 				),
 			)
 		);
-		$this->assertEqual($this->Model->find('all'), $expected);
+		$this->assertEquals($expected, $this->Model->find('all'));
 
 		$expected = array(
 			$this->Model->alias => array(
@@ -55,7 +55,7 @@ class ConfigListBehaviorTest extends NinjaBehaviorTestCase {
 				'list' => array(1, 'piyo'),
 			),
 		);
-		$this->assertEqual($this->Model->find('first'), $expected);
+		$this->assertEquals($expected, $this->Model->find('first'));
 
 		$this->_reattach(array('separator' => ','));
 		$expected = array(
@@ -65,7 +65,7 @@ class ConfigListBehaviorTest extends NinjaBehaviorTestCase {
 				'list' => array(2, '}}fuga'),
 			),
 		);
-		$this->assertEqual($this->Model->find('first'), $expected);
+		$this->assertEquals($expected, $this->Model->find('first'));
 
 		$this->_reattach(array('separator' => 'not match'));
 		$expected = array(
@@ -75,7 +75,7 @@ class ConfigListBehaviorTest extends NinjaBehaviorTestCase {
 				'list' => 'hoge{{,}}fuga',
 			),
 		);
-		$this->assertEqual($this->Model->find('first'), $expected);
+		$this->assertEquals($expected, $this->Model->find('first'));
 
 		$this->_reattach(array('fields' => 'other'));
 		$expected = array(
@@ -85,7 +85,7 @@ class ConfigListBehaviorTest extends NinjaBehaviorTestCase {
 				'list' => 'hoge{{,}}fuga',
 			),
 		);
-		$this->assertEqual($this->Model->find('first'), $expected);
+		$this->assertEquals($expected, $this->Model->find('first'));
 
 		Configure::write('TestConfig.ConfigListBehaviorMockModel.List', $this->_config);
 		$this->_reattach(array('config' => 'TestConfig.:class.List'));
@@ -96,7 +96,7 @@ class ConfigListBehaviorTest extends NinjaBehaviorTestCase {
 				'list' => array(1, 'piyo'),
 			),
 		);
-		$this->assertEqual($this->Model->find('first'), $expected);
+		$this->assertEquals($expected, $this->Model->find('first'));
 
 		$this->Model->updateAll(array('list' => null));
 		$expected = array(
@@ -106,13 +106,13 @@ class ConfigListBehaviorTest extends NinjaBehaviorTestCase {
 				'list' => null,
 			),
 		);
-		$this->assertEqual($this->Model->find('first'), $expected);
+		$this->assertEquals($expected, $this->Model->find('first'));
 	}
 
 	public function testSave() {
 		$result = $this->Model->save(array('id' => 1, 'normal' => 'normal', 'list' => array(1, 2)));
 		$expected = array($this->Model->alias => array('id' => 1, 'normal' => 'normal', 'list' => 'hoge{{,}}hoge{{'));
-		$this->assertIdentical($result, $expected);
+		$this->assertSame($expected, $result);
 
 		$this->_reattach(array('fields' => 'other'));
 		$this->expectError();

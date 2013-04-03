@@ -65,7 +65,7 @@ class DisableActionsComponentTest extends NinjaComponentTestCase {
 		));
 		$this->DisableActions->initialize($this->Controller);
 		$this->assertTrue($this->Controller->blackHole);
-		$this->assertEqual($this->Controller->secureType, 'disableActions');
+		$this->assertEquals('disableActions', $this->Controller->secureType);
 	}
 
 	public function testJudge() {

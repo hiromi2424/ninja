@@ -21,14 +21,14 @@ class NinjaHtmlHelperTest extends NinjaHelperTestCase {
 		$this->assertNoPattern('/title=/', $result);
 
 		$result = $this->NinjaHtml->image('fuga.jpg', array('alt' => 'one'));
-		$this->assertPattern('/title="one"/', $result);
+		$this->assertRegExp('/title="one"/', $result);
 
 		$result = $this->NinjaHtml->image('fuga.jpg', array('title' => 'one'));
-		$this->assertPattern('/alt="one"/', $result);
+		$this->assertRegExp('/alt="one"/', $result);
 
 		$result = $this->NinjaHtml->image('fuga.jpg', array('alt' => 'one', 'title' => 'two'));
-		$this->assertPattern('/alt="one"/', $result);
-		$this->assertPattern('/title="two"/', $result);
+		$this->assertRegExp('/alt="one"/', $result);
+		$this->assertRegExp('/title="two"/', $result);
 
 		$this->loadHelper(array(
 			'altEqualTitle' => false,
@@ -46,24 +46,24 @@ class NinjaHtmlHelperTest extends NinjaHelperTestCase {
 		Configure::write('Asset.filter.js', 'test_js.php');
 
 		$result = $this->NinjaHtml->css('hoge');
-		$this->assertPattern('|ccss/hoge.css|', $result);
+		$this->assertRegExp('|ccss/hoge.css|', $result);
 
 		$result = $this->NinjaHtml->script('hoge', array('once' => false));
-		$this->assertPattern('|cjs/hoge.js|', $result);
+		$this->assertRegExp('|cjs/hoge.js|', $result);
 
 		$result = $this->NinjaHtml->css('hoge', null, array('assetFilter' => false));
-		$this->assertPattern('|[^c]css/hoge.css|', $result);
+		$this->assertRegExp('|[^c]css/hoge.css|', $result);
 
 		$result = $this->NinjaHtml->script('hoge', array('assetFilter' => false, 'once' => false));
-		$this->assertPattern('|[^c]js/hoge.js|', $result);
+		$this->assertRegExp('|[^c]js/hoge.js|', $result);
 
 		Configure::write('Asset.filter', null);
 
 		$result = $this->NinjaHtml->css('hoge');
-		$this->assertPattern('|[^c]css/hoge.css|', $result);
+		$this->assertRegExp('|[^c]css/hoge.css|', $result);
 
 		$result = $this->NinjaHtml->script('hoge', array('once' => false));
-		$this->assertPattern('|[^c]js/hoge.js|', $result);
+		$this->assertRegExp('|[^c]js/hoge.js|', $result);
 	}
 
 }

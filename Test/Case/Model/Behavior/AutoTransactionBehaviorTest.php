@@ -30,26 +30,26 @@ class AutoTransactionBehaviorTest extends NinjaBehaviorTestCase {
 
 	public function testTransaction() {
 		$this->Model->save($this->Model->create());
-		$this->assertEqual($this->_getBehavior()->log, array('begin', 'commit'));
+		$this->assertEquals(array('begin', 'commit'), $this->_getBehavior()->log);
 
 		$this->_reset(false);
 		$this->Model->save($this->Model->create());
-		$this->assertEqual($this->_getBehavior()->log, array());
+		$this->assertEquals(array(), $this->_getBehavior()->log);
 
 		$this->_reset();
 		$this->Model->delete(2);
-		$this->assertEqual($this->_getBehavior()->log, array('begin', 'commit'));
+		$this->assertEquals(array('begin', 'commit'), $this->_getBehavior()->log);
 
 		$this->_reset(false);
 		$this->Model->delete(1);
-		$this->assertEqual($this->_getBehavior()->log, array());
+		$this->assertEquals(array(), $this->_getBehavior()->log);
 	}
 
 	public function testStartedByOther() {
 
 		TransactionManager::begin($this->Model->useDbConfig);
 		$this->Model->save($this->Model->create());
-		$this->assertEqual($this->_getBehavior()->log, array());
+		$this->assertEquals(array(), $this->_getBehavior()->log);
 
 		TransactionManager::rollback($this->Model->useDbConfig);
 	}

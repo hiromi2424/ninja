@@ -53,7 +53,7 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->isCurrentUser(array('common_validation_behavior_user_id' => null));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/common_validation_behavior_user_id/', $e->getMessage());
+			$this->assertRegExp('/common_validation_behavior_user_id/', $e->getMessage());
 		}
 
 		try {
@@ -61,7 +61,7 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->isCurrentUser(array('common_validation_behavior_user_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/CurrentUser\.id/', $e->getMessage());
+			$this->assertRegExp('/CurrentUser\.id/', $e->getMessage());
 		}
 	}
 
@@ -83,7 +83,7 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->currentUserHas(array('common_validation_behavior_belonged_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/CurrentUser\.id/', $e->getMessage());
+			$this->assertRegExp('/CurrentUser\.id/', $e->getMessage());
 		}
 
 		try {
@@ -91,7 +91,7 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->currentUserHas(array('not_valid_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/not_valid_id/', $e->getMessage());
+			$this->assertRegExp('/not_valid_id/', $e->getMessage());
 		}
 
 		try {
@@ -100,7 +100,7 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->currentUserHas(array('common_validation_behavior_belonged_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/CommonValidationBehaviorBelonged/', $e->getMessage());
+			$this->assertRegExp('/CommonValidationBehaviorBelonged/', $e->getMessage());
 		}
 	}
 
@@ -127,14 +127,14 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->hasThis(array('common_validation_behavior_belonged_id' => null));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/common_validation_behavior_belonged_id/', $e->getMessage());
+			$this->assertRegExp('/common_validation_behavior_belonged_id/', $e->getMessage());
 		}
 
 		try {
 			$this->Model->hasThis(array('not_valid_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/not_valid_id/', $e->getMessage());
+			$this->assertRegExp('/not_valid_id/', $e->getMessage());
 		}
 
 		try {
@@ -142,7 +142,7 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->hasThis(array('common_validation_behavior_belonged_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/CommonValidationBehaviorMockModel/', $e->getMessage());
+			$this->assertRegExp('/CommonValidationBehaviorMockModel/', $e->getMessage());
 		}
 	}
 
@@ -152,7 +152,7 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->hasNotThis(array('common_validation_behavior_belonged_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/CommonValidationBehaviorMockModel/', $e->getMessage());
+			$this->assertRegExp('/CommonValidationBehaviorMockModel/', $e->getMessage());
 		}
 
 		$this->Model->id = array(2, 1);
@@ -173,7 +173,7 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->thisHas(array('common_validation_behavior_belonged_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/CommonValidationBehaviorMockModel/', $e->getMessage());
+			$this->assertRegExp('/CommonValidationBehaviorMockModel/', $e->getMessage());
 		}
 
 		$this->Model->id = array(1, 2);
@@ -189,14 +189,14 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->thisHas(array('common_validation_behavior_belonged_id' => null));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/thisHas/', $e->getMessage());
+			$this->assertRegExp('/thisHas/', $e->getMessage());
 		}
 
 		try {
 			$this->Model->thisHas(array('not_valid_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/not_valid_id/', $e->getMessage());
+			$this->assertRegExp('/not_valid_id/', $e->getMessage());
 		}
 	}
 
@@ -206,7 +206,7 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->thisHasNot(array('common_validation_behavior_belonged_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/CommonValidationBehaviorMockModel/', $e->getMessage());
+			$this->assertRegExp('/CommonValidationBehaviorMockModel/', $e->getMessage());
 		}
 
 		$this->Model->id = array(1, 2);
@@ -222,14 +222,14 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->thisHasNot(array('common_validation_behavior_belonged_id' => null));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/common_validation_behavior_belonged_id/', $e->getMessage());
+			$this->assertRegExp('/common_validation_behavior_belonged_id/', $e->getMessage());
 		}
 
 		try {
 			$this->Model->thisHasNot(array('not_valid_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/not_valid_id/', $e->getMessage());
+			$this->assertRegExp('/not_valid_id/', $e->getMessage());
 		}
 	}
 
@@ -249,14 +249,14 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->existsForeign(array('common_validation_behavior_belonged_id' => null));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/common_validation_behavior_belonged_id/', $e->getMessage());
+			$this->assertRegExp('/common_validation_behavior_belonged_id/', $e->getMessage());
 		}
 
 		try {
 			$this->Model->existsForeign(array('not_valid_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/not_valid_id/', $e->getMessage());
+			$this->assertRegExp('/not_valid_id/', $e->getMessage());
 		}
 	}
 
@@ -272,14 +272,14 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->notExistsForeign(array('common_validation_behavior_belonged_id' => null));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/common_validation_behavior_belonged_id/', $e->getMessage());
+			$this->assertRegExp('/common_validation_behavior_belonged_id/', $e->getMessage());
 		}
 
 		try {
 			$this->Model->notExistsForeign(array('not_valid_id' => 1));
 			$this->fail('Expected BadMethodCallException was not thrown');
 		} catch (BadMethodCallException $e) {
-			$this->assertPattern('/not_valid_id/', $e->getMessage());
+			$this->assertRegExp('/not_valid_id/', $e->getMessage());
 		}
 	}
 
@@ -369,11 +369,11 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 	public function testGenerateFormatedDatetime() {
 		$result = $this->Model->generateFormatedDatetime(strtotime('2010-09-26 14:57:38'));
 		$expected = array('year' => '2010', 'month' => '09', 'day' => '26', 'hour' => '14', 'min' => '57', 'sec' => '38');
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->Model->deconstruct('created', $result);
 		$expected = '2010-09-26 14:57:38';
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 	public function testDatetime() {
@@ -396,11 +396,11 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 	public function testConvertDatetime() {
 		$this->assertGreaterThanOrEqual(1288537200, $this->Model->convertDatetime('2010/11/1'));
 		$this->assertLessThan(1288537200 + 86400, $this->Model->convertDatetime('2010/11/1'));
-		$this->assertEqual($this->Model->convertDatetime('2010/11/1 2:00:00'), 1288544400);
+		$this->assertEquals(1288544400, $this->Model->convertDatetime('2010/11/1 2:00:00'));
 		$this->assertGreaterThanOrEqual(1288537200, $this->Model->convertDatetime('２０１０／１１／１'));
 		$this->assertLessThan(1288537200 + 86400, $this->Model->convertDatetime('２０１０／１１／１'));
-		$this->assertEqual($this->Model->convertDatetime('2010/11'), false);
-		$this->assertEqual($this->Model->convertDatetime(time()), false);
-		$this->assertEqual($this->Model->convertDatetime(true), false);
+		$this->assertEquals(false, $this->Model->convertDatetime('2010/11'));
+		$this->assertEquals(false, $this->Model->convertDatetime(time()));
+		$this->assertEquals(false, $this->Model->convertDatetime(true));
 	}
 }

@@ -90,20 +90,20 @@ class TransactionManagerTest extends NinjaTestCase {
 		$this->assertTrue(TransactionManager::commit($this->datasource));
 		$this->assertfalse(TransactionManager::commit($this->datasource));
 
-		$this->assertEqual(TransationManagerTestDatasource::$begun, 2);
-		$this->assertEqual(TransationManagerTestDatasource::$commited, 1);
-		$this->assertEqual(TransationManagerTestDatasource::$rollbacked, 1);
+		$this->assertEquals(2, TransationManagerTestDatasource::$begun);
+		$this->assertEquals(1, TransationManagerTestDatasource::$commited);
+		$this->assertEquals(1, TransationManagerTestDatasource::$rollbacked);
 	}
 
 	public function testAutoCommit() {
 		TransactionManager::begin($this->datasource);
 		TransactionManager::destructs();
-		$this->assertEqual(TransationManagerTestDatasource::$rollbacked, 1);
+		$this->assertEquals(1, TransationManagerTestDatasource::$rollbacked);
 
 		TransactionManager::autoCommit(true, $this->datasource);
 		TransactionManager::begin($this->datasource);
 		TransactionManager::destructs();
-		$this->assertEqual(TransationManagerTestDatasource::$commited, 1);
+		$this->assertEquals(1, TransationManagerTestDatasource::$commited);
 	}
 
 	public function testInvalidDatasource() {

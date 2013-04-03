@@ -90,11 +90,11 @@ class MultiSlugRouteTest extends NinjaTestCase {
 		$this->assertFalse($result);
 
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 1));
-		$this->assertEqual($result, sprintf('/post/%s/%s', rawurlencode('mariano'), rawurlencode('First Post')));
+		$this->assertEquals(sprintf('/post/%s/%s', rawurlencode('mariano'), rawurlencode('First Post')), $result);
 
 		// cached
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 1));
-		$this->assertEqual($result, sprintf('/post/%s/%s', rawurlencode('mariano'), rawurlencode('First Post')));
+		$this->assertEquals(sprintf('/post/%s/%s', rawurlencode('mariano'), rawurlencode('First Post')), $result);
 
 		ClassRegistry::init('Post')->saveAll(array(
 			'Post' => array(
@@ -111,7 +111,7 @@ class MultiSlugRouteTest extends NinjaTestCase {
 		));
 
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 10));
-		$this->assertEqual($result, sprintf('/post/%s/%s', rawurlencode('Hiromi'), rawurlencode('New Post')));
+		$this->assertEquals(sprintf('/post/%s/%s', rawurlencode('Hiromi'), rawurlencode('New Post')), $result);
 
 
 	}
@@ -134,15 +134,15 @@ class MultiSlugRouteTest extends NinjaTestCase {
 		$this->assertFalse($result);
 
 		$result = $route->parse('/post/mariano/First Post');
-		$this->assertEqual($result['controller'], 'posts');
-		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['pass'], array(1));
+		$this->assertEquals('posts', $result['controller']);
+		$this->assertEquals('view', $result['action']);
+		$this->assertEquals(array(1), $result['pass']);
 
 		// cached
 		$result = $route->parse('/post/mariano/First Post');
-		$this->assertEqual($result['controller'], 'posts');
-		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['pass'], array(1));
+		$this->assertEquals('posts', $result['controller']);
+		$this->assertEquals('view', $result['action']);
+		$this->assertEquals(array(1), $result['pass']);
 
 		ClassRegistry::init('Post')->saveAll(array(
 			'Post' => array(
@@ -159,9 +159,9 @@ class MultiSlugRouteTest extends NinjaTestCase {
 		));
 
 		$result = $route->parse('/post/Hiromi/New Post');
-		$this->assertEqual($result['controller'], 'posts');
-		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['pass'], array(10));
+		$this->assertEquals('posts', $result['controller']);
+		$this->assertEquals('view', $result['action']);
+		$this->assertEquals(array(10), $result['pass']);
 
 	}
 
@@ -175,7 +175,7 @@ class MultiSlugRouteTest extends NinjaTestCase {
 		$route = $this->_createInstance();
 		$route->match(array('controller' => 'posts', 'action' => 'view', 1));
 		$mapMatch = MultiSlugRoute::readCache('Post');
-		$this->assertEqual($mapParse, $mapMatch);
+		$this->assertEquals($mapMatch, $mapParse);
 	}
 
 	public function testCallback() {
@@ -193,12 +193,12 @@ class MultiSlugRouteTest extends NinjaTestCase {
 		));
 
 		$result = $route->parse('/post/First Post/author;mariano');
-		$this->assertEqual($result['controller'], 'posts');
-		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['pass'], array(1));
+		$this->assertEquals('posts', $result['controller']);
+		$this->assertEquals('view', $result['action']);
+		$this->assertEquals(array(1), $result['pass']);
 
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 1));
-		$this->assertEqual($result, sprintf('/post/%s/%s', rawurlencode('First Post'), rawurlencode('author;mariano')));
+		$this->assertEquals(sprintf('/post/%s/%s', rawurlencode('First Post'), rawurlencode('author;mariano')), $result);
 
 	}
 
@@ -206,12 +206,12 @@ class MultiSlugRouteTest extends NinjaTestCase {
 		$route = $this->_createInstance('/post/:user/:title/*');
 
 		$result = $route->parse('/post/mariano/First Post/2');
-		$this->assertEqual($result['controller'], 'posts');
-		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['pass'], array(1, 2));
+		$this->assertEquals('posts', $result['controller']);
+		$this->assertEquals('view', $result['action']);
+		$this->assertEquals(array(1, 2), $result['pass']);
 
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 1, 2));
-		$this->assertEqual($result, sprintf('/post/%s/%s/2', rawurlencode('mariano'), rawurlencode('First Post'), rawurlencode('2')));
+		$this->assertEquals(sprintf('/post/%s/%s/2', rawurlencode('mariano'), rawurlencode('First Post'), rawurlencode('2')), $result);
 
 	}
 
@@ -231,7 +231,7 @@ class MultiSlugRouteTest extends NinjaTestCase {
 			'conditions' => array(
 			),
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 	public function testCacheControll() {
@@ -244,7 +244,7 @@ class MultiSlugRouteTest extends NinjaTestCase {
 		$route = $this->_createInstance();
 
 		$result = MultiSlugRoute::getCacheName('Post');
-		$this->assertEqual($result, 'posts');
+		$this->assertEquals('posts', $result);
 
 		$route->parse('/post/mariano/First Post');
 		$route = $this->_createInstance();
@@ -252,14 +252,14 @@ class MultiSlugRouteTest extends NinjaTestCase {
 		$result = MultiSlugRoute::readCache('Post');
 		$id = key($result);
 		$slugs = current($result);
-		$this->assertEqual($id, 1);
-		$this->assertEqual($slugs['user'], 'mariano');
-		$this->assertEqual($slugs['title'], 'First Post');
+		$this->assertEquals(1, $id);
+		$this->assertEquals('mariano', $slugs['user']);
+		$this->assertEquals('First Post', $slugs['title']);
 
 		$this->assertTrue(MultiSlugRoute::storeCache('Post', 'test'));
-		$this->assertEqual(MultiSlugRoute::readCache('Post'), 'test');
+		$this->assertEquals('test', MultiSlugRoute::readCache('Post'));
 		$this->assertTrue(MultiSlugRoute::clearCache('Post'));
-		$this->assertEqual(MultiSlugRoute::readCache('Post'), array());
+		$this->assertEquals(array(), MultiSlugRoute::readCache('Post'));
 		$this->assertFalse(MultiSlugRoute::clearCache('Post'));
 		$this->assertFalse(MultiSlugRoute::clearCacheAll());
 	}
@@ -296,9 +296,9 @@ class MultiSlugRouteTest extends NinjaTestCase {
 		$end = microtime(true) - $start;
 		var_dump(sprintf('non cached parsing took %.1f msec', 1000.0 * $end));
 
-		$this->assertEqual($result['controller'], 'posts');
-		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['pass'], array(100));
+		$this->assertEquals('posts', $result['controller']);
+		$this->assertEquals('view', $result['action']);
+		$this->assertEquals(array(100), $result['pass']);
 
 		$start = microtime(true);
 		$result = $route->parse('/post/user100/Post100');

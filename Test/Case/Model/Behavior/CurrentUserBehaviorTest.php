@@ -16,7 +16,7 @@ class CurrentUserBehaviorTest extends NinjaBehaviorTestCase {
 
 		Configure::write('CurrentUser.id', 1);
 		$this->assertTrue($this->Model->setCurrentUser());
-		$this->assertEqual($this->Model->data['CurrentUserBehaviorMockModel']['user_id'], 1);
+		$this->assertEquals(1, $this->Model->data['CurrentUserBehaviorMockModel']['user_id']);
 
 		$this->Model->data = array();
 		$data = array(
@@ -26,13 +26,13 @@ class CurrentUserBehaviorTest extends NinjaBehaviorTestCase {
 		);
 		$this->Model->set($data);
 		$this->Model->setCurrentUser();
-		$this->assertEqual($this->Model->data['CurrentUserBehaviorMockModel']['user_id'], 1);
+		$this->assertEquals(1, $this->Model->data['CurrentUserBehaviorMockModel']['user_id']);
 
 		$data[$this->Model->alias]['user_id'] = 2;
 		$this->Model->data = array();
 		$this->Model->set($data);
 		$this->Model->setCurrentUser();
-		$this->assertEqual($this->Model->data['CurrentUserBehaviorMockModel']['user_id'], 1);
+		$this->assertEquals(1, $this->Model->data['CurrentUserBehaviorMockModel']['user_id']);
 	}
 
 	public function testValidate() {
@@ -44,27 +44,27 @@ class CurrentUserBehaviorTest extends NinjaBehaviorTestCase {
 		);
 		$this->Model->set($data);
 		$this->Model->validates($data);
-		$this->assertEqual($this->Model->data['CurrentUserBehaviorMockModel']['user_id'], 1);
+		$this->assertEquals(1, $this->Model->data['CurrentUserBehaviorMockModel']['user_id']);
 
 		$this->_reattach(array('auto' => 'set'));
 		$this->Model->create(false);
 		$this->Model->set($data);
 		$this->Model->validates($data);
-		$this->assertEqual($this->Model->data['CurrentUserBehaviorMockModel']['user_id'], 1);
+		$this->assertEquals(1, $this->Model->data['CurrentUserBehaviorMockModel']['user_id']);
 
 		$this->_reattach(array('auto' => 'delete'));
 		$data[$this->Model->alias]['user_id'] = 2;
 		$this->Model->create(false);
 		$this->Model->set($data);
 		$this->Model->validates($data);
-		$this->assertEqual($this->Model->data['CurrentUserBehaviorMockModel']['user_id'], 2);
+		$this->assertEquals(2, $this->Model->data['CurrentUserBehaviorMockModel']['user_id']);
 
 		$this->_reattach(array('auto' => false));
 		$data[$this->Model->alias]['user_id'] = 2;
 		$this->Model->create(false);
 		$this->Model->set($data);
 		$this->Model->validates($data);
-		$this->assertEqual($this->Model->data['CurrentUserBehaviorMockModel']['user_id'], 2);
+		$this->assertEquals(2, $this->Model->data['CurrentUserBehaviorMockModel']['user_id']);
 	}
 
 	public function testValidateCurrentUserDelete() {

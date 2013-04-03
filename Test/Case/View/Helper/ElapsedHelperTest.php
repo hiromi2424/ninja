@@ -10,15 +10,15 @@ class ElapsedHelperTest extends NinjaHelperTestCase {
 		$min = __d('elapsed', 'min');
 		$hour = __d('elapsed', 'hour');
 
-		$this->assertEqual("1 $hour 10 $min 27.225 $sec", $this->Elapsed->nice(4227.2246));
-		$this->assertEqual("225 $msec", $this->Elapsed->nice(0.2246));
+		$this->assertEquals($this->Elapsed->nice(4227.2246), "1 $hour 10 $min 27.225 $sec");
+		$this->assertEquals($this->Elapsed->nice(0.2246), "225 $msec");
 
-		$this->assertEqual("1 $hour, 10 $min, 27.225 $sec", $this->Elapsed->nice(4227.2246, ', '));
-		$this->assertEqual("1 $hour 10 $min 27.2 $sec", $this->Elapsed->nice(4227.2246, array('decimal' => 1)));
+		$this->assertEquals("1 $hour, 10 $min, 27.225 $sec", $this->Elapsed->nice(4227.2246, ', '));
+		$this->assertEquals($this->Elapsed->nice(4227.2246, array('decimal' => 1)), "1 $hour 10 $min 27.2 $sec");
 
-		$this->assertEqual("0.225 $sec", $this->Elapsed->nice(0.2246, array('msec' => false)));
-		$this->assertEqual("1 $hour", $this->Elapsed->nice(4227.2246, array('format' => 'h')));
-		$this->assertEqual("27.225 $sec:10 $min:1 $hour", $this->Elapsed->nice(4227.2246, array('separator' => ':','format' => 'S:M:H')));
+		$this->assertEquals($this->Elapsed->nice(0.2246, array('msec' => false)), "0.225 $sec");
+		$this->assertEquals($this->Elapsed->nice(4227.2246, array('format' => 'h')), "1 $hour");
+		$this->assertEquals($this->Elapsed->nice(4227.2246, array('separator' => ':','format' => 'S:M:H')), "27.225 $sec:10 $min:1 $hour");
 	}
 
 }
