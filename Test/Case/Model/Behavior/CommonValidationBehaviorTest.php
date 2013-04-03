@@ -394,13 +394,11 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 	}
 
 	public function testConvertDatetime() {
-		$this->assertGreaterThanOrEqual(1288537200, $this->Model->convertDatetime('2010/11/1'));
-		$this->assertLessThan(1288537200 + 86400, $this->Model->convertDatetime('2010/11/1'));
-		$this->assertEquals(1288544400, $this->Model->convertDatetime('2010/11/1 2:00:00'));
-		$this->assertGreaterThanOrEqual(1288537200, $this->Model->convertDatetime('２０１０／１１／１'));
-		$this->assertLessThan(1288537200 + 86400, $this->Model->convertDatetime('２０１０／１１／１'));
-		$this->assertEquals(false, $this->Model->convertDatetime('2010/11'));
-		$this->assertEquals(false, $this->Model->convertDatetime(time()));
-		$this->assertEquals(false, $this->Model->convertDatetime(true));
+		$this->assertSame(strtotime('2010/11/01'), $this->Model->convertDatetime('2010/11/1'));
+		$this->assertSame(strtotime('2010/11/01 2:00:00'), $this->Model->convertDatetime('2010/11/1 2:00:00'));
+		$this->assertSame(strtotime('2010/11/01'), $this->Model->convertDatetime('２０１０／１１／１'));
+		$this->assertSame(false, $this->Model->convertDatetime('2010/11'));
+		$this->assertSame(false, $this->Model->convertDatetime(time()));
+		$this->assertSame(false, $this->Model->convertDatetime(true));
 	}
 }
