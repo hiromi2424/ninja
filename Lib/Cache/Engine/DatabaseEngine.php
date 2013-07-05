@@ -1,11 +1,12 @@
 <?php
-/**
- * Database engine for cache.
- *
- * 
- */
 
 App::uses('ClassRegistry', 'Utility');
+
+/**
+ * DatabaseEngin class
+ *
+ * Database engine for cache.
+ */
 class DatabaseEngine extends CacheEngine {
 
 /**
@@ -28,19 +29,12 @@ class DatabaseEngine extends CacheEngine {
  *
  * @var Model
  */
-	protected $_model;
-
-/**
- * Whether the model instance was initialized or not.
- *
- * @var boolean
- */
-	protected $_initialized = false;
+	protected $_model = null;
 
 /**
  * Initialize the Cache Engine
  *
- * Called automatically by the cache frontend
+ * Called automatically by the cache front-end
  * To reinitialize the settings call Cache::config('EngineName', [optional] settings = array());
  *
  * @param array $setting array of setting for the engine
@@ -69,12 +63,8 @@ class DatabaseEngine extends CacheEngine {
  * @return Model the model instance
  */
 	public function getModel() {
-		if (!$this->_initialized) {
-			if (!class_exists('ClassRegistry')) {
-				App::import('Core', 'ClassRegistry');
-			}
+		if (null === $this->_model) {
 			$this->_model = ClassRegistry::init($this->settings['model']);
-			$this->_initialized = true;
 		}
 		return $this->_model;
 	}
@@ -96,7 +86,7 @@ class DatabaseEngine extends CacheEngine {
 
 		$model->create(array(
 			$this->settings['fields']['value'] => $this->serialize($value),
-			$this->settings['fields']['expires'] => $duration == 0 ? 0 : $duration + time(),
+			$this->settings['fields']['expires'] => $duration == 0 ? 0 : $duration + $this->time(),
 		));
 		if ($this->settings['fields']['key'] === $model->primaryKey) {
 			$id = $key;
@@ -133,7 +123,7 @@ class DatabaseEngine extends CacheEngine {
 					$this->settings['fields']['key'] => $key,
 					'OR' => array(
 						$this->settings['fields']['expires'] => 0,
-						$this->settings['fields']['expires'] . ' >= ' => time(),
+						$this->settings['fields']['expires'] . ' >= ' => $this->time(),
 					),
 				),
 				'recursive' => -1
@@ -182,7 +172,7 @@ class DatabaseEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
 		$model = $this->getModel();
@@ -208,7 +198,7 @@ class DatabaseEngine extends CacheEngine {
  * Delete all keys from the cache
  *
  * @param boolean $check Optional - only delete expired cache items
- * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
 		$model = $this->getModel();
@@ -220,7 +210,7 @@ class DatabaseEngine extends CacheEngine {
 		if ($check) {
 			$conditions = array(
 				$this->settings['fields']['expires'] . ' != ' => 0,
-				$this->settings['fields']['expires'] . ' < ' => time(),
+				$this->settings['fields']['expires'] . ' < ' => $this->time(),
 			);
 		}
 		$records = $model->find('all', array(
@@ -247,10 +237,32 @@ class DatabaseEngine extends CacheEngine {
 	}
 
 /**
+ * Wrapper function of time for test
+ *
+ * @param mixed $time timestamp to be set, true to set time() or false to reset
+ */
+	public static function time($time = null) {
+		static $_time;
+		if ($time !== null) {
+			if (false === $time) {
+				$_time = null;
+			} else {
+				if (true === $time) {
+					$time = time();
+				}
+				$_time = $time;
+			}
+		}
+		return $_time ? $_time : time();
+	}
+
+/**
  * Garbage collection
  *
  * Permanently remove all expired and deleted data
  *
+ * @param string $expires
+ * @return void
  */
 	public function gc($expires = null) {
 		return $this->clear(true);

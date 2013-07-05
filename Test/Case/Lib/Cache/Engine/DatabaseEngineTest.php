@@ -36,6 +36,7 @@ class DatabaseEngineTest extends NinjaTestCase {
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 		Cache::config('database_test', array('engine' => 'Ninja.Database', 'prefix' => 'database_test_'));
+		DatabaseEngine::time(false);
 	}
 
 /**
@@ -47,7 +48,6 @@ class DatabaseEngineTest extends NinjaTestCase {
 		Cache::clear(false, 'database_test');
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::drop('database_test');
-		Cache::config('default');
 		parent::tearDown();
 	}
 
@@ -57,21 +57,18 @@ class DatabaseEngineTest extends NinjaTestCase {
  * @return void
  */
 	public function testReadAndWriteCache() {
-		Cache::set(array('duration' => 1));
+		Cache::config('database_test', array('duration' => 1));
 
-		$result = Cache::read('test');
-		$expecting = '';
-		$this->assertEquals($expecting, $result);
+		$result = Cache::read('test', 'database_test');
+		$this->assertFalse($result);
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('test', $data);
+		$result = Cache::write('test', $data, 'database_test');
 		$this->assertTrue($result);
 
-		$result = Cache::read('test');
-		$expecting = $data;
-		$this->assertEquals($expecting, $result);
-
-		Cache::delete('test');
+		$result = Cache::read('test', 'database_test');
+		$expected = $data;
+		$this->assertSame($expected, $result);
 	}
 
 /**
@@ -80,12 +77,12 @@ class DatabaseEngineTest extends NinjaTestCase {
  * @return void
  */
 	public function testReadWriteDurationZero() {
-		Cache::config('database_test', array('engine' => 'Ninja.Database', 'duration' => 0));
+		Cache::config('database_test', array('duration' => 0));
 		Cache::write('zero', 'Should save', 'database_test');
-		sleep(1);
+		DatabaseEngine::time(PHP_INT_MAX);
 
 		$result = Cache::read('zero', 'database_test');
-		$this->assertEquals($result, 'Should save');
+		$this->assertSame('Should save', $result);
 	}
 
 /**
@@ -94,35 +91,29 @@ class DatabaseEngineTest extends NinjaTestCase {
  * @return void
  */
 	public function testExpiry() {
-		Cache::set(array('duration' => 1), 'database_test');
+		// expired
+		Cache::config('database_test', array('duration' => 1));
 
+		DatabaseEngine::time(true);
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'database_test');
 		$this->assertTrue($result);
 
-		sleep(2);
+		DatabaseEngine::time(time() + 2);
 		$result = Cache::read('other_test', 'database_test');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' => 1), 'database_test');
+		// not expired
+		Cache::config('database_test', array('duration' => 10));
 
+		DatabaseEngine::time(true);
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'database_test');
 		$this->assertTrue($result);
 
-		sleep(2);
+		DatabaseEngine::time(time() + 1);
 		$result = Cache::read('other_test', 'database_test');
-		$this->assertFalse($result);
-
-		Cache::set(array('duration' => 0), 'database_test');
-
-		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('persistent', $data, 'database_test');
-		$this->assertTrue($result);
-
-		sleep(1);
-		$result = Cache::read('persistent', 'database_test');
-		$this->assertEquals($data, $result);
+		$this->assertSame($data, $result);
 	}
 
 /**
@@ -132,13 +123,19 @@ class DatabaseEngineTest extends NinjaTestCase {
  */
 	public function testDeleteCache() {
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('delete_test', $data);
+		$result = Cache::write('delete_test', $data, 'database_test');
 		$this->assertTrue($result);
 
-		$result = Cache::delete('delete_test');
+		$result = Cache::read('delete_test', 'database_test');
+		$this->assertSame($data, $result);
+
+		$result = Cache::delete('delete_test', 'database_test');
 		$this->assertTrue($result);
 
-		$result = Cache::delete('delete_test');
+		$result = Cache::read('delete_test', 'database_test');
+		$this->assertFalse($result);
+
+		$result = Cache::delete('delete_test', 'database_test');
 		$this->assertFalse($result);
 	}
 
