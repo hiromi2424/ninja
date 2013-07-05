@@ -48,7 +48,7 @@ class ConfigListBehavior extends ModelBehavior {
 		foreach ((array)$values as $index => $value) {
 			if (!isset($this->__lists[self::_listName($field)][$value])) {
 				return false;
-			} 
+			}
 		}
 		return true;
 	}

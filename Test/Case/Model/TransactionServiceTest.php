@@ -38,7 +38,7 @@ class TransactionServiceTest extends NinjaModelTestCase {
 		');
 	}
 
-	public function tearDown() {	
+	public function tearDown() {
 		ConnectionManager::drop('_transactionServiceMock');
 		parent::tearDown();
 	}
