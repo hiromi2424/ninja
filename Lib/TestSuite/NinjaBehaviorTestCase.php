@@ -13,6 +13,8 @@ abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 	public $behaviorClass;
 	public $modelName;
 
+	public $behaviorSettings = array();
+
 	public function _determineClassName() {
 		$this->behaviorName = preg_replace('/BehaviorTest(Case)?$/', '', get_class($this));
 		$this->behaviorClass = $this->behaviorName . 'Behavior';
@@ -25,7 +27,7 @@ abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 			$this->behaviorClass = 'Mock' . $this->behaviorClass;
 			$this->behaviorName = 'Mock' . $this->behaviorName;
 		} elseif (!class_exists($this->behaviorClass)) {
-			App::uses($this->behaviorName, $this->plugin . 'Model/Behavior');
+			App::uses($this->behaviorClass, $this->plugin . 'Model/Behavior');
 		}
 
 	}
@@ -34,7 +36,7 @@ abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 		if ($this->modelName) {
 			$this->Model = ClassRegistry::init($this->modelName);
 			if (!$this->Model->Behaviors->attached($this->behaviorName)) {
-				$this->Model->Behaviors->load($this->behaviorName);
+				$this->Model->Behaviors->load($this->plugin . $this->behaviorName, $this->behaviorSettings);
 			}
 			$this->Behavior = $this->_getBehavior();
 		} else {
@@ -55,6 +57,7 @@ abstract class NinjaBehaviorTestCase extends NinjaTestCase {
 	}
 
 	protected function _reattach($config = array()) {
+		$config = Hash::merge($this->behaviorSettings, $config);
 		$this->Model->Behaviors->detach($this->behaviorName);
 		$this->Model->Behaviors->attach($this->behaviorName, $config);
 	}
