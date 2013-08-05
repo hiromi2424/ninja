@@ -171,11 +171,12 @@ class MenuHelper extends AppHelper {
 			$options = Set::merge($options, $current);
 		} elseif ($current === 'disable') {
 			$url = false;
-		} elseif ($current === 'class') {
+		} else {
+			$class = $current === 'class' ? 'current' : $current;
 			if (empty($options['class'])) {
-				$options['class'] = 'current';
+				$options['class'] = $class;
 			} else {
-				$options['class'] .= ' current';
+				$options['class'] .= " $class";
 			}
 		}
 	}
