@@ -3,7 +3,9 @@
 App::import('TestSuite', 'Ninja.NinjaBehaviorTestCase');
 
 class CommonValidationBehaviorMockModel extends Model {
+
 	public $actsAs = array('Ninja.CommonValidation' => array('userModel' => 'CommonValidationBehaviorUser'));
+
 	public $validate = array(
 		'common_validation_behavior_belonged_id' => array(
 			'existsForeign' => array(
@@ -19,9 +21,20 @@ class CommonValidationBehaviorMockModel extends Model {
 		),
 		'CommonValidationBehaviorUser',
 	);
+
 	public $hasMany = array(
 		'CommonValidationBehaviorBelonged',
 	);
+
+	public $fieldValue = null;
+
+	public function field($name, $conditions = null, $order = null) {
+		if ($this->fieldValue !== null) {
+			return $this->fieldValue;
+		}
+		return parent::field($name, $conditions, $order);
+	}
+
 }
 
 class CommonValidationBehaviorUser extends Model {
@@ -401,4 +414,35 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 		$this->assertFalse($this->Model->convertDatetime(time()));
 		$this->assertFalse($this->Model->convertDatetime(true));
 	}
+
+	public function testSplitAlias() {
+		$tests = array(
+			'password' => array('CommonValidationBehaviorMockModel', 'password'),
+			'User.password' => array('User', 'password'),
+			'Group.id' => array('Group', 'id'),
+		);
+		foreach ($tests as $testValue => $expected) {
+			$this->assertSame($expected, $this->Model->splitAlias($testValue));
+		}
+	}
+
+	public function testSameInput() {
+		$data = array(
+			'password' => 'hoge',
+			'password_confirm' => 'hoge',
+		);
+		$this->Model->create($data);
+		$this->assertTrue($this->Model->sameInput($data['password_confirm'], 'password'));
+
+		$data['password'] = 'fuga';
+		$this->Model->create($data);
+		$this->assertFalse($this->Model->sameInput($data['password_confirm'], 'password'));
+	}
+
+	public function testSameAsSavedValue() {
+		$this->Model->fieldValue = 'hoge';
+		$this->assertTrue($this->Model->sameAsSavedValue('hoge', 'password'));
+		$this->assertFalse($this->Model->sameAsSavedValue('fuga', 'password'));
+	}
+
 }

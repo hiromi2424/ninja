@@ -283,4 +283,42 @@ class CommonValidationBehavior extends ModelBehavior {
 	public function convertDatetime($model, $datetime) {
 		return strtotime(mb_convert_kana(trim($datetime), 'a'));
 	}
+
+	public function splitAlias($model, $field) {
+		if (strpos($field, '.') === false) {
+			$alias = $model->alias;
+		} else {
+			list($alias, $field) = explode('.', $field);
+		}
+
+		return array($alias, $field);
+	}
+
+	public function sameInput($model, $check, $field, $hash = false) {
+		$value = current((array)$check);
+		list($alias, $field) = $model->splitAlias($field);
+
+		if (!isset($model->data[$alias][$field])) {
+			return false;
+		}
+
+		if ($hash === true) {
+			$value = AuthComponent::password($value);
+		}
+
+		return $value === $model->data[$alias][$field];
+	}
+
+	public function sameAsSavedValue($model, $check, $field, $hash = false) {
+		$value = current((array)$check);
+
+		$savedValue = $model->field($field, array($model->alias . '.id' => $model->id));
+
+		if ($hash === true) {
+			$value = AuthComponent::password($value);
+		}
+
+		return $value === $savedValue;
+	}
+
 }
