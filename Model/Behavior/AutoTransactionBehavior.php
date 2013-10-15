@@ -46,14 +46,14 @@ class AutoTransactionBehavior extends ModelBehavior {
 		return $start ? TransactionManager::begin($model->useDbConfig) : TransactionManager::commit($model->useDbConfig);
 	}
 
-	public function beforeSave(Model $model) {
+	public function beforeSave(Model $model, $options = array()) {
 		if ($this->_determineAutoTransaction($model, true)) {
 			$this->_transaction($model);
 		}
 		return true;
 	}
 
-	public function afterSave(Model $model, $created) {
+	public function afterSave(Model $model, $created, $options = array()) {
 		if ($this->_determineAutoTransaction($model, false)) {
 			$this->_transaction($model, false);
 		}

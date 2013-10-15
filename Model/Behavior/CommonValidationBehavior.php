@@ -205,7 +205,7 @@ class CommonValidationBehavior extends ModelBehavior {
 		return true;
 	}
 
-	public function beforeValidate(Model $model) {
+	public function beforeValidate(Model $model, $options = array()) {
 		$create =
 			$this->settings[$model->alias]['autoSetCreated'] &&
 			$model->hasField('created') &&

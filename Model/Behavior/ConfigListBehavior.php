@@ -15,7 +15,7 @@ class ConfigListBehavior extends ModelBehavior {
 		$this->settings[$Model->name] = array_merge(self::$defaultSettings, (array)$settings);
 	}
 
-	public function afterFind(Model $Model, $results, $primary) {
+	public function afterFind(Model $Model, $results, $primary = false) {
 
 		if (!empty($results[0][$Model->alias])) {
 
@@ -31,7 +31,7 @@ class ConfigListBehavior extends ModelBehavior {
 		return $results;
 	}
 
-	public function beforeSave(Model $Model) {
+	public function beforeSave(Model $Model, $options = array()) {
 		if (isset($Model->data[$Model->alias])) {
 			$this->__lists = Configure::read($this->_compileConfigureName($Model, $this->settings[$Model->name]['config']));
 			$Model->data[$Model->alias] = $this->_convertData($Model, $Model->data[$Model->alias]);

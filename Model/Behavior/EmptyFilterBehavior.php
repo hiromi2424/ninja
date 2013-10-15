@@ -59,7 +59,7 @@ class EmptyFilterBehavior extends ModelBehavior {
 		return preg_replace("/(^$space+|$space+$)/mu", '', $data);
 	}
 
-	public function beforeValidate(Model $Model) {
+	public function beforeValidate(Model $Model, $options = array()) {
 		extract($this->settings[$Model->alias]);
 		if ($autoTrim) {
 			$Model->data = $this->trimSpaces($Model, $Model->data);
