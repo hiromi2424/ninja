@@ -9,13 +9,22 @@ class RoleAuthorize extends BaseAuthorize {
 	public $groupIdField = 'group_id';
 	public $model = 'Group';
 	public $usePrefix = true;
+	public $actionIsLowerCase = true;
 
 	public function authorize($user, CakeRequest $request) {
+		$action = $this->_Controller->action;
+		if ($this->actionIsLowerCase) {
+			$action = strtolower($action);
+		}
 
 		if (!empty($this->_Controller->requireAuth) && !is_array($this->_Controller->requireAuth)) {
 			$requireAuth = $this->_Controller->requireAuth;
-		} elseif (!empty($this->_Controller->requireAuth) && is_array($this->_Controller->requireAuth) && !empty($this->_Controller->requireAuth[$this->_Controller->action])) {
-			$requireAuth = $this->_Controller->requireAuth[$this->_Controller->action];
+		} elseif (
+			!empty($this->_Controller->requireAuth) &&
+			is_array($this->_Controller->requireAuth) &&
+			!empty($this->_Controller->requireAuth[$action])
+		) {
+			$requireAuth = $this->_Controller->requireAuth[$action];
 		} elseif ($this->usePrefix && !empty($request->params['prefix'])) {
 			$requireAuth = $request->params['prefix'];
 		}
