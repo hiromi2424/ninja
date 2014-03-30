@@ -149,6 +149,16 @@ class CommonValidationBehavior extends ModelBehavior {
 		return !$Model->exists();
 	}
 
+	// alias for existsForeign()
+	public function foreignExists($model, $check, $className = false) {
+		return $this->existsForeign($model, $check, $className);
+	}
+
+	// alias for notExistsForeign()
+	public function foreignNotExist($model, $check, $className = false) {
+		return $this->notExistsForeign($model, $check, $className);
+	}
+
 	public function existsForeign($model, $check, $className = false) {
 		return $this->_existsForeign($model, $check, $className, __FUNCTION__);
 	}
