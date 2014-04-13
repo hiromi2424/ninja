@@ -29,7 +29,7 @@ class ClearCacheShell extends AppShell {
  */
 	public function basic() {
 		foreach (Cache::configured() as $name) {
-			if (Cache::clear(!empty($this->params['force']), $name)) {
+			if (Cache::clear(empty($this->params['force']), $name)) {
 				$this->out(__d('ninja', 'Caches of [%s] config were cleared.', $name));
 			} else {
 				$this->err(__d('ninja', 'Failed clearing caches of [%s] config.', $name));
