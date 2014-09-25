@@ -22,6 +22,9 @@
 
 echo "<?php\n";
 ?>
+
+App::uses('AppController', 'Controller');
+
 class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>AppController {
 
 	public $name = '<?php echo $controllerName; ?>';
