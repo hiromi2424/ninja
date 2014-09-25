@@ -6,7 +6,7 @@ php:
 
 env:
   - DB=mysql CAKEPHP=master
-  - DB=mysql CAKEPHP=2.5
+  - DB=mysql CAKEPHP=2.6
 
 install:
   - git clone git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKEPHP
