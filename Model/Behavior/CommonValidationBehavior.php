@@ -1,5 +1,7 @@
 <?php
 
+App::uses('String', 'Utility');
+
 class CommonValidationBehavior extends ModelBehavior {
 
 	public $defaultSettings = array(
