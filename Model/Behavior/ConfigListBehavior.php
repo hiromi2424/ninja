@@ -1,5 +1,7 @@
 <?php
 
+App::uses('String', 'Utility');
+
 class ConfigListBehavior extends ModelBehavior {
 
 	public $settings = array();

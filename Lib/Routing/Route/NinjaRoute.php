@@ -1,5 +1,7 @@
 <?php
 
+App::uses('String', 'Utility');
+
 abstract class NinjaRoute extends CakeRoute {
 
 	protected function _insertParams($string, $model) {
