@@ -4,9 +4,14 @@ class MagickMethodBehavior extends ModelBehavior {
 
 	public $mapMethods = array();
 
-	protected $_findMap = array('/^find(.+)$/' => '_findMagick');
-	protected $_scopeMap = array('/^scope(.+)$/' => '_scopeMagick');
-	protected $_fieldMap = array('/^fieldBy(.+)$/' => '_fieldMagick');
+	public static $_mapMethodsDef = array(
+		'find' => array('/^find(.+)$/' => '_findMagick'),
+		'scope' => array('/^scope(.+)$/' => '_scopeMagick'),
+		'conditions' => array('/^conditionsBy(.+)$/' => '_conditionsMagick'),
+		'field' => array('/^fieldBy(.+)$/' => '_fieldMagick'),
+		'deleteAll' => array('/^deleteAllBy(.+)$/' => '_deleteAllMagick'),
+		'updateAll' => array('/^updateAllBy(.+)$/' => '_updateAllMagick'),
+	);
 
 	public static $defaultSettings = array(
 		'callbackPrefix' => 'by',
@@ -19,8 +24,14 @@ class MagickMethodBehavior extends ModelBehavior {
 	);
 
 	public function setup(Model $Model, $config = array()) {
-		$this->mapMethods = array_merge($this->_findMap, $this->_scopeMap, $this->_fieldMap);
+		if (!isset(static::$defaultSettings['map'])) {
+			$mapKeys = array_keys(static::$_mapMethodsDef);
+			static::$defaultSettings['map'] = array_combine($mapKeys, array_fill(0, count($mapKeys), true));
+		}
+
 		$this->settings[$Model->alias] = Set::merge(self::$defaultSettings, $config);
+		$mapDefs = array_intersect_key(static::$_mapMethodsDef, array_filter($this->settings[$Model->alias]['map']));
+		$this->mapMethods = call_user_func_array('array_merge', $mapDefs);
 	}
 
 	protected function _matched($regex, $method) {
@@ -54,7 +65,7 @@ class MagickMethodBehavior extends ModelBehavior {
 		$method = array_shift($args);
 		$args = array_values($args);
 
-		$matched = $this->_matched(key($this->_findMap), $method);
+		$matched = $this->_matched(key(static::$_mapMethodsDef['find']), $method);
 		list($type, $parts) = $this->_parse($matched);
 
 		list($fields, $operators) = $this->_extract($parts);
@@ -80,7 +91,7 @@ class MagickMethodBehavior extends ModelBehavior {
 		$method = array_shift($args);
 		$args = array_values($args);
 
-		$matched = $this->_matched(key($this->_scopeMap) , $method);
+		$matched = $this->_matched(key(static::$_mapMethodsDef['scope']), $method);
 
 		list($fields, $operators) = $this->_extract($matched);
 
@@ -88,6 +99,23 @@ class MagickMethodBehavior extends ModelBehavior {
 		$query = Set::merge(compact('conditions'), $query);
 
 		return $query;
+
+	}
+
+	public function _conditionsMagick($Model) {
+
+		$args = func_get_args();
+		/* $Model = */ array_shift($args);
+		$method = array_shift($args);
+		$args = array_values($args);
+
+		$matched = $this->_matched(key(static::$_mapMethodsDef['conditions']), $method);
+
+		list($fields, $operators) = $this->_extract($matched);
+
+		list($conditions) = $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method'));
+
+		return $conditions;
 
 	}
 
@@ -99,13 +127,47 @@ class MagickMethodBehavior extends ModelBehavior {
 		$field = array_shift($args);
 		$args = array_values($args);
 
-		$matched = $this->_matched(key($this->_fieldMap) , $method);
+		$matched = $this->_matched(key(static::$_mapMethodsDef['field']), $method);
 		list($fields, $operators) = $this->_extract($matched);
 
 		list($generatedConditions, $conditions) = $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method'));
 		$conditions = Set::merge($generatedConditions, $conditions);
 
 		return $Model->field($field, $conditions);
+	}
+
+	public function _deleteAllMagick($Model) {
+
+		$args = func_get_args();
+		/* $Model = */ array_shift($args);
+		$method = array_shift($args);
+		$args = array_values($args);
+
+		$matched = $this->_matched(key(static::$_mapMethodsDef['deleteAll']), $method);
+		list($fields, $operators) = $this->_extract($matched);
+
+		$passArguments = true;
+		$args = $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method', 'passArguments'));
+
+		return $Model->dispatchMethod('deleteAll', $args);
+
+	}
+
+	public function _updateAllMagick($Model) {
+
+		$args = func_get_args();
+		/* $Model = */ array_shift($args);
+		$method = array_shift($args);
+		$fieldsArg = array_shift($args);
+		$args = array_values($args);
+
+		$matched = $this->_matched(key(static::$_mapMethodsDef['updateAll']), $method);
+		list($fields, $operators) = $this->_extract($matched);
+
+		list($generatedConditions, $conditions) = $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method'));
+		$conditions = Set::merge($generatedConditions, $conditions);
+
+		return $Model->updateAll($fieldsArg, $conditions);
 	}
 
 	protected function _extract($parts) {
@@ -181,7 +243,6 @@ class MagickMethodBehavior extends ModelBehavior {
 			}
 
 		}
-		$query = isset($args[$offset]) ? $args[$offset] : array();
 
 		if (empty($operators) || !in_array('or', $operators)) {
 			$criteria = $scopes;
@@ -189,7 +250,15 @@ class MagickMethodBehavior extends ModelBehavior {
 			$criteria = $this->_generatesOrCreteria($scopes, $operators);
 		}
 
-		return array($criteria, $query);
+		$return = array($criteria);
+		if (!empty($passArguments)) {
+			for ($i = $offset; array_key_exists($i, $args); $i++) {
+				$return[] = $args[$i];
+			}
+		} else {
+			$return[] = isset($args[$offset]) ? $args[$offset] : array();
+		}
+		return $return;
 
 	}
 

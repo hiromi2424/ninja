@@ -26,6 +26,16 @@ class MagickMethodBehaviorMockBase extends Model {
 		return $args;
 	}
 
+	public function updateAll($fields, $conditions = true) {
+		$args = func_get_args();
+		return $args;
+	}
+
+	public function deleteAll($conditions, $cascade = true, $callbacks = false) {
+		$args = func_get_args();
+		return $args;
+	}
+
 }
 
 
@@ -126,6 +136,13 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 			$this->Model->escapeField('id') => 1,
 			$this->Model->escapeField('user_name') => 'john',
 			$this->Model->escapeField('password') => 'I love you',
+		)));
+		$this->assertEquals($result, $expected);
+
+		$result = $this->Model->findById(1, array('conditions' => array('user_name' => 'john')));
+		$expected = array('first', array('conditions' => array(
+			$this->Model->escapeField('id') => 1,
+			'user_name' => 'john',
 		)));
 		$this->assertEquals($result, $expected);
 
@@ -311,7 +328,30 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 
 	}
 
-	public function testField() {
+	public function testConditionsBy() {
+
+		$result = $this->Model->conditionsById(1);
+		$expected = array(
+			$this->Model->escapeField('id') => 1,
+		);
+		$this->assertEquals($result, $expected);
+
+		$result = $this->Model->conditionsByInsertId();
+		$expected = array(
+			$this->Model->escapeField('id') => 2,
+		);
+		$this->assertEquals($result, $expected);
+
+		$result = $this->Model->conditionsByEnabledAndInsertId(true);
+		$expected = array(
+			$this->Model->escapeField('enabled') => true,
+			$this->Model->escapeField('id') => 2,
+		);
+		$this->assertEquals($result, $expected);
+
+	}
+
+	public function testFieldBy() {
 
 		$result = $this->Model->fieldById('hoge', 1);
 		$expected = array('hoge', array(
@@ -329,6 +369,65 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 		$expected = array('piyo', array(
 			$this->Model->escapeField('enabled') => true,
 			$this->Model->escapeField('id') => 2,
+		));
+		$this->assertEquals($result, $expected);
+
+	}
+
+	public function testDeleteAllBy() {
+
+		$result = $this->Model->deleteAllById(1);
+		$expected = array(array(
+			$this->Model->escapeField('id') => 1,
+		));
+		$this->assertEquals($result, $expected);
+
+		$result = $this->Model->deleteAllByInsertId();
+		$expected = array(array(
+			$this->Model->escapeField('id') => 2,
+		));
+		$this->assertEquals($result, $expected);
+
+		$result = $this->Model->deleteAllByEnabledAndInsertId(true);
+		$expected = array(array(
+			$this->Model->escapeField('enabled') => true,
+			$this->Model->escapeField('id') => 2,
+		));
+		$this->assertEquals($result, $expected);
+
+		$result = $this->Model->deleteAllByNullValue(null, '2ndArg', '3rdArg');
+		$expected = array(array(
+			$this->Model->escapeField('null_value') => null,
+		), '2ndArg', '3rdArg');
+		$this->assertEquals($result, $expected);
+
+	}
+
+	public function testUpdateAllBy() {
+
+		$result = $this->Model->updateAllById(array('status' => 'valid'), 1);
+		$expected = array(array('status' => 'valid'), array(
+			$this->Model->escapeField('id') => 1,
+		));
+		$this->assertEquals($result, $expected);
+
+		$result = $this->Model->updateAllByInsertId(array('status' => 'valid'));
+		$expected = array(array('status' => 'valid'), array(
+			$this->Model->escapeField('id') => 2,
+		));
+		$this->assertEquals($result, $expected);
+
+		$result = $this->Model->updateAllByEnabledAndInsertId(array('status' => 'valid'), true);
+		$expected = array(array('status' => 'valid'), array(
+			$this->Model->escapeField('enabled') => true,
+			$this->Model->escapeField('id') => 2,
+		));
+		$this->assertEquals($result, $expected);
+
+		$result = $this->Model->updateAllByNullValue(array('status' => 'valid'), null, array('additionalConditions' => true));
+		$expected = array(array('status' => 'valid'), array(
+			$this->Model->escapeField('null_value') => null,
+			'additionalConditions' => true,
 		));
 		$this->assertEquals($result, $expected);
 
