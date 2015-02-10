@@ -44,7 +44,6 @@ abstract class NinjaGroupTest extends PHPUnit_Framework_TestSuite {
 					!preg_match('|^All.+?\.php$|', basename($file)) &&
 					($excludes === null || !in_array($file, $excludes))
 				) {
-
 					$files[] = $file;
 				}
 			}

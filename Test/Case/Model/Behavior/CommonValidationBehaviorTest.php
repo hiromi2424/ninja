@@ -396,7 +396,7 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 			$this->assertFalse($this->Model->datetime(array('datetime' => '0001/11/11 11:11:11')));
 		}
 		$this->assertFalse($this->Model->datetime(array('datetime' => '2010/14/11')));
-		$this->assertFalse($this->Model->datetime(array('datetime' => time())));
+		$this->assertFalse($this->Model->datetime(array('datetime' => 100)));
 		$this->assertFalse($this->Model->datetime(array('datetime' => true)));
 
 		$this->assertTrue($this->Model->datetime(array('datetime' => '2010/10/11')));
@@ -411,7 +411,7 @@ class CommonValidationBehaviorTest extends NinjaBehaviorTestCase {
 		$this->assertSame(strtotime('2010/11/01 2:00:00'), $this->Model->convertDatetime('2010/11/1 2:00:00'));
 		$this->assertSame(strtotime('2010/11/01'), $this->Model->convertDatetime('２０１０／１１／１'));
 		$this->assertFalse($this->Model->convertDatetime('2010/11'));
-		$this->assertFalse($this->Model->convertDatetime(time()));
+		$this->assertFalse($this->Model->convertDatetime(100));
 		$this->assertFalse($this->Model->convertDatetime(true));
 	}
 

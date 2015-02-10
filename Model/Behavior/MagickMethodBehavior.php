@@ -9,6 +9,7 @@ class MagickMethodBehavior extends ModelBehavior {
 		'scope' => array('/^scope(.+)$/' => '_scopeMagick'),
 		'conditions' => array('/^conditionsBy(.+)$/' => '_conditionsMagick'),
 		'field' => array('/^fieldBy(.+)$/' => '_fieldMagick'),
+		'saveField' => array('/^saveFieldBy(.+)$/' => '_saveFieldMagick'),
 		'deleteAll' => array('/^deleteAllBy(.+)$/' => '_deleteAllMagick'),
 		'updateAll' => array('/^updateAllBy(.+)$/' => '_updateAllMagick'),
 	);
@@ -134,6 +135,34 @@ class MagickMethodBehavior extends ModelBehavior {
 		$conditions = Set::merge($generatedConditions, $conditions);
 
 		return $Model->field($field, $conditions);
+	}
+
+	public function _saveFieldMagick($Model) {
+
+		$args = func_get_args();
+		/* $Model = */ array_shift($args);
+		$method = array_shift($args);
+		$name = array_shift($args);
+		$value = array_shift($args);
+		$args = array_values($args);
+
+		$matched = $this->_matched(key(static::$_mapMethodsDef['saveField']), $method);
+		list($fields, $operators) = $this->_extract($matched);
+
+		// saveFieldById($id);
+		if (count($fields) === 1 && count($operators) === 0 && $fields === array($Model->primaryKey)) {
+			$Model->id = array_shift($args);
+			return $Model->dispatchMethod('saveField', array_merge(array($name, $value), $args));
+		}
+
+		$passArguments = true;
+		$args = $this->_findParams(compact('Model', 'fields', 'operators', 'args', 'method', 'passArguments'));
+		$conditions = array_shift($args);
+
+		$Model->id = $Model->field($Model->primaryKey, $conditions);
+		array_unshift($args, $value);
+		array_unshift($args, $name);
+		return $Model->dispatchMethod('saveField', $args);
 	}
 
 	public function _deleteAllMagick($Model) {

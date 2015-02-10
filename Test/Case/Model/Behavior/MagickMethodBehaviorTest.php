@@ -26,6 +26,11 @@ class MagickMethodBehaviorMockBase extends Model {
 		return $args;
 	}
 
+	public function saveField($name, $value, $validate = false) {
+		$args = func_get_args();
+		return $args;
+	}
+
 	public function updateAll($fields, $conditions = true) {
 		$args = func_get_args();
 		return $args;
@@ -367,6 +372,34 @@ class MagickMethodBehaviorTest extends NinjaBehaviorTestCase {
 
 		$result = $this->Model->fieldByEnabledAndInsertId('piyo', true);
 		$expected = array('piyo', array(
+			$this->Model->escapeField('enabled') => true,
+			$this->Model->escapeField('id') => 2,
+		));
+		$this->assertEquals($result, $expected);
+
+	}
+
+	public function testSaveFieldBy() {
+
+		$result = $this->Model->saveFieldById('hoge', 'fuga', 1);
+		$expected = array('hoge', 'fuga');
+		$this->assertEquals($result, $expected);
+		$this->assertSame($this->Model->id, 1);
+
+		$result = $this->Model->saveFieldByInsertId('hoge', 'fuga');
+		$expected = array('hoge', 'fuga');
+		$this->assertEquals($result, $expected);
+		$result = $this->Model->id;
+		$expected = array('id', array(
+			$this->Model->escapeField('id') => 2,
+		));
+		$this->assertEquals($result, $expected);
+
+		$result = $this->Model->saveFieldByEnabledAndInsertId('hoge', 'fuga', true);
+		$expected = array('hoge', 'fuga');
+		$this->assertEquals($result, $expected);
+		$result = $this->Model->id;
+		$expected = array('id', array(
 			$this->Model->escapeField('enabled') => true,
 			$this->Model->escapeField('id') => 2,
 		));
